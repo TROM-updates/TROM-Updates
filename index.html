@@ -2,405 +2,1933 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TROM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TROM — The Republic of Moe</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+:root{
+--blue:#2f80ff;
+--purple:#8b5cf6;
+--pink:#ff5fa2;
+--cyan:#25c7f5;
+--green:#35c98b;
+--yellow:#ffcc4d;
+--red:#ff4d5e;
+--orange:#ff914d;
+
+--text:#182033;
+--muted:#718096;
+--card:rgba(255,255,255,.78);
+--border:rgba(30,50,90,.10);
+--shadow:0 20px 55px rgba(52,72,120,.13);
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
 body{
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-background:#05060b;color:#fff;overflow-x:hidden
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",
+"Segoe UI",Roboto,Arial,sans-serif;
+color:var(--text);
+background:
+radial-gradient(circle at 10% 10%,rgba(47,128,255,.12),transparent 25%),
+radial-gradient(circle at 90% 10%,rgba(255,95,162,.12),transparent 25%),
+radial-gradient(circle at 50% 90%,rgba(139,92,246,.10),transparent 30%),
+#f7f9fd;
+min-height:100vh;
+overflow-x:hidden;
 }
-body:before,body:after{
-content:"";position:fixed;width:500px;height:500px;border-radius:50%;
-filter:blur(130px);opacity:.25;z-index:-1
-}
-body:before{background:#ff2fca;top:-220px;left:-180px}
-body:after{background:#00d9ff;right:-220px;bottom:-220px}
 
-/* LOCK */
-#lock{
-position:fixed;inset:0;z-index:9999;
-display:flex;align-items:center;justify-content:center;
-background:#05060b;padding:20px;
-transition:1s
+/* ---------- BACKGROUND ---------- */
+
+body::before{
+content:"";
+position:fixed;
+width:420px;
+height:420px;
+border-radius:50%;
+background:rgba(37,199,245,.08);
+filter:blur(60px);
+top:-160px;
+left:-120px;
+pointer-events:none;
+z-index:-1;
 }
-#lock.hide{opacity:0;transform:scale(1.04);pointer-events:none}
-.login{
-width:min(450px,100%);padding:45px 32px;text-align:center;
-border-radius:35px;background:rgba(255,255,255,.07);
-border:1px solid rgba(255,255,255,.14);
-backdrop-filter:blur(35px);
-box-shadow:0 30px 100px #0008
+
+body::after{
+content:"";
+position:fixed;
+width:500px;
+height:500px;
+border-radius:50%;
+background:rgba(255,95,162,.07);
+filter:blur(80px);
+right:-180px;
+bottom:-180px;
+pointer-events:none;
+z-index:-1;
 }
-.logoBig{
-font-size:75px;font-weight:950;letter-spacing:-6px;
-background:linear-gradient(90deg,#ff3dce,#795cff,#00d9ff,#54ffc0);
-background-size:300%;
--webkit-background-clip:text;color:transparent;
-animation:grad 5s infinite alternate
+
+/* ---------- LOGIN ---------- */
+
+#loginScreen{
+position:fixed;
+inset:0;
+z-index:9999;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:25px;
+background:
+radial-gradient(circle at 15% 20%,rgba(47,128,255,.35),transparent 30%),
+radial-gradient(circle at 85% 20%,rgba(255,95,162,.30),transparent 30%),
+radial-gradient(circle at 50% 90%,rgba(139,92,246,.30),transparent 35%),
+linear-gradient(135deg,#f9fbff,#eef4ff);
+transition:.7s ease;
 }
-@keyframes grad{to{background-position:100%}}
-.login small{color:#8f9aad;letter-spacing:5px}
-.login h2{margin-top:35px;font-size:28px}
-.login p{color:#8994a8;margin:10px 0 25px}
-input{
-width:100%;padding:16px;border-radius:16px;
-border:1px solid #ffffff22;background:#0005;color:#fff;
-text-align:center;font-size:16px;outline:none
+
+#loginScreen.hide{
+opacity:0;
+visibility:hidden;
+pointer-events:none;
 }
+
+.login-box{
+width:min(530px,100%);
+padding:42px;
+border-radius:34px;
+background:rgba(255,255,255,.83);
+border:1px solid rgba(255,255,255,.8);
+box-shadow:0 35px 100px rgba(44,67,115,.18);
+backdrop-filter:blur(25px);
+text-align:center;
+animation:loginPop .8s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes loginPop{
+from{
+opacity:0;
+transform:translateY(30px) scale(.96);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
+
+.logo{
+width:92px;
+height:92px;
+margin:0 auto 20px;
+border-radius:28px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:31px;
+font-weight:900;
+letter-spacing:-2px;
+background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));
+box-shadow:0 18px 40px rgba(87,91,220,.28);
+}
+
+.login-box h1{
+font-size:42px;
+letter-spacing:-2px;
+margin-bottom:5px;
+}
+
+.login-box .subtitle{
+color:var(--muted);
+margin-bottom:30px;
+}
+
+.login-buttons{
+display:grid;
+gap:12px;
+}
+
 button{
-width:100%;padding:16px;margin-top:14px;border:0;border-radius:16px;
-background:linear-gradient(100deg,#ff3dce,#7657ff,#00d9ff);
-color:#fff;font-weight:800;cursor:pointer
+border:0;
+font:inherit;
+cursor:pointer;
 }
-#msg{margin-top:15px;min-height:20px;font-size:13px;font-weight:bold}
 
-/* PORTAL */
-#portal{display:none}
-header{
-position:sticky;top:0;z-index:50;
-display:flex;justify-content:space-between;align-items:center;
-padding:17px 6%;background:#05060bcc;
-backdrop-filter:blur(25px);border-bottom:1px solid #ffffff12
+.primary-btn,
+.secondary-btn{
+width:100%;
+padding:16px 20px;
+border-radius:17px;
+font-weight:750;
+transition:.25s;
 }
-.logo{font-weight:950;font-size:25px;letter-spacing:5px}
-nav{display:flex;gap:25px}
-nav a{color:#aab4c6;text-decoration:none;font-size:13px}
-nav a:hover{color:#fff}
-.online{font-size:11px;color:#59ffc1}
 
-/* HERO */
+.primary-btn{
+color:white;
+background:linear-gradient(135deg,var(--blue),var(--purple));
+box-shadow:0 12px 25px rgba(72,105,220,.23);
+}
+
+.secondary-btn{
+color:var(--text);
+background:#f0f3f9;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover{
+transform:translateY(-2px);
+}
+
+.login-form{
+display:none;
+text-align:left;
+}
+
+.login-form.show{
+display:block;
+animation:fadeUp .35s ease;
+}
+
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:none}
+}
+
+.field{
+margin-bottom:15px;
+}
+
+.field label{
+display:block;
+font-size:13px;
+font-weight:700;
+color:#657089;
+margin:0 0 7px 4px;
+}
+
+.field input{
+width:100%;
+border:1px solid var(--border);
+background:#f7f9fc;
+padding:15px 16px;
+border-radius:15px;
+outline:none;
+font-size:16px;
+}
+
+.field input:focus{
+border-color:var(--blue);
+box-shadow:0 0 0 4px rgba(47,128,255,.10);
+}
+
+.error{
+color:var(--red);
+font-size:13px;
+min-height:20px;
+margin:5px 0 8px;
+}
+
+/* ---------- APP ---------- */
+
+#app{
+display:none;
+}
+
+#app.show{
+display:block;
+animation:pageIn .7s ease;
+}
+
+@keyframes pageIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+.container{
+width:min(1250px,calc(100% - 36px));
+margin:auto;
+}
+
+/* ---------- NAV ---------- */
+
+nav{
+position:sticky;
+top:12px;
+z-index:1000;
+width:min(1180px,calc(100% - 30px));
+margin:12px auto 0;
+padding:11px 15px;
+border:1px solid rgba(255,255,255,.8);
+background:rgba(255,255,255,.76);
+backdrop-filter:blur(24px);
+border-radius:22px;
+box-shadow:0 12px 35px rgba(40,60,100,.10);
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.nav-brand{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:900;
+letter-spacing:-.5px;
+}
+
+.nav-logo{
+width:38px;
+height:38px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:13px;
+font-weight:900;
+background:linear-gradient(135deg,var(--blue),var(--purple));
+}
+
+.nav-links{
+display:flex;
+gap:5px;
+}
+
+.nav-links button{
+background:transparent;
+padding:10px 12px;
+border-radius:12px;
+color:#667085;
+font-size:13px;
+font-weight:700;
+}
+
+.nav-links button:hover{
+background:#eef3ff;
+color:var(--blue);
+}
+
+#navProfile{
+display:flex;
+align-items:center;
+gap:9px;
+font-size:13px;
+font-weight:700;
+}
+
+.avatar{
+width:34px;
+height:34px;
+border-radius:50%;
+background:linear-gradient(135deg,#d9e6ff,#f4d8ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:900;
+color:#456;
+}
+
+/* ---------- PAGES ---------- */
+
+.page{
+display:none;
+padding:55px 0 100px;
+min-height:calc(100vh - 80px);
+}
+
+.page.active{
+display:block;
+animation:sectionIn .5s ease;
+}
+
+@keyframes sectionIn{
+from{
+opacity:0;
+transform:translateY(15px);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
+
+.page-title{
+margin-bottom:30px;
+}
+
+.page-title .eyebrow{
+text-transform:uppercase;
+letter-spacing:2px;
+color:var(--blue);
+font-size:12px;
+font-weight:900;
+margin-bottom:9px;
+}
+
+.page-title h2{
+font-size:44px;
+letter-spacing:-2px;
+}
+
+.page-title p{
+color:var(--muted);
+margin-top:8px;
+}
+
+/* ---------- HERO ---------- */
+
 .hero{
-min-height:78vh;display:flex;flex-direction:column;
-justify-content:center;align-items:center;text-align:center;padding:50px 20px
-}
-.hero span{color:#8fa0ff;letter-spacing:6px;font-size:11px;font-weight:bold}
-.hero h1{
-font-size:clamp(100px,19vw,220px);line-height:.8;
-letter-spacing:-13px;font-weight:950;
-background:linear-gradient(90deg,#ff3dce,#795cff,#00d9ff,#54ffc0);
-background-size:300%;-webkit-background-clip:text;color:transparent;
-animation:grad 6s infinite alternate
-}
-.hero p{margin-top:35px;color:#b9c2d1;font-size:20px;line-height:1.6}
-.hero a{
-margin-top:30px;padding:15px 25px;border-radius:30px;
-color:#fff;text-decoration:none;font-weight:bold;
-background:linear-gradient(100deg,#ff3dce,#7657ff,#00d9ff)
+padding:55px 0 35px;
 }
 
-/* SECTIONS */
-section{width:90%;max-width:1150px;margin:0 auto 120px}
-.label{font-size:11px;letter-spacing:4px;color:#5eeaff;font-weight:900}
-.title{font-size:clamp(45px,8vw,75px);letter-spacing:-4px;font-weight:950;margin:8px 0 35px}
-.glass{
-background:#ffffff0b;border:1px solid #ffffff14;
-backdrop-filter:blur(25px);border-radius:30px
+.hero-grid{
+display:grid;
+grid-template-columns:1.25fr .75fr;
+gap:20px;
 }
 
-/* WEATHER */
-.weather{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
-.weatherMain,.weatherSide{padding:35px}
-.place{color:#8995a9;font-size:13px}
-.temp{font-size:85px;font-weight:950;margin:10px 0}
-.desc{font-size:18px;color:#c5cedc}
-.weatherSide{display:flex;flex-direction:column;justify-content:center;gap:20px}
-.row{display:flex;justify-content:space-between;color:#8d99ac}
-.row b{color:#fff}
-
-/* CARDS */
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.card{padding:30px;min-height:220px;transition:.35s}
-.card:hover{transform:translateY(-9px);box-shadow:0 25px 60px #0006}
-.icon{font-size:43px;margin-bottom:20px}
-.card h3{font-size:26px;margin-bottom:10px}
-.card p{color:#929daf;line-height:1.6}
-
-/* NEWS */
-.news{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
-.newsCard{padding:32px;min-height:240px}
-.badge{
-display:inline-block;padding:6px 10px;border-radius:20px;
-background:#ff4b7d22;color:#ff7698;font-size:10px;
-font-weight:bold;letter-spacing:2px;margin-bottom:20px
+.hero-card{
+min-height:360px;
+padding:42px;
+border-radius:34px;
+position:relative;
+overflow:hidden;
+background:
+radial-gradient(circle at 90% 10%,rgba(255,255,255,.55),transparent 30%),
+linear-gradient(135deg,#e9f3ff,#f6eaff 55%,#ffe9f2);
+box-shadow:var(--shadow);
 }
-.newsCard h3{font-size:28px;margin-bottom:12px}
-.newsCard p{color:#949fb2;line-height:1.7}
 
-/* MEDIA */
-.media{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.mediaCard{
-height:300px;display:flex;align-items:center;justify-content:center;
-text-align:center;transition:.35s
+.hero-card::after{
+content:"";
+position:absolute;
+width:230px;
+height:230px;
+border-radius:50%;
+right:-80px;
+bottom:-100px;
+background:rgba(255,255,255,.45);
 }
-.mediaCard:hover{transform:scale(1.02)}
-.mediaCard div{font-size:65px}
-.mediaCard h3{font-size:30px;margin-top:12px}
-.mediaCard p{color:#909bad;margin-top:8px}
 
-/* INFO */
-.infoGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.info{padding:25px;text-align:center}
-.info .icon{font-size:35px;margin-bottom:10px}
-.info small{display:block;color:#8490a3;margin-top:7px}
-
-/* EVENTS */
-.event{
-padding:25px;display:flex;align-items:center;gap:20px;
-margin-bottom:15px
+.hero-card .small{
+color:#60708b;
+font-size:14px;
+font-weight:700;
 }
-.date{
-width:70px;height:70px;border-radius:20px;
-display:flex;align-items:center;justify-content:center;
-text-align:center;font-weight:900;
-background:linear-gradient(135deg,#795cff,#00d9ff);
-flex-shrink:0
+
+.hero-card h1{
+font-size:clamp(48px,7vw,86px);
+line-height:.95;
+letter-spacing:-5px;
+margin:12px 0;
 }
-.event p{color:#8d98aa;margin-top:6px}
 
-/* FOOTER */
-footer{text-align:center;padding:70px 20px;border-top:1px solid #ffffff10;color:#687387}
-footer strong{font-size:28px;letter-spacing:5px;color:#fff}
+.hero-card h1 span{
+background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));
+-webkit-background-clip:text;
+color:transparent;
+}
 
-@media(max-width:800px){
-nav{display:none}
-.weather,.news,.media{grid-template-columns:1fr}
-.grid3{grid-template-columns:1fr}
-.infoGrid{grid-template-columns:1fr 1fr}
-.temp{font-size:65px}
+.hero-card p{
+max-width:590px;
+color:#59657b;
+line-height:1.65;
+}
+
+.hero-time{
+margin-top:28px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.pill{
+padding:10px 14px;
+background:rgba(255,255,255,.68);
+border:1px solid rgba(255,255,255,.8);
+border-radius:100px;
+font-size:13px;
+font-weight:750;
+}
+
+.weather-card{
+border-radius:34px;
+padding:32px;
+background:linear-gradient(145deg,#dff6ff,#eaf0ff);
+box-shadow:var(--shadow);
+min-height:360px;
+position:relative;
+overflow:hidden;
+}
+
+.weather-icon{
+font-size:70px;
+margin-bottom:15px;
+}
+
+.weather-card h3{
+font-size:21px;
+}
+
+.temperature{
+font-size:55px;
+font-weight:850;
+letter-spacing:-3px;
+margin:8px 0;
+}
+
+.weather-card p{
+color:var(--muted);
+}
+
+.weather-details{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px;
+margin-top:22px;
+}
+
+.weather-detail{
+background:rgba(255,255,255,.6);
+padding:12px;
+border-radius:14px;
+font-size:12px;
+}
+
+/* ---------- PERSONAL DASHBOARD ---------- */
+
+.personal-grid{
+display:grid;
+grid-template-columns:1.4fr .6fr;
+gap:18px;
+}
+
+.personal-main,
+.personal-side{
+background:var(--card);
+border:1px solid var(--border);
+box-shadow:var(--shadow);
+border-radius:30px;
+padding:27px;
+backdrop-filter:blur(18px);
+}
+
+.profile-heading{
+display:flex;
+align-items:center;
+gap:17px;
+margin-bottom:25px;
+}
+
+.profile-avatar{
+width:70px;
+height:70px;
+border-radius:22px;
+background:linear-gradient(135deg,#dce9ff,#f4dcff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:23px;
+font-weight:900;
+}
+
+.profile-heading h3{
+font-size:25px;
+letter-spacing:-1px;
+}
+
+.profile-heading p{
+color:var(--muted);
+font-size:13px;
+margin-top:3px;
+}
+
+.info-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+}
+
+.info-card{
+padding:15px;
+border-radius:17px;
+background:#f6f8fc;
+}
+
+.info-card .label{
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:.7px;
+color:#8a94a8;
+font-weight:800;
+}
+
+.info-card .value{
+font-size:14px;
+font-weight:800;
+margin-top:5px;
+}
+
+.countdown{
+background:linear-gradient(135deg,#edf5ff,#f4edff);
+padding:20px;
+border-radius:22px;
+margin-bottom:15px;
+}
+
+.countdown .label{
+color:#69758b;
+font-size:12px;
+font-weight:800;
+text-transform:uppercase;
+}
+
+.countdown strong{
+display:block;
+font-size:29px;
+margin-top:6px;
+letter-spacing:-1px;
+}
+
+.notice{
+padding:17px;
+border-radius:19px;
+background:#fff7df;
+color:#725d17;
+font-size:13px;
+line-height:1.55;
+}
+
+/* ---------- SCHEDULE ---------- */
+
+.schedule-shell{
+background:rgba(255,255,255,.78);
+border:1px solid var(--border);
+box-shadow:var(--shadow);
+border-radius:30px;
+padding:25px;
+}
+
+.schedule-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+margin-bottom:20px;
+}
+
+.schedule-header h3{
+font-size:25px;
+letter-spacing:-1px;
+}
+
+.day-badge{
+background:#eef3ff;
+color:var(--blue);
+padding:9px 13px;
+border-radius:12px;
+font-size:12px;
+font-weight:850;
+}
+
+.schedule-list{
+display:grid;
+gap:8px;
+}
+
+.schedule-row{
+display:grid;
+grid-template-columns:130px 1fr 100px 100px;
+align-items:center;
+gap:12px;
+padding:16px;
+border-radius:18px;
+background:#f7f9fc;
+border:1px solid transparent;
+transition:.25s;
+}
+
+.schedule-row.upcoming{
+background:#fff;
+}
+
+.schedule-row.current{
+background:linear-gradient(135deg,#fff0f1,#ffe9ec);
+border-color:#ffb9c1;
+box-shadow:0 9px 25px rgba(255,77,94,.12);
+transform:scale(1.008);
+}
+
+.schedule-row.completed{
+opacity:.42;
+filter:saturate(.55);
+}
+
+.schedule-row.transition{
+background:transparent;
+padding:5px 16px;
+color:#9aa4b6;
+font-size:11px;
+}
+
+.schedule-row.break{
+background:#fff8e8;
+}
+
+.schedule-time{
+font-weight:850;
+font-size:13px;
+}
+
+.schedule-subject{
+font-weight:800;
+}
+
+.schedule-room{
+color:#758198;
+font-size:12px;
+}
+
+.status{
+justify-self:end;
+text-align:right;
+font-size:11px;
+font-weight:850;
+}
+
+.status.now{
+color:var(--red);
+}
+
+.status.done{
+color:#9aa4b6;
+}
+
+.status.next{
+color:var(--blue);
+}
+
+.live-count{
+font-size:12px;
+margin-top:4px;
+}
+
+.dismissed{
+margin-top:15px;
+padding:17px;
+text-align:center;
+border-radius:17px;
+background:linear-gradient(135deg,#eef7ff,#f8efff);
+font-weight:800;
+color:#5e6980;
+}
+
+/* ---------- CARDS ---------- */
+
+.card-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:17px;
+}
+
+.feature-card{
+min-height:210px;
+padding:25px;
+border-radius:27px;
+background:white;
+box-shadow:0 15px 40px rgba(40,60,100,.09);
+border:1px solid var(--border);
+transition:.3s;
+position:relative;
+overflow:hidden;
+}
+
+.feature-card:hover{
+transform:translateY(-5px);
+box-shadow:0 25px 55px rgba(40,60,100,.13);
+}
+
+.feature-icon{
+width:53px;
+height:53px;
+border-radius:17px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+margin-bottom:22px;
+background:#eef3ff;
+}
+
+.feature-card h3{
+margin-bottom:7px;
+}
+
+.feature-card p{
+color:var(--muted);
+font-size:13px;
+line-height:1.55;
+}
+
+/* ---------- NEWS ---------- */
+
+.news-grid{
+display:grid;
+grid-template-columns:1.5fr 1fr;
+gap:18px;
+}
+
+.news-main{
+padding:30px;
+min-height:330px;
+border-radius:29px;
+color:white;
+background:linear-gradient(135deg,#347dff,#7658dd,#d2589b);
+box-shadow:var(--shadow);
+}
+
+.news-main .tag{
+display:inline-block;
+padding:7px 10px;
+border-radius:10px;
+background:rgba(255,255,255,.18);
+font-size:11px;
+font-weight:800;
+}
+
+.news-main h3{
+font-size:31px;
+margin:20px 0 10px;
+max-width:600px;
+}
+
+.news-main p{
+color:rgba(255,255,255,.78);
+line-height:1.6;
+}
+
+.news-side{
+display:grid;
+gap:12px;
+}
+
+.news-small{
+background:white;
+border:1px solid var(--border);
+border-radius:20px;
+padding:20px;
+}
+
+.news-small .date{
+color:var(--blue);
+font-size:11px;
+font-weight:850;
+}
+
+.news-small h4{
+margin:6px 0;
+}
+
+.news-small p{
+font-size:12px;
+color:var(--muted);
+}
+
+/* ---------- MEDIA ---------- */
+
+.media-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+
+.media-card{
+border-radius:28px;
+overflow:hidden;
+background:white;
+box-shadow:var(--shadow);
+}
+
+.media-image{
+height:210px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:60px;
+background:linear-gradient(135deg,#e7f2ff,#f7eaff);
+}
+
+.media-content{
+padding:22px;
+}
+
+.media-content p{
+color:var(--muted);
+font-size:13px;
+line-height:1.6;
+}
+
+/* ---------- COUNTRY ---------- */
+
+.country-header{
+padding:38px;
+border-radius:32px;
+background:
+radial-gradient(circle at 90% 20%,rgba(255,255,255,.3),transparent 25%),
+linear-gradient(135deg,#1d6fff,#7b55dc);
+color:white;
+margin-bottom:20px;
+}
+
+.country-header h2{
+font-size:45px;
+letter-spacing:-2px;
+}
+
+.country-header p{
+margin-top:8px;
+color:rgba(255,255,255,.78);
+}
+
+.country-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+}
+
+.country-card{
+padding:23px;
+border-radius:24px;
+background:white;
+border:1px solid var(--border);
+box-shadow:0 12px 35px rgba(40,60,100,.08);
+}
+
+.country-card h3{
+margin-bottom:8px;
+}
+
+.country-card p{
+color:var(--muted);
+font-size:13px;
+line-height:1.6;
+}
+
+/* ---------- AI ---------- */
+
+.ai-button{
+position:fixed;
+right:23px;
+bottom:23px;
+z-index:1500;
+width:62px;
+height:62px;
+border-radius:22px;
+color:white;
+font-size:25px;
+background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));
+box-shadow:0 18px 40px rgba(80,80,190,.28);
+transition:.25s;
+}
+
+.ai-button:hover{
+transform:translateY(-4px) scale(1.04);
+}
+
+.ai-panel{
+position:fixed;
+right:23px;
+bottom:98px;
+z-index:1499;
+width:min(390px,calc(100% - 30px));
+height:560px;
+border-radius:27px;
+background:rgba(255,255,255,.93);
+backdrop-filter:blur(25px);
+border:1px solid rgba(255,255,255,.8);
+box-shadow:0 30px 80px rgba(40,60,100,.2);
+display:none;
+overflow:hidden;
+}
+
+.ai-panel.open{
+display:flex;
+flex-direction:column;
+animation:aiOpen .3s ease;
+}
+
+@keyframes aiOpen{
+from{opacity:0;transform:translateY(15px) scale(.97)}
+to{opacity:1;transform:none}
+}
+
+.ai-top{
+padding:17px;
+background:linear-gradient(135deg,#edf5ff,#f7edff);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.ai-top strong{
+font-size:15px;
+}
+
+.ai-close{
+background:#e9edf5;
+width:30px;
+height:30px;
+border-radius:10px;
+}
+
+.ai-messages{
+flex:1;
+overflow-y:auto;
+padding:16px;
+}
+
+.message{
+max-width:85%;
+padding:12px 14px;
+border-radius:16px;
+margin-bottom:10px;
+font-size:13px;
+line-height:1.5;
+}
+
+.message.bot{
+background:#f0f3f8;
+}
+
+.message.user{
+margin-left:auto;
+background:#eaf2ff;
+color:#285ab4;
+}
+
+.ai-input{
+padding:12px;
+border-top:1px solid var(--border);
+display:flex;
+gap:8px;
+}
+
+.ai-input input{
+flex:1;
+border:0;
+outline:0;
+background:#f3f5f9;
+border-radius:13px;
+padding:12px;
+}
+
+.ai-input button{
+width:45px;
+border-radius:13px;
+background:var(--blue);
+color:white;
+}
+
+/* ---------- FOOTER ---------- */
+
+footer{
+text-align:center;
+padding:50px 20px 100px;
+color:#8993a5;
+font-size:12px;
+}
+
+footer strong{
+color:#5f6b80;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media(max-width:900px){
+.hero-grid,
+.personal-grid,
+.news-grid{
+grid-template-columns:1fr;
+}
+
+.card-grid,
+.country-grid{
+grid-template-columns:1fr 1fr;
+}
+
+.schedule-row{
+grid-template-columns:95px 1fr 85px;
+}
+
+.schedule-room{
+display:none;
+}
+}
+
+@media(max-width:650px){
+.container{
+width:min(100% - 22px,1250px);
+}
+
+nav{
+width:calc(100% - 18px);
+}
+
+.nav-links{
+display:none;
+}
+
+.hero{
+padding-top:30px;
+}
+
+.hero-card,
+.weather-card{
+padding:27px;
+min-height:auto;
+}
+
+.hero-card h1{
+font-size:58px;
+}
+
+.page{
+padding-top:35px;
+}
+
+.page-title h2{
+font-size:34px;
+}
+
+.info-grid{
+grid-template-columns:1fr 1fr;
+}
+
+.card-grid,
+.country-grid,
+.media-grid{
+grid-template-columns:1fr;
+}
+
+.schedule-shell{
+padding:13px;
+}
+
+.schedule-row{
+grid-template-columns:78px 1fr 70px;
+padding:13px 10px;
+}
+
+.schedule-subject{
+font-size:13px;
+}
+
+.status{
+font-size:9px;
+}
+
+.login-box{
+padding:30px 22px;
+}
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOCK SCREEN -->
-<div id="lock">
-<div class="login">
-<div class="logoBig">TROM</div>
-<small>THE REPUBLIC OF MOE</small>
+<!-- =========================================================
+LOGIN
+========================================================= -->
 
-<h2>Private Portal</h2>
-<p>Enter the access code to continue.</p>
+<div id="loginScreen">
 
-<input id="code" type="password" placeholder="Access code"
-onkeydown="if(event.key==='Enter')unlock()">
+<div class="login-box">
 
-<button onclick="unlock()">ENTER TROM →</button>
-
-<div id="msg"></div>
-</div>
-</div>
-
-
-<!-- EVERYTHING INSIDE TROM -->
-<div id="portal">
-
-<header>
 <div class="logo">TROM</div>
 
+<h1>Welcome to TROM</h1>
+<p class="subtitle">The Republic of Moe</p>
+
+<div id="loginChoice" class="login-buttons">
+
+<button class="primary-btn" onclick="showLogin()">
+Sign in to My TROM
+</button>
+
+<button class="secondary-btn" onclick="enterGuest()">
+Continue as Guest
+</button>
+
+</div>
+
+<div id="loginForm" class="login-form">
+
+<div class="field">
+<label>Citizen ID / School ID</label>
+<input id="citizenID" placeholder="Enter your Citizen ID">
+</div>
+
+<div class="field">
+<label>TROM Access Code</label>
+<input id="accessCode" type="password" placeholder="Enter access code">
+</div>
+
+<div id="loginError" class="error"></div>
+
+<button class="primary-btn" onclick="signIn()">
+Enter My TROM
+</button>
+
+<br><br>
+
+<button class="secondary-btn" onclick="backToChoice()">
+Back
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+APP
+========================================================= -->
+
+<div id="app">
+
 <nav>
-<a href="#home">Home</a>
-<a href="#explore">Explore</a>
-<a href="#news">Newsroom</a>
-<a href="#media">Media</a>
-<a href="#country">TROM</a>
-<a href="#events">Events</a>
+
+<div class="nav-brand">
+<div class="nav-logo">T</div>
+<span>TROM</span>
+</div>
+
+<div class="nav-links">
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('schedule')">Schedule</button>
+<button onclick="showPage('news')">Newsroom</button>
+<button onclick="showPage('media')">Media</button>
+<button onclick="showPage('country')">TROM Country</button>
+</div>
+
+<div id="navProfile">
+<div class="avatar" id="navAvatar">G</div>
+<span id="navName">Guest</span>
+</div>
+
 </nav>
 
-<div class="online">● TROM ONLINE</div>
-</header>
 
+<!-- =========================================================
+HOME
+========================================================= -->
 
-<!-- HOME -->
-<div class="hero" id="home">
-<span>WELCOME TO</span>
-<h1>TROM</h1>
+<main id="home" class="page active">
+
+<section class="hero">
+
+<div class="container">
+
+<div class="hero-grid">
+
+<div class="hero-card">
+
+<div class="small" id="welcomeSmall">
+Welcome to TROM
+</div>
+
+<h1 id="welcomeName">
+The Republic<br>
+<span>of Moe.</span>
+</h1>
+
 <p>
-The Republic of Moe<br>
-Your digital home for everything TROM.
+A colorful digital home for the people, places, information,
+news and services of TROM.
 </p>
-<a href="#explore">EXPLORE TROM ↓</a>
+
+<div class="hero-time">
+
+<div class="pill">
+🕐 <span id="liveClock">--:--</span>
 </div>
 
-
-<!-- WEATHER -->
-<section>
-<div class="label">TROM NOW</div>
-<div class="title">Weather.</div>
-
-<div class="weather">
-
-<div class="weatherMain glass">
-<div class="place">TROM WEATHER • LIVE</div>
-<div class="temp" id="temp">--°</div>
-<div class="desc" id="desc">Loading weather...</div>
+<div class="pill">
+📅 <span id="liveDate">Loading...</span>
 </div>
 
-<div class="weatherSide glass">
-<div class="row"><span>Feels like</span><b id="feels">--°</b></div>
-<div class="row"><span>Wind</span><b id="wind">-- km/h</b></div>
-<div class="row"><span>Humidity</span><b id="humidity">--%</b></div>
-<div class="row"><span>Status</span><b id="status">LOADING</b></div>
+<div class="pill">
+🇧🇭 TROM Weather
 </div>
 
 </div>
+
+</div>
+
+
+<div class="weather-card">
+
+<div class="weather-icon" id="weatherIcon">☀️</div>
+
+<h3>TROM Weather</h3>
+
+<div class="temperature" id="temperature">
+--°
+</div>
+
+<p id="weatherDescription">
+Loading weather...
+</p>
+
+<div class="weather-details">
+
+<div class="weather-detail">
+<strong>Feels like</strong><br>
+<span id="feels">--°</span>
+</div>
+
+<div class="weather-detail">
+<strong>Humidity</strong><br>
+<span id="humidity">--%</span>
+</div>
+
+<div class="weather-detail">
+<strong>Wind</strong><br>
+<span id="wind">-- km/h</span>
+</div>
+
+<div class="weather-detail">
+<strong>Source</strong><br>
+Bahrain data
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 
 
-<!-- EXPLORE -->
-<section id="explore">
-<div class="label">DISCOVER</div>
-<div class="title">Explore TROM.</div>
+<!-- PERSONALIZED AREA -->
 
-<div class="grid3">
+<section id="personalSection">
 
-<div class="card glass">
-<div class="icon">🗺️</div>
-<h3>Places</h3>
-<p>Discover TROM's cities, regions, landmarks and important locations.</p>
+<div class="container">
+
+<div class="page-title">
+
+<div class="eyebrow">
+MY TROM
 </div>
 
-<div class="card glass">
-<div class="icon">🏛️</div>
-<h3>Government</h3>
-<p>Explore the government, institutions, departments and leadership of TROM.</p>
-</div>
+<h2 id="personalTitle">
+Your TROM
+</h2>
 
-<div class="card glass">
-<div class="icon">📖</div>
-<h3>About TROM</h3>
-<p>Learn about the history, culture, people and identity of the Republic.</p>
-</div>
-
-</div>
-</section>
-
-
-<!-- NEWSROOM -->
-<section id="news">
-<div class="label">TROM NEWSROOM</div>
-<div class="title">What's happening.</div>
-
-<div class="news">
-
-<div class="newsCard glass">
-<div class="badge">LATEST</div>
-<h3>TROM launches its new digital portal 🚀</h3>
 <p>
-The Republic of Moe has launched its new digital headquarters,
-bringing news, information, media, weather and national updates
-together in one place.
+Your personalized information, school/work status and today's important information.
 </p>
-</div>
-
-<div class="newsCard glass">
-<div class="badge">NATIONAL</div>
-<h3>A new digital era for TROM.</h3>
-<p>
-The TROM portal will become the home for future national
-announcements, stories and updates.
-</p>
-</div>
 
 </div>
-</section>
 
 
-<!-- MEDIA -->
-<section id="media">
-<div class="label">TROM MEDIA</div>
-<div class="title">See TROM.</div>
+<div class="personal-grid">
 
-<div class="media">
+<div class="personal-main">
 
-<div class="mediaCard glass">
+<div class="profile-heading">
+
+<div class="profile-avatar" id="profileAvatar">
+M
+</div>
+
 <div>
-<div>📸</div>
+<h3 id="profileGreeting">
+Good morning
+</h3>
+
+<p id="profileRole">
+TROM Citizen
+</p>
+</div>
+
+</div>
+
+
+<div class="info-grid">
+
+<div class="info-card">
+<div class="label">Citizen ID</div>
+<div class="value" id="infoID">—</div>
+</div>
+
+<div class="info-card">
+<div class="label">School</div>
+<div class="value" id="infoSchool">—</div>
+</div>
+
+<div class="info-card">
+<div class="label">Grade</div>
+<div class="value" id="infoGrade">—</div>
+</div>
+
+<div class="info-card">
+<div class="label">Homeroom</div>
+<div class="value" id="infoRoom">—</div>
+</div>
+
+<div class="info-card">
+<div class="label">Birthday</div>
+<div class="value" id="infoBirthday">—</div>
+</div>
+
+<div class="info-card">
+<div class="label">Black Points</div>
+<div class="value" id="infoPoints">—</div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="personal-side">
+
+<div class="countdown">
+
+<div class="label" id="schoolCountdownLabel">
+School status
+</div>
+
+<strong id="schoolCountdown">
+Loading...
+</strong>
+
+</div>
+
+<div class="notice">
+
+<strong>Important</strong>
+
+<div id="importantNotice">
+Welcome to your personalized TROM dashboard.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- TODAY -->
+
+<section style="padding-top:45px">
+
+<div class="container">
+
+<div class="page-title">
+
+<div class="eyebrow">TODAY</div>
+
+<h2>What is happening now?</h2>
+
+<p id="currentClassSummary">
+Loading your schedule...
+</p>
+
+</div>
+
+<div class="schedule-shell">
+
+<div class="schedule-header">
+
+<div>
+<h3>Today's Schedule</h3>
+</div>
+
+<div class="day-badge" id="todayBadge">
+Loading
+</div>
+
+</div>
+
+<div id="todaySchedule" class="schedule-list"></div>
+
+<div class="dismissed" id="dismissalMessage">
+Class dismissed at 2:55 PM
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- QUICK ACCESS -->
+
+<section style="padding-top:45px">
+
+<div class="container">
+
+<div class="page-title">
+
+<div class="eyebrow">EXPLORE</div>
+
+<h2>TROM at a glance</h2>
+
+</div>
+
+<div class="card-grid">
+
+<div class="feature-card" onclick="showPage('news')">
+<div class="feature-icon">📰</div>
+<h3>Newsroom</h3>
+<p>
+Follow announcements, national updates and important TROM news.
+</p>
+</div>
+
+<div class="feature-card" onclick="showPage('media')">
+<div class="feature-icon">🎬</div>
+<h3>TROM Media</h3>
+<p>
+Explore TROM TV, the National Gallery and future media.
+</p>
+</div>
+
+<div class="feature-card" onclick="showPage('country')">
+<div class="feature-icon">🏛️</div>
+<h3>TROM Country</h3>
+<p>
+Discover geography, government, history, cities and national symbols.
+</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+SCHEDULE PAGE
+========================================================= -->
+
+<section id="schedule" class="page">
+
+<div class="container">
+
+<div class="page-title">
+
+<div class="eyebrow">MY TROM</div>
+
+<h2>School & Work Schedule</h2>
+
+<p>
+Your timetable updates automatically as the day moves forward.
+</p>
+
+</div>
+
+<div class="schedule-shell">
+
+<div class="schedule-header">
+
+<h3 id="schedulePageTitle">
+Today's timetable
+</h3>
+
+<div class="day-badge" id="schedulePageDay">
+—
+</div>
+
+</div>
+
+<div id="fullSchedule" class="schedule-list"></div>
+
+<div class="dismissed">
+Class dismissed at <strong>2:55 PM</strong> on regular days.
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+NEWS
+========================================================= -->
+
+<section id="news" class="page">
+
+<div class="container">
+
+<div class="page-title">
+
+<div class="eyebrow">TROM MEDIA</div>
+
+<h2>TROM Newsroom</h2>
+
+<p>
+The latest announcements and national updates.
+</p>
+
+</div>
+
+<div class="news-grid">
+
+<div class="news-main">
+
+<span class="tag">TROM NEWS</span>
+
+<h3>
+Welcome to the new TROM digital newsroom.
+</h3>
+
+<p>
+This is the central place for TROM announcements,
+national events, updates and important information.
+</p>
+
+</div>
+
+<div class="news-side">
+
+<div class="news-small">
+
+<div class="date">TROM UPDATE</div>
+
+<h4>Digital services are expanding</h4>
+
+<p>
+More TROM services and information will be added here.
+</p>
+
+</div>
+
+<div class="news-small">
+
+<div class="date">NATIONAL</div>
+
+<h4>TROM Country portal</h4>
+
+<p>
+Explore the country section for national information.
+</p>
+
+</div>
+
+<div class="news-small">
+
+<div class="date">COMING SOON</div>
+
+<h4>More TROM announcements</h4>
+
+<p>
+This newsroom is ready for future news articles.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+MEDIA
+========================================================= -->
+
+<section id="media" class="page">
+
+<div class="container">
+
+<div class="page-title">
+
+<div class="eyebrow">TROM MEDIA</div>
+
+<h2>Gallery & TROM TV</h2>
+
+<p>
+A home for photographs, videos and broadcasts from TROM.
+</p>
+
+</div>
+
+<div class="media-grid">
+
+<div class="media-card">
+
+<div class="media-image">
+📸
+</div>
+
+<div class="media-content">
+
 <h3>National Gallery</h3>
-<p>Photos from around TROM.</p>
-</div>
+
+<p>
+TROM photographs, landmarks, events and important moments
+will appear here.
+</p>
+
 </div>
 
-<div class="mediaCard glass">
-<div>
-<div>▶️</div>
+</div>
+
+
+<div class="media-card">
+
+<div class="media-image">
+📺
+</div>
+
+<div class="media-content">
+
 <h3>TROM TV</h3>
-<p>Videos, broadcasts and national media.</p>
-</div>
-</div>
 
-</div>
-</section>
+<p>
+A future home for TROM broadcasts, interviews,
+announcements and special programmes.
+</p>
 
-
-<!-- COUNTRY -->
-<section id="country">
-<div class="label">THE REPUBLIC</div>
-<div class="title">TROM at a glance.</div>
-
-<div class="infoGrid">
-
-<div class="info glass">
-<div class="icon">🏛️</div>
-<strong>Government</strong>
-<small>Republic of Moe</small>
-</div>
-
-<div class="info glass">
-<div class="icon">💰</div>
-<strong>Currency</strong>
-<small>Coming soon</small>
-</div>
-
-<div class="info glass">
-<div class="icon">🦅</div>
-<strong>National Animal</strong>
-<small>Coming soon</small>
-</div>
-
-<div class="info glass">
-<div class="icon">🎵</div>
-<strong>National Anthem</strong>
-<small>Coming soon</small>
 </div>
 
 </div>
-</section>
 
 
-<!-- EVENTS -->
-<section id="events">
-<div class="label">NATIONAL CALENDAR</div>
-<div class="title">What's next.</div>
+<div class="media-card">
 
-<div class="event glass">
-<div class="date">TBD</div>
-<div>
-<h3>TROM National Event</h3>
-<p>Event information will appear here.</p>
-</div>
+<div class="media-image">
+🎥
 </div>
 
-<div class="event glass">
-<div class="date">TBD</div>
-<div>
-<h3>Republic of Moe Celebration</h3>
-<p>A national celebration will be announced here.</p>
+<div class="media-content">
+
+<h3>Video Archive</h3>
+
+<p>
+Videos can be added here later without changing the overall design.
+</p>
+
 </div>
+
+</div>
+
+
+<div class="media-card">
+
+<div class="media-image">
+🎉
+</div>
+
+<div class="media-content">
+
+<h3>TROM Events</h3>
+
+<p>
+National celebrations, school events and future public events.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 </section>
+
+
+<!-- =========================================================
+COUNTRY
+========================================================= -->
+
+<section id="country" class="page">
+
+<div class="container">
+
+<div class="country-header">
+
+<h2>TROM COUNTRY</h2>
+
+<p>
+The Republic of Moe — national information portal.
+</p>
+
+</div>
+
+<div class="country-grid">
+
+<div class="country-card">
+<h3>🌍 Geography</h3>
+<p>
+Information about the geography, regions, borders,
+landscapes and important locations of TROM.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🏛️ Government</h3>
+<p>
+The government structure, departments, public services
+and national institutions of TROM.
+</p>
+</div>
+
+<div class="country-card">
+<h3>📜 History</h3>
+<p>
+The history and major milestones of the Republic of Moe.
+</p>
+</div>
+
+<div class="country-card">
+<h3>👥 Population</h3>
+<p>
+National population information and future demographic data.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🏙️ Cities</h3>
+<p>
+Explore TROM's cities, districts, landmarks and important places.
+</p>
+</div>
+
+<div class="country-card">
+<h3>💰 Currency</h3>
+<p>
+Information about the official TROM currency and monetary system.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🚩 Flag</h3>
+<p>
+The national flag and its meaning, symbolism and history.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🎵 Anthem</h3>
+<p>
+Information about the national anthem of the Republic of Moe.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🦅 National Animal</h3>
+<p>
+The official national animal and its importance to TROM.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🎊 National Holidays</h3>
+<p>
+National celebrations, public holidays and important dates.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🌐 International</h3>
+<p>
+TROM's international information, relationships and global presence.
+</p>
+</div>
+
+<div class="country-card">
+<h3>🇹🇷 About TROM</h3>
+<p>
+Everything about the Republic of Moe in one central place.
+</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+AI ASSISTANT
+========================================================= -->
+
+<button class="ai-button" onclick="toggleAI()">✦</button>
+
+<div id="aiPanel" class="ai-panel">
+
+<div class="ai-top">
+
+<strong>✦ TROM Assistant</strong>
+
+<button class="ai-close" onclick="toggleAI()">×</button>
+
+</div>
+
+<div id="aiMessages" class="ai-messages">
+
+<div class="message bot">
+Hi! I'm the TROM Assistant 👋<br><br>
+Ask me about your schedule, TROM, weather, school times,
+classes, Citizen information, or just ask me something!
+</div>
+
+</div>
+
+<div class="ai-input">
+
+<input
+id="aiInput"
+placeholder="Ask TROM..."
+onkeydown="if(event.key==='Enter') sendAI()"
+>
+
+<button onclick="sendAI()">↑</button>
+
+</div>
+
+</div>
 
 
 <footer>
-<strong>TROM</strong>
-<br><br>
-The Republic of Moe
-<br><br>
-Official Digital Portal • 2026
+
+<strong>TROM</strong> — The Republic of Moe<br><br>
+
+Digital services of the Republic of Moe
+
 </footer>
 
 </div>
@@ -408,40 +1936,1378 @@ Official Digital Portal • 2026
 
 <script>
 
-function unlock(){
+/* =========================================================
+TROM DATA
+========================================================= */
 
-const code=document.getElementById("code").value;
-const msg=document.getElementById("msg");
+const ACCESS_CODE = "TROM2026";
 
-if(code==="TROM2026"){
+const profiles = {
 
-msg.textContent="✓ ACCESS GRANTED";
-msg.style.color="#59ffc1";
+"2019094": {
 
-setTimeout(()=>{
+fullName:"Mohammed Chadi Hassoun",
 
-document.getElementById("portal").style.display="block";
-document.getElementById("lock").classList.add("hide");
+firstName:"Mohammed",
 
-setTimeout(()=>{
-document.getElementById("lock").style.display="none";
-},1000);
+role:"Student",
+
+citizenID:"2019094",
+
+school:"Ibn Khaldun National School",
+
+grade:"6C",
+
+room:"M 25",
+
+birthday:"03/01/2015",
+
+blackPoints:"0",
+
+type:"student"
+
+},
+
+"201115": {
+
+fullName:"Farah Sami Issa",
+
+firstName:"Farah",
+
+role:"Teacher",
+
+citizenID:"201115",
+
+school:"Ibn Khaldun National School",
+
+grade:"Middle School Faculty",
+
+room:"M 38",
+
+birthday:"03/09/1988",
+
+blackPoints:"—",
+
+type:"teacher"
+
+}
+
+};
+
+
+/* =========================================================
+SHARED BELL SCHEDULE
+========================================================= */
+
+const bellSchedule = {
+
+regular:[
+
+{
+name:"Homeroom",
+start:"07:45",
+end:"07:55",
+type:"homeroom"
+},
+
+{
+name:"Transition",
+start:"07:55",
+end:"08:00",
+type:"transition"
+},
+
+{
+period:"P1",
+start:"08:00",
+end:"08:55"
+},
+
+{
+name:"Transition",
+start:"08:55",
+end:"09:00",
+type:"transition"
+},
+
+{
+period:"P2",
+start:"09:00",
+end:"10:00"
+},
+
+{
+name:"Transition",
+start:"10:00",
+end:"10:05",
+type:"transition"
+},
+
+{
+period:"P3",
+start:"10:05",
+end:"11:05"
+},
+
+{
+name:"Break",
+start:"11:05",
+end:"11:35",
+type:"break"
+},
+
+{
+name:"Transition",
+start:"11:35",
+end:"11:40",
+type:"transition"
+},
+
+{
+period:"P4",
+start:"11:40",
+end:"12:40"
+},
+
+{
+name:"Transition",
+start:"12:40",
+end:"12:45",
+type:"transition"
+},
+
+{
+period:"P5",
+start:"12:45",
+end:"13:45"
+},
+
+{
+name:"Break",
+start:"13:45",
+end:"14:00",
+type:"break"
+},
+
+{
+name:"Transition",
+start:"14:00",
+end:"14:05",
+type:"transition"
+},
+
+{
+period:"P6",
+start:"14:05",
+end:"14:55"
+},
+
+{
+name:"After School Activities",
+start:"15:10",
+end:"17:00",
+type:"afterSchool"
+}
+
+],
+
+
+tuesday:[
+
+{
+name:"Homeroom",
+start:"07:45",
+end:"07:55",
+type:"homeroom"
+},
+
+{
+name:"Transition",
+start:"07:55",
+end:"08:00",
+type:"transition"
+},
+
+{
+period:"P1",
+start:"08:00",
+end:"08:45"
+},
+
+{
+name:"Transition",
+start:"08:45",
+end:"08:50",
+type:"transition"
+},
+
+{
+period:"P2",
+start:"08:50",
+end:"09:35"
+},
+
+{
+name:"Transition",
+start:"09:35",
+end:"09:40",
+type:"transition"
+},
+
+{
+period:"P3",
+start:"09:40",
+end:"10:30"
+},
+
+{
+name:"Break",
+start:"10:30",
+end:"10:50",
+type:"break"
+},
+
+{
+name:"Transition",
+start:"10:50",
+end:"10:55",
+type:"transition"
+},
+
+{
+period:"P4",
+start:"10:55",
+end:"11:40"
+},
+
+{
+name:"Transition",
+start:"11:40",
+end:"11:45",
+type:"transition"
+},
+
+{
+period:"P5",
+start:"11:45",
+end:"12:25"
+},
+
+{
+name:"Break",
+start:"12:25",
+end:"12:40",
+type:"break"
+},
+
+{
+name:"Transition",
+start:"12:40",
+end:"12:45",
+type:"transition"
+},
+
+{
+period:"P6",
+start:"12:45",
+end:"13:25"
+}
+
+]
+
+};
+
+
+/* =========================================================
+MOHAMMED SCHEDULE
+========================================================= */
+
+const studentSchedule = {
+
+D1:{
+
+P1:["Science 6","M 16"],
+P2:["Mathematics 6","M 40"],
+P3:["Islamic Studies","733"],
+P4:["Individuals and Societies 6","M 24"],
+P5:["Arabic Literature 6","M 14"],
+P6:["English Literature 6","M 25"]
+
+},
+
+D2:{
+
+P1:["Arabic Literature 6","M 14"],
+P2:["Design 6","M 31"],
+P3:["English Literature 6","M 25"],
+P4:["Islamic Studies","733"],
+P5:["Mathematics 6","M 40"],
+P6:["Science 6","M 16"]
+
+},
+
+D3:{
+
+P1:["Mathematics 6","M 40"],
+P2:["Science 6","M 16"],
+P3:["Visual Art 6","715"],
+P4:["English Literature 6","M 25"],
+P5:["Physical and Health Education 6","GYM"],
+P6:["Arabic Literature 6","M 14"]
+
+},
+
+D4:{
+
+P1:["Individuals and Societies 6","M 24"],
+P2:["National Studies 6","733"],
+P3:["Arabic Literature 6","M 14"],
+P4:["Science 6","M 16"],
+P5:["English Literature 6","M 25"],
+P6:["Mathematics 6","M 40"]
+
+},
+
+D5:{
+
+P1:["English Literature 6","M 25"],
+P2:["Mathematics 6","M 40"],
+P3:["Visual Art 6","715"],
+P4:["National Studies 6","733"],
+P5:["Arabic Literature 6","M 14"],
+P6:["Design 6","M 31"]
+
+},
+
+D6:{
+
+P1:["Physical and Health Education 6","GYM"],
+P2:["English Literature 6","M 25"],
+P3:["Individuals and Societies 6","M 24"],
+P4:["Arabic Literature 6","M 14"],
+P5:["Science 6","M 16"],
+P6:["Visual Art 6","715"]
+
+}
+
+};
+
+
+/* =========================================================
+FARAH TEACHER SCHEDULE
+========================================================= */
+
+const teacherSchedule = {
+
+D1:{
+
+P1:null,
+P2:["Mathematics 6","M 38"],
+P3:["Mathematics 8","M 38"],
+P4:["Mathematics 7","M 38"],
+P5:["Mathematics 8","M 38"],
+P6:null
+
+},
+
+D2:{
+
+P1:["Mathematics 8","M 38"],
+P2:["Mathematics 8","M 38"],
+P3:null,
+P4:null,
+P5:["Mathematics 6","M 38"],
+P6:["Mathematics 7","M 38"]
+
+},
+
+D3:{
+
+P1:["Mathematics 8","M 38"],
+P2:["Mathematics 7","M 38"],
+P3:null,
+P4:null,
+P5:null,
+P6:["Mathematics 8","M 38"]
+
+},
+
+D4:{
+
+P1:["Mathematics 6","M 38"],
+P2:null,
+P3:["Mathematics 8","M 38"],
+P4:null,
+P5:["Mathematics 8","M 38"],
+P6:null
+
+},
+
+D5:{
+
+P1:["Mathematics 6","M 38"],
+P2:null,
+P3:null,
+P4:["Mathematics 7","M 38"],
+P5:null,
+P6:["Mathematics 8","M 38"]
+
+},
+
+D6:{
+
+P1:null,
+P2:["Mathematics 7","M 38"],
+P3:null,
+P4:["Mathematics 8","M 38"],
+P5:null,
+P6:["Mathematics 6","M 38"]
+
+}
+
+};
+
+
+/* =========================================================
+DAY ROTATION
+Change this when you want to enter the school's exact
+D1-D6 calendar.
+========================================================= */
+
+const dayRotation = {
+
+0:"D1",
+1:"D2",
+2:null,
+3:"D3",
+4:"D4",
+5:null,
+6:null
+
+};
+
+
+/* =========================================================
+GLOBALS
+========================================================= */
+
+let currentProfile = null;
+let guestMode = false;
+
+
+/* =========================================================
+LOGIN
+========================================================= */
+
+function showLogin(){
+
+document.getElementById("loginChoice").style.display="none";
+
+document.getElementById("loginForm")
+.classList.add("show");
+
+}
+
+
+function backToChoice(){
+
+document.getElementById("loginForm")
+.classList.remove("show");
+
+document.getElementById("loginChoice")
+.style.display="grid";
+
+}
+
+
+function signIn(){
+
+const id =
+document.getElementById("citizenID").value.trim();
+
+const code =
+document.getElementById("accessCode").value.trim();
+
+const error =
+document.getElementById("loginError");
+
+if(code !== ACCESS_CODE){
+
+error.textContent =
+"Incorrect TROM access code.";
+
+return;
+}
+
+if(!profiles[id]){
+
+error.textContent =
+"That Citizen ID is not registered yet.";
+
+return;
+}
+
+currentProfile = profiles[id];
+
+guestMode=false;
+
+openApp();
+
+}
+
+
+function enterGuest(){
+
+currentProfile=null;
+
+guestMode=true;
+
+openApp();
+
+}
+
+
+function openApp(){
+
+document.getElementById("loginScreen")
+.classList.add("hide");
+
+document.getElementById("app")
+.classList.add("show");
+
+setupProfile();
+
+updateClock();
+
+updateSchedule();
 
 loadWeather();
 
-},500);
+setInterval(updateClock,1000);
+
+setInterval(updateSchedule,1000);
+
+setInterval(loadWeather,600000);
+
+}
+
+
+/* =========================================================
+PROFILE
+========================================================= */
+
+function setupProfile(){
+
+const personalSection =
+document.getElementById("personalSection");
+
+if(guestMode){
+
+personalSection.style.display="none";
+
+document.getElementById("navName")
+.textContent="Guest";
+
+document.getElementById("navAvatar")
+.textContent="G";
+
+document.getElementById("welcomeSmall")
+.textContent="Welcome to TROM";
+
+document.getElementById("welcomeName")
+.innerHTML="The Republic<br><span>of Moe.</span>";
+
+return;
+
+}
+
+personalSection.style.display="block";
+
+const p=currentProfile;
+
+document.getElementById("navName")
+.textContent=p.firstName;
+
+document.getElementById("navAvatar")
+.textContent=p.firstName[0];
+
+document.getElementById("welcomeSmall")
+.textContent="Welcome back, "+p.firstName;
+
+document.getElementById("welcomeName")
+.innerHTML=
+"Welcome,<br><span>"+p.firstName+".</span>";
+
+document.getElementById("profileAvatar")
+.textContent=p.firstName[0];
+
+document.getElementById("profileRole")
+.textContent=
+p.role+" • "+p.school;
+
+document.getElementById("infoID")
+.textContent=p.citizenID;
+
+document.getElementById("infoSchool")
+.textContent=p.school;
+
+document.getElementById("infoGrade")
+.textContent=p.grade;
+
+document.getElementById("infoRoom")
+.textContent=p.room;
+
+document.getElementById("infoBirthday")
+.textContent=p.birthday;
+
+document.getElementById("infoPoints")
+.textContent=p.blackPoints;
+
+}
+
+
+/* =========================================================
+CLOCK
+========================================================= */
+
+function updateClock(){
+
+const now =
+new Date();
+
+const options={
+timeZone:"Asia/Bahrain",
+hour:"numeric",
+minute:"2-digit",
+second:"2-digit",
+hour12:true
+};
+
+const dateOptions={
+timeZone:"Asia/Bahrain",
+weekday:"long",
+day:"numeric",
+month:"long",
+year:"numeric"
+};
+
+document.getElementById("liveClock")
+.textContent=
+new Intl.DateTimeFormat("en-US",options)
+.format(now);
+
+document.getElementById("liveDate")
+.textContent=
+new Intl.DateTimeFormat("en-US",dateOptions)
+.format(now);
+
+updateGreeting();
+
+}
+
+
+/* =========================================================
+GREETING
+========================================================= */
+
+function updateGreeting(){
+
+if(guestMode) return;
+
+const hour =
+Number(
+new Intl.DateTimeFormat(
+"en-US",
+{
+timeZone:"Asia/Bahrain",
+hour:"numeric",
+hour12:false
+}
+).format(new Date())
+);
+
+let greeting="Good evening";
+
+if(hour>=4 && hour<12)
+greeting="Good morning";
+
+else if(hour>=12 && hour<18)
+greeting="Good afternoon";
+
+document.getElementById("profileGreeting")
+.textContent=
+greeting+", "+currentProfile.firstName;
+
+}
+
+
+/* =========================================================
+TIME HELPERS
+========================================================= */
+
+function minutesNow(){
+
+const parts =
+new Intl.DateTimeFormat(
+"en-US",
+{
+timeZone:"Asia/Bahrain",
+hour:"2-digit",
+minute:"2-digit",
+hour12:false
+}
+)
+.formatToParts(new Date());
+
+const hour =
+Number(parts.find(x=>x.type==="hour").value);
+
+const minute =
+Number(parts.find(x=>x.type==="minute").value);
+
+return hour*60+minute;
+
+}
+
+
+function timeToMinutes(time){
+
+const [h,m]=time.split(":").map(Number);
+
+return h*60+m;
+
+}
+
+
+function formatRemaining(seconds){
+
+if(seconds<0) seconds=0;
+
+const h=Math.floor(seconds/3600);
+
+const m=Math.floor((seconds%3600)/60);
+
+const s=seconds%60;
+
+if(h>0)
+return `${h}h ${m}m ${String(s).padStart(2,"0")}s`;
+
+return `${m}m ${String(s).padStart(2,"0")}s`;
+
+}
+
+
+/* =========================================================
+CURRENT DAY
+========================================================= */
+
+function currentWeekday(){
+
+const day =
+new Intl.DateTimeFormat(
+"en-US",
+{
+timeZone:"Asia/Bahrain",
+weekday:"short"
+}
+).format(new Date());
+
+return day;
+
+}
+
+
+function isWeekend(){
+
+const d=currentWeekday();
+
+return d==="Fri" || d==="Sat";
+
+}
+
+
+function isTuesday(){
+
+return currentWeekday()==="Tue";
+
+}
+
+
+function rotationDay(){
+
+const now =
+new Date();
+
+const weekday =
+Number(
+new Intl.DateTimeFormat(
+"en-US",
+{
+timeZone:"Asia/Bahrain",
+weekday:"short"
+}
+).formatToParts(now)
+.find(x=>x.type==="weekday")
+);
+
+return null;
+
+}
+
+
+/*
+The exact D1-D6 rotation is controlled separately.
+Until the school calendar is entered, the page uses
+the weekday fallback below.
+*/
+
+function getCurrentDayCode(){
+
+const d=currentWeekday();
+
+if(d==="Sun") return "D1";
+if(d==="Mon") return "D2";
+if(d==="Tue") return "TUESDAY";
+if(d==="Wed") return "D3";
+if(d==="Thu") return "D4";
+
+return "WEEKEND";
+
+}
+
+
+/* =========================================================
+GET PERSONAL SCHEDULE
+========================================================= */
+
+function getPersonalSchedule(){
+
+if(!currentProfile){
+
+return null;
+
+}
+
+const day=getCurrentDayCode();
+
+if(day==="WEEKEND")
+return [];
+
+if(day==="TUESDAY"){
+
+return buildTuesdaySchedule();
+
+}
+
+if(currentProfile.type==="student"){
+
+return buildSchedule(
+studentSchedule[day],
+bellSchedule.regular
+);
+
+}
+
+return buildSchedule(
+teacherSchedule[day],
+bellSchedule.regular
+);
+
+}
+
+
+/* =========================================================
+BUILD SCHEDULE
+========================================================= */
+
+function buildSchedule(subjects,times){
+
+return times.map(item=>{
+
+if(item.period){
+
+const data =
+subjects[item.period];
+
+return {
+
+name:data ? data[0] : "Free Period",
+
+room:data ? data[1] : "",
+
+start:item.start,
+
+end:item.end,
+
+type:data ? "class" : "free",
+
+period:item.period
+
+};
+
+}
+
+return item;
+
+});
+
+}
+
+
+/* =========================================================
+TUESDAY
+========================================================= */
+
+function buildTuesdaySchedule(){
+
+const base=bellSchedule.tuesday;
+
+let subjects;
+
+if(currentProfile.type==="student"){
+
+/*
+Tuesday follows the same P1-P6 subject structure.
+Exact D-day rotation can be connected once the
+school's D1-D6 calendar is entered.
+*/
+
+subjects=studentSchedule.D1;
 
 }else{
 
-msg.textContent="✕ INCORRECT ACCESS CODE";
-msg.style.color="#ff6688";
+subjects=teacherSchedule.D1;
+
+}
+
+const result=buildSchedule(subjects,base);
+
+if(currentProfile.type==="teacher"){
+
+result.push({
+
+name:"Faculty / Departmental Meetings",
+
+room:"Staff / Assigned Meeting Room",
+
+start:"13:30",
+
+end:"14:55",
+
+type:"meeting"
+
+});
+
+}else{
+
+result.push({
+
+name:"No after-school activities yet",
+
+room:"—",
+
+start:"13:30",
+
+end:"14:55",
+
+type:"studentAfter"
+
+});
+
+}
+
+return result;
+
+}
+
+
+/* =========================================================
+SCHEDULE RENDER
+========================================================= */
+
+function updateSchedule(){
+
+if(!currentProfile){
+
+return;
+
+}
+
+const schedule=getPersonalSchedule();
+
+const badge=
+document.getElementById("todayBadge");
+
+const pageBadge=
+document.getElementById("schedulePageDay");
+
+const day=getCurrentDayCode();
+
+if(day==="WEEKEND"){
+
+badge.textContent="Weekend";
+pageBadge.textContent="Weekend";
+
+document.getElementById("todaySchedule")
+.innerHTML=
+`<div class="schedule-row">
+<div class="schedule-subject">Weekend</div>
+<div>Friday & Saturday</div>
+</div>`;
+
+return;
+
+}
+
+badge.textContent=
+day==="TUESDAY"
+? "Tuesday • Short Day"
+: day;
+
+pageBadge.textContent=badge.textContent;
+
+const list =
+document.getElementById("todaySchedule");
+
+const full =
+document.getElementById("fullSchedule");
+
+renderSchedule(schedule,list);
+
+renderSchedule(schedule,full);
+
+updateCurrentSummary(schedule);
+
+updateSchoolCountdown(schedule);
+
+}
+
+
+/* =========================================================
+RENDER ROWS
+========================================================= */
+
+function renderSchedule(schedule,container){
+
+if(!schedule){
+
+container.innerHTML="";
+
+return;
+
+}
+
+const now=minutesNow();
+
+container.innerHTML="";
+
+schedule.forEach(item=>{
+
+if(item.type==="transition"){
+
+const row=document.createElement("div");
+
+row.className="schedule-row transition";
+
+row.innerHTML=
+`<div>↔</div>
+<div>5-minute transition</div>
+<div></div>
+<div></div>`;
+
+container.appendChild(row);
+
+return;
+
+}
+
+const start=timeToMinutes(item.start);
+
+const end=timeToMinutes(item.end);
+
+let state="upcoming";
+
+if(now>=end)
+state="completed";
+
+if(now>=start && now<end)
+state="current";
+
+const row=document.createElement("div");
+
+row.className=
+"schedule-row "+state;
+
+if(item.type==="break")
+row.classList.add("break");
+
+let statusHTML="";
+
+if(state==="current"){
+
+const secondsLeft =
+Math.max(
+0,
+(end*60) -
+(now*60) -
+(new Date().getSeconds())
+);
+
+statusHTML=
+`<div class="status now">
+<div>● NOW</div>
+<div class="live-count">
+${formatRemaining(secondsLeft)} left
+</div>
+</div>`;
+
+}else if(state==="completed"){
+
+statusHTML=
+`<div class="status done">
+DONE
+</div>`;
+
+}else{
+
+const secondsUntil=
+Math.max(
+0,
+(start*60) -
+(now*60) -
+new Date().getSeconds()
+);
+
+statusHTML=
+`<div class="status next">
+UPCOMING
+<div class="live-count">
+in ${formatRemaining(secondsUntil)}
+</div>
+</div>`;
+
+}
+
+let name=item.name;
+
+if(item.type==="break")
+name="☕ "+name;
+
+if(item.type==="meeting")
+name="👥 "+name;
+
+if(item.type==="studentAfter")
+name="🎒 "+name;
+
+if(item.type==="afterSchool")
+name="🎯 "+name;
+
+row.innerHTML=`
+
+<div class="schedule-time">
+${item.start} – ${item.end}
+</div>
+
+<div>
+
+<div class="schedule-subject">
+${name}
+</div>
+
+${
+item.room
+?
+`<div class="schedule-room">
+Room: ${item.room}
+</div>`
+:
+""
+}
+
+</div>
+
+<div class="schedule-room">
+${
+item.period
+? item.period
+: ""
+}
+</div>
+
+${statusHTML}
+
+`;
+
+container.appendChild(row);
+
+});
+
+}
+
+
+/* =========================================================
+CURRENT SUMMARY
+========================================================= */
+
+function updateCurrentSummary(schedule){
+
+if(!schedule || !schedule.length)
+return;
+
+const now=minutesNow();
+
+let current=null;
+let next=null;
+
+schedule.forEach(item=>{
+
+if(!item.start || !item.end)
+return;
+
+const s=timeToMinutes(item.start);
+const e=timeToMinutes(item.end);
+
+if(now>=s && now<e)
+current=item;
+
+if(now<s && !next)
+next=item;
+
+});
+
+const el=
+document.getElementById("currentClassSummary");
+
+if(current){
+
+const secondsLeft =
+current.end.split(":")[0]*3600+
+current.end.split(":")[1]*60-
+(Math.floor(now)*60)-
+new Date().getSeconds();
+
+el.textContent=
+`You are currently in ${current.name}. `+
+`${formatRemaining(Math.max(0,secondsLeft))} remaining.`;
+
+return;
+
+}
+
+if(next){
+
+const diff=
+timeToMinutes(next.start)-now;
+
+el.textContent=
+`Your next period is ${next.name}, `+
+`starting in ${Math.max(0,diff)} minutes.`;
+
+return;
+
+}
+
+el.textContent=
+"Your scheduled school/work day is finished.";
+
+}
+
+
+/* =========================================================
+SCHOOL COUNTDOWN
+========================================================= */
+
+function updateSchoolCountdown(schedule){
+
+if(!schedule || !schedule.length)
+return;
+
+const now=minutesNow();
+
+let current=null;
+let next=null;
+
+for(const item of schedule){
+
+if(!item.start || !item.end)
+continue;
+
+const s=timeToMinutes(item.start);
+const e=timeToMinutes(item.end);
+
+if(now>=s && now<e)
+current=item;
+
+if(now<s && !next)
+next=item;
+
+}
+
+const label=
+document.getElementById("schoolCountdownLabel");
+
+const value=
+document.getElementById("schoolCountdown");
+
+if(current){
+
+label.textContent=
+current.type==="meeting"
+? "Meeting in progress"
+: "Currently";
+
+const end=
+timeToMinutes(current.end);
+
+const remaining=
+(end-now)*60-new Date().getSeconds();
+
+value.textContent=
+`${current.name} • ${formatRemaining(Math.max(0,remaining))}`;
+
+}else if(next){
+
+label.textContent="Next";
+
+const diff=
+timeToMinutes(next.start)-now;
+
+value.textContent=
+`${next.name} in ${Math.max(0,diff)} min`;
+
+}else{
+
+label.textContent="School / work status";
+
+if(isTuesday()){
+
+if(currentProfile.type==="teacher"){
+
+value.textContent=
+"Tuesday meetings / work continue until 2:55 PM";
+
+}else{
+
+value.textContent=
+"No after-school activities yet";
+
+}
+
+}else{
+
+value.textContent=
+"Class dismissed at 2:55 PM";
 
 }
 
 }
 
+}
 
-/* LIVE TROM WEATHER */
+
+/* =========================================================
+WEATHER
+========================================================= */
 
 async function loadWeather(){
 
@@ -454,55 +3320,455 @@ const url=
 "&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code"+
 "&timezone=Asia%2FBahrain";
 
-const response=await fetch(url);
-const data=await response.json();
-const c=data.current;
+const response=
+await fetch(url);
 
-document.getElementById("temp").textContent=
-Math.round(c.temperature_2m)+"°";
+const data=
+await response.json();
 
-document.getElementById("feels").textContent=
-Math.round(c.apparent_temperature)+"°";
+const current=data.current;
 
-document.getElementById("wind").textContent=
-Math.round(c.wind_speed_10m)+" km/h";
+document.getElementById("temperature")
+.textContent=
+Math.round(current.temperature_2m)+"°";
 
-document.getElementById("humidity").textContent=
-c.relative_humidity_2m+"%";
+document.getElementById("feels")
+.textContent=
+Math.round(current.apparent_temperature)+"°";
 
-document.getElementById("desc").textContent=
-weatherText(c.weather_code);
+document.getElementById("humidity")
+.textContent=
+current.relative_humidity_2m+"%";
 
-document.getElementById("status").textContent="● LIVE";
-document.getElementById("status").style.color="#59ffc1";
+document.getElementById("wind")
+.textContent=
+Math.round(current.wind_speed_10m)+" km/h";
 
-}catch{
+const weather=
+weatherText(current.weather_code);
 
-document.getElementById("desc").textContent=
-"Weather unavailable";
+document.getElementById("weatherDescription")
+.textContent=
+weather.text;
 
-document.getElementById("status").textContent="OFFLINE";
+document.getElementById("weatherIcon")
+.textContent=
+weather.icon;
+
+}catch(error){
+
+document.getElementById("weatherDescription")
+.textContent=
+"Weather temporarily unavailable.";
 
 }
 
 }
+
 
 function weatherText(code){
 
-if(code===0)return"☀️ Clear sky";
-if(code<=3)return"⛅ Partly cloudy";
-if(code<=48)return"🌫️ Foggy";
-if(code<=67)return"🌧️ Rain";
-if(code<=77)return"❄️ Snow";
-if(code<=82)return"🌦️ Rain showers";
-if(code<=86)return"🌨️ Snow showers";
-if(code>=95)return"⛈️ Thunderstorm";
+if(code===0)
+return {text:"Clear sky",icon:"☀️"};
 
-return"🌤️ Changing conditions";
+if([1,2,3].includes(code))
+return {text:"Partly cloudy",icon:"⛅"};
+
+if([45,48].includes(code))
+return {text:"Foggy",icon:"🌫️"};
+
+if([51,53,55,56,57].includes(code))
+return {text:"Drizzle",icon:"🌦️"};
+
+if([61,63,65,66,67].includes(code))
+return {text:"Rain",icon:"🌧️"};
+
+if([80,81,82].includes(code))
+return {text:"Rain showers",icon:"🌦️"};
+
+if([95,96,99].includes(code))
+return {text:"Thunderstorm",icon:"⛈️"};
+
+return {text:"Current conditions",icon:"🌤️"};
 
 }
 
-setInterval(loadWeather,600000);
+
+/* =========================================================
+PAGE NAVIGATION
+========================================================= */
+
+function showPage(id){
+
+document.querySelectorAll(".page")
+.forEach(page=>{
+page.classList.remove("active");
+});
+
+const page=document.getElementById(id);
+
+if(page)
+page.classList.add("active");
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* =========================================================
+AI ASSISTANT
+========================================================= */
+
+function toggleAI(){
+
+document.getElementById("aiPanel")
+.classList.toggle("open");
+
+}
+
+
+function addMessage(text,type){
+
+const box=
+document.getElementById("aiMessages");
+
+const msg=
+document.createElement("div");
+
+msg.className=
+"message "+type;
+
+msg.innerHTML=
+text;
+
+box.appendChild(msg);
+
+box.scrollTop=
+box.scrollHeight;
+
+}
+
+
+function sendAI(){
+
+const input=
+document.getElementById("aiInput");
+
+const question=
+input.value.trim();
+
+if(!question)
+return;
+
+addMessage(question,"user");
+
+input.value="";
+
+setTimeout(()=>{
+
+const answer=
+getAIAnswer(question);
+
+addMessage(answer,"bot");
+
+},350);
+
+}
+
+
+function getAIAnswer(question){
+
+const q=
+question.toLowerCase();
+
+/* Greeting */
+
+if(
+q.includes("hello") ||
+q.includes("hi") ||
+q.includes("hey")
+){
+
+return currentProfile
+? `Hi ${currentProfile.firstName}! 👋 I'm your TROM Assistant. What would you like to know?`
+: `Hi! 👋 I'm the TROM Assistant. Ask me about TROM, school times, weather, news or anything I know about.`;
+
+}
+
+
+/* Current user */
+
+if(
+q.includes("who am i") ||
+q.includes("my name")
+){
+
+if(!currentProfile)
+return "You're currently using TROM as a guest.";
+
+return `You're ${currentProfile.fullName}. Your TROM profile identifies you as a ${currentProfile.role}.`;
+
+}
+
+
+/* Citizen ID */
+
+if(
+q.includes("citizen id") ||
+q.includes("my id")
+){
+
+if(!currentProfile)
+return "Citizen ID information is only available after signing in to My TROM.";
+
+return `Your Citizen ID is ${currentProfile.citizenID}.`;
+
+}
+
+
+/* Room */
+
+if(
+q.includes("room") ||
+q.includes("homeroom")
+){
+
+if(!currentProfile)
+return "Sign in to My TROM and I can tell you your personalized room.";
+
+return `Your homeroom is ${currentProfile.room}.`;
+
+}
+
+
+/* Birthday */
+
+if(
+q.includes("birthday") ||
+q.includes("born")
+){
+
+if(!currentProfile)
+return "Sign in to My TROM to view your personal birthday information.";
+
+return `Your birthday is ${currentProfile.birthday}. 🎂`;
+
+}
+
+
+/* School */
+
+if(
+q.includes("school")
+){
+
+return "Ibn Khaldun National School is the school connected to this TROM profile.";
+
+}
+
+
+/* Dismissal */
+
+if(
+q.includes("dismiss") ||
+q.includes("finish school") ||
+q.includes("school finish")
+){
+
+if(isTuesday())
+return currentProfile?.type==="teacher"
+? "Tuesday is the short day. Faculty/departamental meetings are scheduled after the student timetable and can continue toward 2:55 PM."
+: "Tuesday is the short day. The student timetable ends at 1:25 PM, and there are no after-school activities yet.";
+
+return "On regular days, the final class ends at 2:55 PM. 🎒";
+
+}
+
+
+/* Transition */
+
+if(
+q.includes("transition") ||
+q.includes("between classes")
+){
+
+return "There are 5 minutes between classes for transition. ↔️";
+
+}
+
+
+/* Tuesday */
+
+if(
+q.includes("tuesday")
+){
+
+if(currentProfile?.type==="teacher"){
+
+return "Tuesday is the short day. After the six short periods, Faculty / Departmental Collaborative Meetings are scheduled. TROM currently shows the teacher meeting period as 1:30 PM–2:55 PM.";
+
+}
+
+return "Tuesday is the short day. Students finish their six short periods at 1:25 PM. TROM currently shows: “No after-school activities yet.”";
+
+}
+
+
+/* Schedule */
+
+if(
+q.includes("schedule") ||
+q.includes("timetable") ||
+q.includes("class")
+){
+
+return "You can open the Schedule page to see every period, room, transition, current class, completed class and live countdown.";
+
+}
+
+
+/* Current */
+
+if(
+q.includes("what class") ||
+q.includes("current class") ||
+q.includes("now")
+){
+
+const summary=
+document.getElementById("currentClassSummary")
+?.textContent;
+
+return summary || "Open My TROM and I'll show your current schedule.";
+
+}
+
+
+/* Weather */
+
+if(
+q.includes("weather") ||
+q.includes("temperature") ||
+q.includes("hot")
+){
+
+const temp=
+document.getElementById("temperature")
+?.textContent;
+
+const desc=
+document.getElementById("weatherDescription")
+?.textContent;
+
+return `TROM Weather is currently ${temp}, with ${desc}. The displayed weather uses live Bahrain weather data. 🌤️`;
+
+}
+
+
+/* TROM */
+
+if(
+q.includes("what is trom") ||
+q.includes("what's trom") ||
+q.includes("republic of moe")
+){
+
+return "TROM stands for The Republic of Moe — a digital country portal with personalized services, national information, news, media, weather and more.";
+
+}
+
+
+/* News */
+
+if(
+q.includes("news")
+){
+
+return "You can open the Newsroom page for TROM announcements and national updates.";
+
+}
+
+
+/* Media */
+
+if(
+q.includes("tv") ||
+q.includes("gallery") ||
+q.includes("video")
+){
+
+return "TROM Media contains the National Gallery, TROM TV, video archives and event media.";
+
+}
+
+
+/* Country */
+
+if(
+q.includes("country") ||
+q.includes("government") ||
+q.includes("history") ||
+q.includes("cities")
+){
+
+return "Open TROM COUNTRY for geography, government, history, population, cities, currency, flag, anthem, national animal, holidays and international information.";
+
+}
+
+
+/* Thanks */
+
+if(
+q.includes("thank")
+){
+
+return "You're welcome! 😊";
+
+}
+
+
+/* General */
+
+return `
+I'm still learning! 🤖<br><br>
+I can currently help with:
+• your schedule<br>
+• current class and countdowns<br>
+• school dismissal<br>
+• Tuesday information<br>
+• 5-minute transitions<br>
+• your TROM profile<br>
+• weather<br>
+• TROM Newsroom<br>
+• TROM Country<br>
+• TROM Media<br>
+• general TROM questions
+`;
+
+}
+
+
+/* =========================================================
+INITIAL UI
+========================================================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+/*
+Prevent accidental form submission.
+*/
+
+document
+.getElementById("accessCode")
+.addEventListener("keydown",e=>{
+if(e.key==="Enter")
+signIn();
+});
+
+});
 
 </script>
 
