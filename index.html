@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Private Video Library</title>
+</head>
+
+<body>
+<h1>🔒 Private Video Library</h1>
+
+<p>Enter your access code:</p>
+
+<input type="password" id="code" placeholder="Access code">
+<button onclick="checkCode()">ENTER</button>
+
+<p id="message"></p>
+
+<div id="videos" style="display:none;">
+<h2>🎥 My Videos</h2>
+<p>Your videos will go here!</p>
+</div>
+
+<script>
+function checkCode() {
+const code = document.getElementById("code").value;
+
+if (code === "BHR2026") {
+document.getElementById("videos").style.display = "block";
+document.getElementById("message").textContent = "✅ Access granted!";
+} else {
+document.getElementById("message").textContent = "❌ Wrong code!";
+}
+}
+</script>
+</body>
+</html>
