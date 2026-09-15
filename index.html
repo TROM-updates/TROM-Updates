@@ -2,1140 +2,823 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>TROM — The Republic of Moe</title>
 
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
 :root{
---blue:#2f80ff;
---purple:#8b5cf6;
---pink:#ff5fa2;
---cyan:#25c7f5;
---green:#35c98b;
---yellow:#ffcc4d;
---red:#ff4d5e;
---orange:#ff914d;
-
+--bg:#f7f8ff;
+--card:rgba(255,255,255,.88);
 --text:#182033;
---muted:#718096;
---card:rgba(255,255,255,.78);
---border:rgba(30,50,90,.10);
---shadow:0 20px 55px rgba(52,72,120,.13);
-}
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-html{
-scroll-behavior:smooth;
+--muted:#697386;
+--line:rgba(20,30,55,.09);
+--pink:#f04f9d;
+--purple:#8b5cf6;
+--blue:#4f7cff;
+--cyan:#27b9e8;
+--green:#20b486;
+--yellow:#f5c542;
+--orange:#ff8b4d;
+--red:#ff3f4d;
+--shadow:0 20px 60px rgba(40,50,100,.10);
 }
 
 body{
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",
-"Segoe UI",Roboto,Arial,sans-serif;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif;
+background:var(--bg);
 color:var(--text);
-background:
-radial-gradient(circle at 10% 10%,rgba(47,128,255,.12),transparent 25%),
-radial-gradient(circle at 90% 10%,rgba(255,95,162,.12),transparent 25%),
-radial-gradient(circle at 50% 90%,rgba(139,92,246,.10),transparent 30%),
-#f7f9fd;
 min-height:100vh;
 overflow-x:hidden;
+transition:.5s;
 }
 
-/* ---------- BACKGROUND ---------- */
+button,input{font:inherit}
 
-body::before{
-content:"";
-position:fixed;
-width:420px;
-height:420px;
-border-radius:50%;
-background:rgba(37,199,245,.08);
-filter:blur(60px);
-top:-160px;
-left:-120px;
-pointer-events:none;
-z-index:-1;
+button{
+border:0;
+cursor:pointer;
 }
 
-body::after{
-content:"";
-position:fixed;
-width:500px;
-height:500px;
-border-radius:50%;
-background:rgba(255,95,162,.07);
-filter:blur(80px);
-right:-180px;
-bottom:-180px;
-pointer-events:none;
-z-index:-1;
+.hidden{display:none!important}
+
+/* TIME BACKGROUNDS */
+body.time-morning{
+background:
+radial-gradient(circle at 10% 10%,#ffe9a8 0,transparent 25%),
+radial-gradient(circle at 90% 5%,#ffd1e9 0,transparent 25%),
+linear-gradient(135deg,#f7fbff,#fff5ec);
+}
+body.time-afternoon{
+background:
+radial-gradient(circle at 10% 10%,#bcecff 0,transparent 27%),
+radial-gradient(circle at 90% 15%,#ffd6f0 0,transparent 27%),
+linear-gradient(135deg,#f5fbff,#fff8fc);
+}
+body.time-evening{
+background:
+radial-gradient(circle at 80% 10%,#ffd38c 0,transparent 27%),
+radial-gradient(circle at 15% 20%,#f7c7ef 0,transparent 28%),
+linear-gradient(135deg,#fff8eb,#f5efff);
+}
+body.time-night{
+background:
+radial-gradient(circle at 80% 5%,#c8b8ff 0,transparent 25%),
+radial-gradient(circle at 15% 20%,#9ddcff 0,transparent 25%),
+linear-gradient(135deg,#eef0ff,#f8efff);
 }
 
-/* ---------- LOGIN ---------- */
-
-#loginScreen{
+/* LOCK SCREEN */
+#lockScreen{
 position:fixed;
 inset:0;
 z-index:9999;
 display:flex;
 align-items:center;
 justify-content:center;
-padding:25px;
+padding:24px;
 background:
-radial-gradient(circle at 15% 20%,rgba(47,128,255,.35),transparent 30%),
-radial-gradient(circle at 85% 20%,rgba(255,95,162,.30),transparent 30%),
-radial-gradient(circle at 50% 90%,rgba(139,92,246,.30),transparent 35%),
-linear-gradient(135deg,#f9fbff,#eef4ff);
-transition:.7s ease;
+radial-gradient(circle at 15% 20%,#ffcf72 0,transparent 28%),
+radial-gradient(circle at 85% 15%,#ff9ed0 0,transparent 28%),
+radial-gradient(circle at 70% 90%,#a98cff 0,transparent 30%),
+linear-gradient(135deg,#fff,#f1f5ff);
 }
 
-#loginScreen.hide{
-opacity:0;
-visibility:hidden;
-pointer-events:none;
-}
-
-.login-box{
-width:min(530px,100%);
-padding:42px;
+.lock-card{
+width:min(470px,100%);
+background:rgba(255,255,255,.78);
+backdrop-filter:blur(30px);
+-webkit-backdrop-filter:blur(30px);
+border:1px solid rgba(255,255,255,.9);
 border-radius:34px;
-background:rgba(255,255,255,.83);
-border:1px solid rgba(255,255,255,.8);
-box-shadow:0 35px 100px rgba(44,67,115,.18);
-backdrop-filter:blur(25px);
+padding:42px;
 text-align:center;
-animation:loginPop .8s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes loginPop{
-from{
-opacity:0;
-transform:translateY(30px) scale(.96);
-}
-to{
-opacity:1;
-transform:none;
-}
+box-shadow:0 30px 100px rgba(50,40,100,.18);
 }
 
 .logo{
-width:92px;
-height:92px;
-margin:0 auto 20px;
-border-radius:28px;
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-size:31px;
-font-weight:900;
-letter-spacing:-2px;
-background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));
-box-shadow:0 18px 40px rgba(87,91,220,.28);
-}
-
-.login-box h1{
-font-size:42px;
-letter-spacing:-2px;
-margin-bottom:5px;
-}
-
-.login-box .subtitle{
-color:var(--muted);
-margin-bottom:30px;
-}
-
-.login-buttons{
+width:82px;
+height:82px;
+margin:auto auto 20px;
+border-radius:25px;
 display:grid;
-gap:12px;
-}
-
-button{
-border:0;
-font:inherit;
-cursor:pointer;
-}
-
-.primary-btn,
-.secondary-btn{
-width:100%;
-padding:16px 20px;
-border-radius:17px;
-font-weight:750;
-transition:.25s;
-}
-
-.primary-btn{
+place-items:center;
 color:white;
-background:linear-gradient(135deg,var(--blue),var(--purple));
-box-shadow:0 12px 25px rgba(72,105,220,.23);
+font-weight:900;
+font-size:25px;
+background:linear-gradient(135deg,#ff6b6b,#ec4899,#8b5cf6,#4f7cff);
+box-shadow:0 15px 35px rgba(139,92,246,.28);
 }
 
-.secondary-btn{
-color:var(--text);
-background:#f0f3f9;
+.lock-card h1{
+font-size:40px;
+letter-spacing:-2px;
 }
 
-.primary-btn:hover,
-.secondary-btn:hover{
-transform:translateY(-2px);
+.lock-card p{
+color:var(--muted);
+margin:8px 0 26px;
 }
 
-.login-form{
-display:none;
-text-align:left;
-}
-
-.login-form.show{
-display:block;
-animation:fadeUp .35s ease;
-}
-
-@keyframes fadeUp{
-from{opacity:0;transform:translateY(10px)}
-to{opacity:1;transform:none}
-}
-
-.field{
-margin-bottom:15px;
-}
-
-.field label{
-display:block;
-font-size:13px;
-font-weight:700;
-color:#657089;
-margin:0 0 7px 4px;
-}
-
-.field input{
+.lock-input{
 width:100%;
-border:1px solid var(--border);
-background:#f7f9fc;
-padding:15px 16px;
-border-radius:15px;
+padding:16px;
+border-radius:17px;
+border:1px solid var(--line);
+background:white;
 outline:none;
-font-size:16px;
+margin-bottom:12px;
 }
 
-.field input:focus{
-border-color:var(--blue);
-box-shadow:0 0 0 4px rgba(47,128,255,.10);
+.primary{
+width:100%;
+padding:16px;
+border-radius:17px;
+color:white;
+font-weight:800;
+background:linear-gradient(135deg,#ff6b6b,#ec4899,#8b5cf6);
+}
+
+.secondary{
+width:100%;
+padding:14px;
+border-radius:16px;
+background:#f1f3f8;
+color:var(--text);
+font-weight:700;
+margin-top:10px;
 }
 
 .error{
 color:var(--red);
-font-size:13px;
 min-height:20px;
-margin:5px 0 8px;
+margin-top:10px;
+font-size:14px;
 }
 
-/* ---------- APP ---------- */
+/* APP */
+#app{display:none;min-height:100vh}
 
-#app{
-display:none;
-}
-
-#app.show{
-display:block;
-animation:pageIn .7s ease;
-}
-
-@keyframes pageIn{
-from{opacity:0}
-to{opacity:1}
-}
-
-.container{
-width:min(1250px,calc(100% - 36px));
-margin:auto;
-}
-
-/* ---------- NAV ---------- */
-
-nav{
+.topbar{
 position:sticky;
-top:12px;
-z-index:1000;
-width:min(1180px,calc(100% - 30px));
-margin:12px auto 0;
-padding:11px 15px;
-border:1px solid rgba(255,255,255,.8);
-background:rgba(255,255,255,.76);
+top:0;
+z-index:100;
+padding:13px 18px;
 backdrop-filter:blur(24px);
-border-radius:22px;
-box-shadow:0 12px 35px rgba(40,60,100,.10);
+-webkit-backdrop-filter:blur(24px);
+background:rgba(255,255,255,.72);
+border-bottom:1px solid var(--line);
+}
+
+.topbar-inner{
+max-width:1250px;
+margin:auto;
 display:flex;
 align-items:center;
 justify-content:space-between;
 }
 
-.nav-brand{
+.brand{
 display:flex;
 align-items:center;
 gap:10px;
 font-weight:900;
-letter-spacing:-.5px;
 }
 
-.nav-logo{
-width:38px;
-height:38px;
-border-radius:12px;
-display:flex;
-align-items:center;
-justify-content:center;
+.brand-box{
+width:40px;
+height:40px;
+border-radius:13px;
+display:grid;
+place-items:center;
 color:white;
-font-size:13px;
-font-weight:900;
-background:linear-gradient(135deg,var(--blue),var(--purple));
-}
-
-.nav-links{
-display:flex;
-gap:5px;
-}
-
-.nav-links button{
-background:transparent;
-padding:10px 12px;
-border-radius:12px;
-color:#667085;
-font-size:13px;
-font-weight:700;
-}
-
-.nav-links button:hover{
-background:#eef3ff;
-color:var(--blue);
-}
-
-#navProfile{
-display:flex;
-align-items:center;
-gap:9px;
-font-size:13px;
-font-weight:700;
+font-size:12px;
+background:linear-gradient(135deg,#ff6b6b,#ec4899,#8b5cf6,#4f7cff);
 }
 
 .avatar{
-width:34px;
-height:34px;
+width:42px;
+height:42px;
 border-radius:50%;
-background:linear-gradient(135deg,#d9e6ff,#f4d8ff);
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:900;
-color:#456;
-}
-
-/* ---------- PAGES ---------- */
-
-.page{
-display:none;
-padding:55px 0 100px;
-min-height:calc(100vh - 80px);
-}
-
-.page.active{
-display:block;
-animation:sectionIn .5s ease;
-}
-
-@keyframes sectionIn{
-from{
-opacity:0;
-transform:translateY(15px);
-}
-to{
-opacity:1;
-transform:none;
-}
-}
-
-.page-title{
-margin-bottom:30px;
-}
-
-.page-title .eyebrow{
-text-transform:uppercase;
-letter-spacing:2px;
-color:var(--blue);
-font-size:12px;
-font-weight:900;
-margin-bottom:9px;
-}
-
-.page-title h2{
-font-size:44px;
-letter-spacing:-2px;
-}
-
-.page-title p{
-color:var(--muted);
-margin-top:8px;
-}
-
-/* ---------- HERO ---------- */
-
-.hero{
-padding:55px 0 35px;
-}
-
-.hero-grid{
 display:grid;
-grid-template-columns:1.25fr .75fr;
-gap:20px;
+place-items:center;
+overflow:hidden;
+background:linear-gradient(135deg,#ffd166,#f472b6,#8b5cf6);
+color:white;
+font-weight:900;
 }
 
-.hero-card{
-min-height:360px;
-padding:42px;
-border-radius:34px;
+.avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.main{
+width:min(1250px,calc(100% - 28px));
+margin:25px auto 120px;
+}
+
+.page{display:none}
+.page.active{display:block;animation:pageIn .35s ease}
+
+@keyframes pageIn{
+from{opacity:0;transform:translateY(8px)}
+to{opacity:1;transform:none}
+}
+
+/* HERO */
+.hero{
 position:relative;
 overflow:hidden;
+border-radius:32px;
+padding:38px;
+min-height:260px;
 background:
-radial-gradient(circle at 90% 10%,rgba(255,255,255,.55),transparent 30%),
-linear-gradient(135deg,#e9f3ff,#f6eaff 55%,#ffe9f2);
+radial-gradient(circle at 80% 10%,rgba(255,255,255,.9),transparent 25%),
+linear-gradient(135deg,#fff0bf,#ffd8ed 42%,#e0d4ff 75%,#cbeeff);
 box-shadow:var(--shadow);
 }
 
-.hero-card::after{
+.hero:after{
 content:"";
 position:absolute;
-width:230px;
-height:230px;
+width:220px;
+height:220px;
 border-radius:50%;
-right:-80px;
+background:rgba(255,255,255,.3);
+right:-50px;
 bottom:-100px;
-background:rgba(255,255,255,.45);
+animation:float 6s ease-in-out infinite;
 }
 
-.hero-card .small{
-color:#60708b;
-font-size:14px;
-font-weight:700;
+@keyframes float{
+50%{transform:translateY(-18px) rotate(10deg)}
 }
 
-.hero-card h1{
-font-size:clamp(48px,7vw,86px);
-line-height:.95;
-letter-spacing:-5px;
-margin:12px 0;
+.eyebrow{
+font-size:12px;
+font-weight:900;
+letter-spacing:1.5px;
+text-transform:uppercase;
+color:#6d6681;
 }
 
-.hero-card h1 span{
-background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));
--webkit-background-clip:text;
-color:transparent;
-}
-
-.hero-card p{
-max-width:590px;
-color:#59657b;
-line-height:1.65;
-}
-
-.hero-time{
-margin-top:28px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
-
-.pill{
-padding:10px 14px;
-background:rgba(255,255,255,.68);
-border:1px solid rgba(255,255,255,.8);
-border-radius:100px;
-font-size:13px;
-font-weight:750;
-}
-
-.weather-card{
-border-radius:34px;
-padding:32px;
-background:linear-gradient(145deg,#dff6ff,#eaf0ff);
-box-shadow:var(--shadow);
-min-height:360px;
-position:relative;
-overflow:hidden;
-}
-
-.weather-icon{
-font-size:70px;
-margin-bottom:15px;
-}
-
-.weather-card h3{
-font-size:21px;
-}
-
-.temperature{
-font-size:55px;
-font-weight:850;
+.hero h2{
+font-size:clamp(34px,6vw,62px);
 letter-spacing:-3px;
 margin:8px 0;
 }
 
-.weather-card p{
-color:var(--muted);
+.hero-text{
+max-width:650px;
+color:#555f72;
+line-height:1.6;
 }
 
-.weather-details{
+.hero-grid{
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:9px;
-margin-top:22px;
-}
-
-.weather-detail{
-background:rgba(255,255,255,.6);
-padding:12px;
-border-radius:14px;
-font-size:12px;
-}
-
-/* ---------- PERSONAL DASHBOARD ---------- */
-
-.personal-grid{
-display:grid;
-grid-template-columns:1.4fr .6fr;
-gap:18px;
-}
-
-.personal-main,
-.personal-side{
-background:var(--card);
-border:1px solid var(--border);
-box-shadow:var(--shadow);
-border-radius:30px;
-padding:27px;
-backdrop-filter:blur(18px);
-}
-
-.profile-heading{
-display:flex;
+grid-template-columns:1fr auto;
+gap:30px;
 align-items:center;
-gap:17px;
-margin-bottom:25px;
 }
 
-.profile-avatar{
-width:70px;
-height:70px;
-border-radius:22px;
-background:linear-gradient(135deg,#dce9ff,#f4dcff);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:23px;
+.hero-time{
+text-align:right;
+}
+
+.big-time{
+font-size:34px;
 font-weight:900;
+letter-spacing:-1px;
 }
 
-.profile-heading h3{
+/* CARDS */
+.section{
+margin-top:28px;
+}
+
+.section-title{
+display:flex;
+justify-content:space-between;
+align-items:end;
+gap:15px;
+margin-bottom:14px;
+}
+
+.section-title h3{
 font-size:25px;
 letter-spacing:-1px;
 }
 
-.profile-heading p{
+.section-title p{
 color:var(--muted);
-font-size:13px;
-margin-top:3px;
+margin-top:4px;
 }
 
-.info-grid{
+.card{
+background:var(--card);
+border:1px solid rgba(255,255,255,.8);
+border-radius:25px;
+padding:22px;
+box-shadow:var(--shadow);
+backdrop-filter:blur(18px);
+-webkit-backdrop-filter:blur(18px);
+}
+
+/* PERSONAL */
+.personal-grid{
 display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px;
+grid-template-columns:1.4fr 1fr 1fr;
+gap:14px;
 }
 
-.info-card{
-padding:15px;
-border-radius:17px;
-background:#f6f8fc;
+.personal-main{
+grid-row:span 2;
+background:linear-gradient(135deg,#fff,#fff3f8);
 }
 
-.info-card .label{
-font-size:11px;
-text-transform:uppercase;
-letter-spacing:.7px;
-color:#8a94a8;
-font-weight:800;
+.personal-main h3{
+font-size:30px;
+margin:7px 0;
 }
 
-.info-card .value{
-font-size:14px;
-font-weight:800;
-margin-top:5px;
+.info-row{
+display:flex;
+justify-content:space-between;
+padding:11px 0;
+border-bottom:1px solid var(--line);
 }
+
+.info-row:last-child{border:0}
+
+.info-label{color:var(--muted)}
+.info-value{font-weight:800;text-align:right}
 
 .countdown{
-background:linear-gradient(135deg,#edf5ff,#f4edff);
-padding:20px;
-border-radius:22px;
-margin-bottom:15px;
-}
-
-.countdown .label{
-color:#69758b;
-font-size:12px;
-font-weight:800;
-text-transform:uppercase;
-}
-
-.countdown strong{
-display:block;
-font-size:29px;
-margin-top:6px;
+font-size:34px;
+font-weight:900;
+margin-top:8px;
 letter-spacing:-1px;
+}
+
+.countdown-sub{
+color:var(--muted);
+margin-top:4px;
 }
 
 .notice{
-padding:17px;
-border-radius:19px;
-background:#fff7df;
-color:#725d17;
-font-size:13px;
-line-height:1.55;
+background:linear-gradient(135deg,#fff6d8,#fff0fa);
 }
 
-/* ---------- SCHEDULE ---------- */
-
-.schedule-shell{
-background:rgba(255,255,255,.78);
-border:1px solid var(--border);
-box-shadow:var(--shadow);
-border-radius:30px;
-padding:25px;
+/* QUICK NAV */
+.quick-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:14px;
 }
 
-.schedule-header{
+.quick{
+padding:22px;
+border-radius:23px;
+min-height:120px;
+transition:.25s;
+text-align:left;
+}
+
+.quick:hover{
+transform:translateY(-4px);
+}
+
+.quick-icon{font-size:30px}
+.quick h4{margin-top:10px;font-size:18px}
+.quick p{color:var(--muted);font-size:13px;margin-top:4px}
+
+.q1{background:#fff0b8}
+.q2{background:#d9f7ff}
+.q3{background:#ffe0f0}
+.q4{background:#e8ddff}
+
+/* SCHEDULE */
+.schedule-head{
 display:flex;
-align-items:center;
 justify-content:space-between;
-gap:15px;
-margin-bottom:20px;
+align-items:center;
+margin-bottom:15px;
 }
 
-.schedule-header h3{
-font-size:25px;
-letter-spacing:-1px;
-}
-
-.day-badge{
-background:#eef3ff;
-color:var(--blue);
-padding:9px 13px;
-border-radius:12px;
-font-size:12px;
-font-weight:850;
+.day-chip{
+padding:10px 15px;
+border-radius:999px;
+background:#fff;
+font-weight:900;
+box-shadow:0 5px 20px rgba(0,0,0,.06);
 }
 
 .schedule-list{
 display:grid;
-gap:8px;
+gap:10px;
 }
 
 .schedule-row{
 display:grid;
-grid-template-columns:130px 1fr 100px 100px;
+grid-template-columns:135px 1fr 120px 120px;
 align-items:center;
-gap:12px;
-padding:16px;
-border-radius:18px;
-background:#f7f9fc;
-border:1px solid transparent;
-transition:.25s;
-}
-
-.schedule-row.upcoming{
+gap:15px;
+padding:18px;
+border-radius:19px;
 background:#fff;
-}
-
-.schedule-row.current{
-background:linear-gradient(135deg,#fff0f1,#ffe9ec);
-border-color:#ffb9c1;
-box-shadow:0 9px 25px rgba(255,77,94,.12);
-transform:scale(1.008);
+border:1px solid var(--line);
+transition:.25s;
 }
 
 .schedule-row.completed{
 opacity:.42;
-filter:saturate(.55);
+filter:saturate(.4);
+}
+
+.schedule-row.current{
+background:linear-gradient(110deg,#fff0f2,#fff);
+border:2px solid var(--red);
+box-shadow:0 12px 30px rgba(255,63,77,.12);
 }
 
 .schedule-row.transition{
-background:transparent;
-padding:5px 16px;
-color:#9aa4b6;
-font-size:11px;
+background:#f5f6fa;
 }
 
 .schedule-row.break{
-background:#fff8e8;
+background:#fff9df;
 }
 
 .schedule-time{
-font-weight:850;
-font-size:13px;
+font-weight:800;
+color:#687286;
 }
 
-.schedule-subject{
-font-weight:800;
+.schedule-name{
+font-weight:900;
+font-size:17px;
 }
 
 .schedule-room{
-color:#758198;
-font-size:12px;
+color:var(--muted);
+margin-top:3px;
 }
 
 .status{
-justify-self:end;
-text-align:right;
-font-size:11px;
-font-weight:850;
+text-align:center;
+font-size:12px;
+font-weight:900;
+padding:8px 10px;
+border-radius:999px;
 }
 
-.status.now{
+.status-now{
+background:var(--red);
+color:white;
+}
+
+.status-up{
+background:#e8edff;
+color:#5367c7;
+}
+
+.status-done{
+background:#eef0f3;
+color:#7b8492;
+}
+
+.status-break{
+background:#fff0ae;
+color:#856d00;
+}
+
+.row-count{
+text-align:right;
+font-weight:900;
 color:var(--red);
 }
 
-.status.done{
-color:#9aa4b6;
-}
-
-.status.next{
-color:var(--blue);
-}
-
-.live-count{
-font-size:12px;
-margin-top:4px;
-}
-
-.dismissed{
-margin-top:15px;
-padding:17px;
-text-align:center;
-border-radius:17px;
-background:linear-gradient(135deg,#eef7ff,#f8efff);
-font-weight:800;
-color:#5e6980;
-}
-
-/* ---------- CARDS ---------- */
-
-.card-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:17px;
-}
-
-.feature-card{
-min-height:210px;
-padding:25px;
-border-radius:27px;
-background:white;
-box-shadow:0 15px 40px rgba(40,60,100,.09);
-border:1px solid var(--border);
-transition:.3s;
-position:relative;
-overflow:hidden;
-}
-
-.feature-card:hover{
-transform:translateY(-5px);
-box-shadow:0 25px 55px rgba(40,60,100,.13);
-}
-
-.feature-icon{
-width:53px;
-height:53px;
-border-radius:17px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:25px;
-margin-bottom:22px;
-background:#eef3ff;
-}
-
-.feature-card h3{
-margin-bottom:7px;
-}
-
-.feature-card p{
-color:var(--muted);
-font-size:13px;
-line-height:1.55;
-}
-
-/* ---------- NEWS ---------- */
-
-.news-grid{
-display:grid;
-grid-template-columns:1.5fr 1fr;
-gap:18px;
-}
-
-.news-main{
-padding:30px;
-min-height:330px;
-border-radius:29px;
-color:white;
-background:linear-gradient(135deg,#347dff,#7658dd,#d2589b);
-box-shadow:var(--shadow);
-}
-
-.news-main .tag{
-display:inline-block;
-padding:7px 10px;
-border-radius:10px;
-background:rgba(255,255,255,.18);
-font-size:11px;
-font-weight:800;
-}
-
-.news-main h3{
-font-size:31px;
-margin:20px 0 10px;
-max-width:600px;
-}
-
-.news-main p{
-color:rgba(255,255,255,.78);
-line-height:1.6;
-}
-
-.news-side{
-display:grid;
-gap:12px;
-}
-
-.news-small{
-background:white;
-border:1px solid var(--border);
-border-radius:20px;
-padding:20px;
-}
-
-.news-small .date{
-color:var(--blue);
-font-size:11px;
-font-weight:850;
-}
-
-.news-small h4{
-margin:6px 0;
-}
-
-.news-small p{
-font-size:12px;
-color:var(--muted);
-}
-
-/* ---------- MEDIA ---------- */
-
+/* MEDIA */
 .media-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:18px;
-}
-
-.media-card{
-border-radius:28px;
-overflow:hidden;
-background:white;
-box-shadow:var(--shadow);
-}
-
-.media-image{
-height:210px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:60px;
-background:linear-gradient(135deg,#e7f2ff,#f7eaff);
-}
-
-.media-content{
-padding:22px;
-}
-
-.media-content p{
-color:var(--muted);
-font-size:13px;
-line-height:1.6;
-}
-
-/* ---------- COUNTRY ---------- */
-
-.country-header{
-padding:38px;
-border-radius:32px;
-background:
-radial-gradient(circle at 90% 20%,rgba(255,255,255,.3),transparent 25%),
-linear-gradient(135deg,#1d6fff,#7b55dc);
-color:white;
-margin-bottom:20px;
-}
-
-.country-header h2{
-font-size:45px;
-letter-spacing:-2px;
-}
-
-.country-header p{
-margin-top:8px;
-color:rgba(255,255,255,.78);
-}
-
-.country-grid{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:15px;
 }
 
-.country-card{
-padding:23px;
-border-radius:24px;
-background:white;
-border:1px solid var(--border);
-box-shadow:0 12px 35px rgba(40,60,100,.08);
-}
-
-.country-card h3{
-margin-bottom:8px;
-}
-
-.country-card p{
-color:var(--muted);
-font-size:13px;
-line-height:1.6;
-}
-
-/* ---------- AI ---------- */
-
-.ai-button{
-position:fixed;
-right:23px;
-bottom:23px;
-z-index:1500;
-width:62px;
-height:62px;
-border-radius:22px;
-color:white;
-font-size:25px;
-background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));
-box-shadow:0 18px 40px rgba(80,80,190,.28);
-transition:.25s;
-}
-
-.ai-button:hover{
-transform:translateY(-4px) scale(1.04);
-}
-
-.ai-panel{
-position:fixed;
-right:23px;
-bottom:98px;
-z-index:1499;
-width:min(390px,calc(100% - 30px));
-height:560px;
-border-radius:27px;
-background:rgba(255,255,255,.93);
-backdrop-filter:blur(25px);
-border:1px solid rgba(255,255,255,.8);
-box-shadow:0 30px 80px rgba(40,60,100,.2);
-display:none;
+.media-card{
+min-height:190px;
+border-radius:25px;
+padding:25px;
+display:flex;
+flex-direction:column;
+justify-content:end;
 overflow:hidden;
 }
 
-.ai-panel.open{
-display:flex;
-flex-direction:column;
-animation:aiOpen .3s ease;
+.media-card h3{font-size:24px}
+.media-card p{color:#596274;margin-top:5px}
+
+.media-news{background:linear-gradient(135deg,#ffe2ef,#fff)}
+.media-tv{background:linear-gradient(135deg,#ddd2ff,#fff)}
+.media-gallery{background:linear-gradient(135deg,#d2f5ff,#fff)}
+
+/* NEWS */
+.news-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
 }
 
-@keyframes aiOpen{
-from{opacity:0;transform:translateY(15px) scale(.97)}
-to{opacity:1;transform:none}
+.news-card{
+overflow:hidden;
+padding:0;
 }
 
-.ai-top{
-padding:17px;
-background:linear-gradient(135deg,#edf5ff,#f7edff);
+.news-image{
+height:150px;
+display:grid;
+place-items:center;
+font-size:55px;
+background:linear-gradient(135deg,#ffe1a9,#ffd7eb,#ded2ff);
+}
+
+.news-body{padding:20px}
+.tag{
+display:inline-block;
+padding:6px 9px;
+border-radius:999px;
+background:#f1f3f8;
+font-size:11px;
+font-weight:900;
+}
+
+.news-title{
+font-size:20px;
+font-weight:900;
+margin:10px 0 5px;
+}
+
+.news-text{
+color:var(--muted);
+line-height:1.5;
+}
+
+/* WEATHER */
+.weather{
+background:linear-gradient(135deg,#d5f4ff,#fff1f8);
+}
+
+.weather-main{
 display:flex;
 justify-content:space-between;
 align-items:center;
 }
 
-.ai-top strong{
-font-size:15px;
+.weather-temp{
+font-size:58px;
+font-weight:900;
+letter-spacing:-3px;
 }
 
-.ai-close{
-background:#e9edf5;
-width:30px;
-height:30px;
-border-radius:10px;
+.weather-desc{
+color:var(--muted);
 }
 
-.ai-messages{
-flex:1;
-overflow-y:auto;
-padding:16px;
+.weather-meta{
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+margin-top:18px;
 }
 
-.message{
-max-width:85%;
-padding:12px 14px;
-border-radius:16px;
-margin-bottom:10px;
+.weather-meta span{
+padding:9px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.7);
 font-size:13px;
+}
+
+.weather-refresh{
+color:var(--muted);
+font-size:12px;
+margin-top:14px;
+}
+
+/* COUNTRY */
+.country-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:14px;
+}
+
+.country-card{
+min-height:150px;
+background:#fff;
+}
+
+.country-card h3{
+margin:10px 0 6px;
+}
+
+.country-card p{
+color:var(--muted);
 line-height:1.5;
 }
 
-.message.bot{
-background:#f0f3f8;
+/* PROFILE */
+.profile-layout{
+display:grid;
+grid-template-columns:300px 1fr;
+gap:18px;
 }
 
-.message.user{
+.profile-photo{
+width:130px;
+height:130px;
+border-radius:40px;
+margin:auto;
+overflow:hidden;
+display:grid;
+place-items:center;
+color:white;
+font-size:48px;
+font-weight:900;
+background:linear-gradient(135deg,#ff7b72,#ec4899,#8b5cf6);
+}
+
+.profile-photo img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.profile-center{text-align:center}
+.profile-center h2{margin:15px 0 4px}
+.profile-center p{color:var(--muted)}
+
+.profile-button{
+margin-top:18px;
+width:100%;
+padding:13px;
+border-radius:15px;
+background:#f0f2f7;
+font-weight:800;
+}
+
+/* AI */
+.ai-box{
+min-height:600px;
+display:flex;
+flex-direction:column;
+}
+
+.messages{
+flex:1;
+min-height:400px;
+padding:10px 0;
+overflow:auto;
+}
+
+.msg{
+max-width:80%;
+padding:13px 16px;
+border-radius:18px;
+margin:8px 0;
+line-height:1.5;
+}
+
+.msg.user{
 margin-left:auto;
-background:#eaf2ff;
-color:#285ab4;
+background:linear-gradient(135deg,#8b5cf6,#ec4899);
+color:white;
+}
+
+.msg.bot{
+background:#f0f2f7;
 }
 
 .ai-input{
-padding:12px;
-border-top:1px solid var(--border);
 display:flex;
 gap:8px;
+margin-top:12px;
 }
 
 .ai-input input{
 flex:1;
-border:0;
-outline:0;
-background:#f3f5f9;
-border-radius:13px;
-padding:12px;
+border:1px solid var(--line);
+border-radius:16px;
+padding:14px;
+outline:none;
 }
 
 .ai-input button{
-width:45px;
-border-radius:13px;
-background:var(--blue);
+padding:0 20px;
+border-radius:16px;
 color:white;
+background:#8b5cf6;
+font-weight:900;
 }
 
-/* ---------- FOOTER ---------- */
-
-footer{
-text-align:center;
-padding:50px 20px 100px;
-color:#8993a5;
-font-size:12px;
+/* BOTTOM NAV */
+.bottom-nav{
+position:fixed;
+z-index:500;
+bottom:14px;
+left:50%;
+transform:translateX(-50%);
+width:min(760px,calc(100% - 22px));
+padding:9px;
+display:flex;
+justify-content:space-around;
+background:rgba(255,255,255,.82);
+backdrop-filter:blur(25px);
+-webkit-backdrop-filter:blur(25px);
+border:1px solid rgba(255,255,255,.9);
+border-radius:25px;
+box-shadow:0 15px 60px rgba(40,40,90,.17);
 }
 
-footer strong{
-color:#5f6b80;
+.nav-btn{
+flex:1;
+padding:10px 5px;
+border-radius:17px;
+background:transparent;
+color:#697386;
+font-size:11px;
+font-weight:800;
 }
 
-/* ---------- RESPONSIVE ---------- */
+.nav-btn span{
+display:block;
+font-size:21px;
+margin-bottom:2px;
+}
 
-@media(max-width:900px){
+.nav-btn.active{
+color:#7b4ce6;
+background:#f0eaff;
+}
+
+/* LOADING */
+#loading{
+position:fixed;
+inset:0;
+z-index:10000;
+background:white;
+display:grid;
+place-items:center;
+}
+
+.loader{
+width:48px;
+height:48px;
+border-radius:50%;
+border:5px solid #eee;
+border-top-color:#8b5cf6;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MOBILE */
+@media(max-width:800px){
 .hero-grid,
 .personal-grid,
-.news-grid{
+.profile-layout{
 grid-template-columns:1fr;
 }
 
-.card-grid,
-.country-grid{
+.hero-time{text-align:left;margin-top:20px}
+
+.quick-grid{
 grid-template-columns:1fr 1fr;
 }
 
+.media-grid,
+.news-grid,
+.country-grid{
+grid-template-columns:1fr;
+}
+
 .schedule-row{
-grid-template-columns:95px 1fr 85px;
+grid-template-columns:1fr;
+gap:8px;
 }
 
-.schedule-room{
-display:none;
-}
-}
+.row-count{text-align:left}
 
-@media(max-width:650px){
-.container{
-width:min(100% - 22px,1250px);
-}
-
-nav{
-width:calc(100% - 18px);
-}
-
-.nav-links{
-display:none;
+.schedule-status{
+width:max-content;
 }
 
 .hero{
-padding-top:30px;
+padding:25px;
 }
 
-.hero-card,
-.weather-card{
-padding:27px;
-min-height:auto;
-}
-
-.hero-card h1{
-font-size:58px;
-}
-
-.page{
-padding-top:35px;
-}
-
-.page-title h2{
-font-size:34px;
-}
-
-.info-grid{
-grid-template-columns:1fr 1fr;
-}
-
-.card-grid,
-.country-grid,
-.media-grid{
-grid-template-columns:1fr;
-}
-
-.schedule-shell{
-padding:13px;
-}
-
-.schedule-row{
-grid-template-columns:78px 1fr 70px;
-padding:13px 10px;
-}
-
-.schedule-subject{
-font-size:13px;
-}
-
-.status{
-font-size:9px;
-}
-
-.login-box{
-padding:30px 22px;
+.lock-card{
+padding:28px 22px;
 }
 }
 </style>
@@ -1143,388 +826,501 @@ padding:30px 22px;
 
 <body>
 
-<!-- =========================================================
-LOGIN
-========================================================= -->
+<div id="loading"><div class="loader"></div></div>
 
-<div id="loginScreen">
-
-<div class="login-box">
-
+<!-- LOCK SCREEN -->
+<div id="lockScreen">
+<div class="lock-card">
 <div class="logo">TROM</div>
+<h1>TROM</h1>
+<p>The Republic of Moe</p>
 
-<h1>Welcome to TROM</h1>
-<p class="subtitle">The Republic of Moe</p>
-
-<div id="loginChoice" class="login-buttons">
-
-<button class="primary-btn" onclick="showLogin()">
-Sign in to My TROM
-</button>
-
-<button class="secondary-btn" onclick="enterGuest()">
-Continue as Guest
-</button>
-
+<div id="lockActions">
+<button class="primary" onclick="openLogin()">Sign in to My TROM</button>
+<button class="secondary" onclick="enterGuest()">Continue as Guest</button>
 </div>
 
-<div id="loginForm" class="login-form">
-
-<div class="field">
-<label>Citizen ID / School ID</label>
-<input id="citizenID" placeholder="Enter your Citizen ID">
-</div>
-
-<div class="field">
-<label>TROM Access Code</label>
-<input id="accessCode" type="password" placeholder="Enter access code">
-</div>
-
+<div id="loginPanel" class="hidden">
+<input id="citizenId" class="lock-input" placeholder="Citizen ID">
+<input id="accessCode" class="lock-input" type="password" placeholder="Access code">
+<button class="primary" onclick="signIn()">Enter TROM</button>
+<button class="secondary" onclick="closeLogin()">Back</button>
 <div id="loginError" class="error"></div>
-
-<button class="primary-btn" onclick="signIn()">
-Enter My TROM
-</button>
-
-<br><br>
-
-<button class="secondary-btn" onclick="backToChoice()">
-Back
-</button>
-
 </div>
-
 </div>
-
 </div>
-
-
-<!-- =========================================================
-APP
-========================================================= -->
 
 <div id="app">
 
-<nav>
-
-<div class="nav-brand">
-<div class="nav-logo">T</div>
-<span>TROM</span>
+<header class="topbar">
+<div class="topbar-inner">
+<div class="brand">
+<div class="brand-box">TROM</div>
+<span>The Republic of Moe</span>
 </div>
 
-<div class="nav-links">
-<button onclick="showPage('home')">Home</button>
-<button onclick="showPage('schedule')">Schedule</button>
-<button onclick="showPage('news')">Newsroom</button>
-<button onclick="showPage('media')">Media</button>
-<button onclick="showPage('country')">TROM Country</button>
+<button class="avatar" onclick="showPage(currentProfile?'profile':'more')">
+<span id="topAvatarText">T</span>
+<img id="topAvatarImg" class="hidden">
+</button>
 </div>
+</header>
 
-<div id="navProfile">
-<div class="avatar" id="navAvatar">G</div>
-<span id="navName">Guest</span>
-</div>
+<main class="main">
 
-</nav>
+<!-- HOME -->
+<section id="home" class="page active">
 
-
-<!-- =========================================================
-HOME
-========================================================= -->
-
-<main id="home" class="page active">
-
-<section class="hero">
-
-<div class="container">
-
+<div class="hero">
 <div class="hero-grid">
-
-<div class="hero-card">
-
-<div class="small" id="welcomeSmall">
-Welcome to TROM
-</div>
-
-<h1 id="welcomeName">
-The Republic<br>
-<span>of Moe.</span>
-</h1>
-
-<p>
-A colorful digital home for the people, places, information,
-news and services of TROM.
+<div>
+<div class="eyebrow" id="heroEyebrow">TROM DIGITAL PORTAL</div>
+<h2 id="heroGreeting">Welcome to TROM</h2>
+<p class="hero-text" id="heroText">
+Your bright digital home for TROM.
 </p>
+</div>
 
 <div class="hero-time">
-
-<div class="pill">
-🕐 <span id="liveClock">--:--</span>
+<div class="eyebrow">Bahrain Time</div>
+<div id="heroTime" class="big-time">--:--:--</div>
+<div id="heroDate" style="color:#697386;margin-top:4px"></div>
+</div>
+</div>
 </div>
 
-<div class="pill">
-📅 <span id="liveDate">Loading...</span>
+<!-- PERSONALIZED SECTION -->
+<div class="section" id="personalSection">
+
+<div class="section-title">
+<div>
+<h3 id="personalGreeting">Your TROM Day</h3>
+<p>Personalized information</p>
 </div>
-
-<div class="pill">
-🇧🇭 TROM Weather
 </div>
-
-</div>
-
-</div>
-
-
-<div class="weather-card">
-
-<div class="weather-icon" id="weatherIcon">☀️</div>
-
-<h3>TROM Weather</h3>
-
-<div class="temperature" id="temperature">
---°
-</div>
-
-<p id="weatherDescription">
-Loading weather...
-</p>
-
-<div class="weather-details">
-
-<div class="weather-detail">
-<strong>Feels like</strong><br>
-<span id="feels">--°</span>
-</div>
-
-<div class="weather-detail">
-<strong>Humidity</strong><br>
-<span id="humidity">--%</span>
-</div>
-
-<div class="weather-detail">
-<strong>Wind</strong><br>
-<span id="wind">-- km/h</span>
-</div>
-
-<div class="weather-detail">
-<strong>Source</strong><br>
-Bahrain data
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- PERSONALIZED AREA -->
-
-<section id="personalSection">
-
-<div class="container">
-
-<div class="page-title">
-
-<div class="eyebrow">
-MY TROM
-</div>
-
-<h2 id="personalTitle">
-Your TROM
-</h2>
-
-<p>
-Your personalized information, school/work status and today's important information.
-</p>
-
-</div>
-
 
 <div class="personal-grid">
 
-<div class="personal-main">
+<div class="card personal-main">
+<div class="eyebrow">MY TROM</div>
+<h3 id="personalName">Guest</h3>
+<p id="personalRole" style="color:var(--muted)">Public TROM access</p>
 
-<div class="profile-heading">
-
-<div class="profile-avatar" id="profileAvatar">
-M
+<div style="margin-top:20px">
+<div class="info-row">
+<span class="info-label">Citizen ID</span>
+<span class="info-value" id="pId">—</span>
 </div>
 
+<div class="info-row">
+<span class="info-label">School</span>
+<span class="info-value" id="pSchool">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Grade</span>
+<span class="info-value" id="pGrade">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Homeroom</span>
+<span class="info-value" id="pRoom">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Black points</span>
+<span class="info-value" id="pPoints">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Birthday</span>
+<span class="info-value" id="pBirthday">—</span>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="eyebrow" id="dayLabel">TODAY</div>
+<div style="font-size:27px;font-weight:900;margin-top:7px" id="cycleLabel">—</div>
+<div class="countdown-sub" id="dayType">—</div>
+</div>
+
+<div class="card">
+<div class="eyebrow" id="schoolWorkLabel">SCHOOL</div>
+<div class="countdown" id="schoolCountdown">—</div>
+<div class="countdown-sub" id="schoolCountdownSub">—</div>
+</div>
+
+<div class="card">
+<div class="eyebrow">CURRENT</div>
+<div style="font-size:22px;font-weight:900;margin-top:7px" id="currentHome">—</div>
+<div class="countdown-sub" id="currentHomeSub">—</div>
+</div>
+
+<div class="card">
+<div class="eyebrow">ROOM</div>
+<div style="font-size:27px;font-weight:900;margin-top:7px" id="currentRoom">—</div>
+<div class="countdown-sub" id="currentStatus">—</div>
+</div>
+
+</div>
+</div>
+
+<!-- QUICK -->
+<div class="section">
+<div class="section-title">
 <div>
-<h3 id="profileGreeting">
-Good morning
-</h3>
-
-<p id="profileRole">
-TROM Citizen
-</p>
+<h3>Explore TROM</h3>
+<p>Move around the country portal</p>
+</div>
 </div>
 
+<div class="quick-grid">
+<button class="quick q1" onclick="showPage('schedule')">
+<div class="quick-icon">📚</div>
+<h4>Schedule</h4>
+<p>Classes, rooms and live countdowns</p>
+</button>
+
+<button class="quick q2" onclick="showPage('media')">
+<div class="quick-icon">📺</div>
+<h4>Media</h4>
+<p>News, gallery and TROM TV</p>
+</button>
+
+<button class="quick q3" onclick="showPage('ai')">
+<div class="quick-icon">🤖</div>
+<h4>TROM AI</h4>
+<p>Ask questions and check your day</p>
+</button>
+
+<button class="quick q4" onclick="showPage('country')">
+<div class="quick-icon">🌍</div>
+<h4>TROM COUNTRY</h4>
+<p>Explore the Republic of Moe</p>
+</button>
+</div>
 </div>
 
-
-<div class="info-grid">
-
-<div class="info-card">
-<div class="label">Citizen ID</div>
-<div class="value" id="infoID">—</div>
-</div>
-
-<div class="info-card">
-<div class="label">School</div>
-<div class="value" id="infoSchool">—</div>
-</div>
-
-<div class="info-card">
-<div class="label">Grade</div>
-<div class="value" id="infoGrade">—</div>
-</div>
-
-<div class="info-card">
-<div class="label">Homeroom</div>
-<div class="value" id="infoRoom">—</div>
-</div>
-
-<div class="info-card">
-<div class="label">Birthday</div>
-<div class="value" id="infoBirthday">—</div>
-</div>
-
-<div class="info-card">
-<div class="label">Black Points</div>
-<div class="value" id="infoPoints">—</div>
-</div>
-
-</div>
-
-</div>
-
-
-<div class="personal-side">
-
-<div class="countdown">
-
-<div class="label" id="schoolCountdownLabel">
-School status
-</div>
-
-<strong id="schoolCountdown">
-Loading...
-</strong>
-
-</div>
-
-<div class="notice">
-
-<strong>Important</strong>
-
-<div id="importantNotice">
-Welcome to your personalized TROM dashboard.
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- TODAY -->
-
-<section style="padding-top:45px">
-
-<div class="container">
-
-<div class="page-title">
-
-<div class="eyebrow">TODAY</div>
-
-<h2>What is happening now?</h2>
-
-<p id="currentClassSummary">
-Loading your schedule...
-</p>
-
-</div>
-
-<div class="schedule-shell">
-
-<div class="schedule-header">
-
+<!-- WEATHER -->
+<div class="section">
+<div class="section-title">
 <div>
-<h3>Today's Schedule</h3>
+<h3>TROM Weather</h3>
+<p>Bahrain live weather data presented as TROM Weather</p>
+</div>
+</div>
+<div class="card weather" id="weatherBox">Loading TROM Weather…</div>
 </div>
 
-<div class="day-badge" id="todayBadge">
-Loading
-</div>
-
-</div>
-
-<div id="todaySchedule" class="schedule-list"></div>
-
-<div class="dismissed" id="dismissalMessage">
-Class dismissed at 2:55 PM
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- QUICK ACCESS -->
-
-<section style="padding-top:45px">
-
-<div class="container">
-
-<div class="page-title">
-
-<div class="eyebrow">EXPLORE</div>
-
-<h2>TROM at a glance</h2>
-
-</div>
-
-<div class="card-grid">
-
-<div class="feature-card" onclick="showPage('news')">
-<div class="feature-icon">📰</div>
+<!-- NEWS -->
+<div class="section">
+<div class="section-title">
+<div>
 <h3>Newsroom</h3>
-<p>
-Follow announcements, national updates and important TROM news.
-</p>
+<p>Latest TROM stories</p>
+</div>
+<button class="secondary" style="width:auto;margin:0" onclick="showPage('media')">View all</button>
+</div>
+<div class="news-grid" id="homeNews"></div>
 </div>
 
-<div class="feature-card" onclick="showPage('media')">
-<div class="feature-icon">🎬</div>
+</section>
+
+
+<!-- SCHEDULE -->
+<section id="schedule" class="page">
+
+<div class="section-title">
+<div>
+<h3>School / Work Schedule</h3>
+<p id="scheduleDate">—</p>
+</div>
+<div class="day-chip" id="scheduleDay">—</div>
+</div>
+
+<div class="card" style="margin-bottom:15px">
+<div class="schedule-head">
+<div>
+<div class="eyebrow">MIDDLE SCHOOL G6–G8</div>
+<strong id="scheduleType">—</strong>
+</div>
+<div id="scheduleRole">Guest</div>
+</div>
+
+<div class="schedule-list" id="scheduleList"></div>
+</div>
+
+<div class="card notice" id="dismissalCard">
+Schedule information will appear here.
+</div>
+
+</section>
+
+
+<!-- MEDIA -->
+<section id="media" class="page">
+
+<div class="section-title">
+<div>
 <h3>TROM Media</h3>
-<p>
-Explore TROM TV, the National Gallery and future media.
+<p>Newsroom, gallery and TROM TV</p>
+</div>
+</div>
+
+<div class="media-grid">
+<div class="media-card media-news">
+<div style="font-size:45px">📰</div>
+<h3>Newsroom</h3>
+<p>National updates and official TROM stories.</p>
+</div>
+
+<div class="media-card media-tv">
+<div style="font-size:45px">📺</div>
+<h3>TROM TV</h3>
+<p>Broadcasts, interviews and national coverage.</p>
+</div>
+
+<div class="media-card media-gallery">
+<div style="font-size:45px">📸</div>
+<h3>National Gallery</h3>
+<p>Photos and visual memories from TROM.</p>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">
+<div>
+<h3>Newsroom</h3>
+<p>Official TROM stories</p>
+</div>
+</div>
+<div class="news-grid" id="newsGrid"></div>
+</div>
+
+</section>
+
+
+<!-- AI -->
+<section id="ai" class="page">
+
+<div class="section-title">
+<div>
+<h3>TROM AI</h3>
+<p>Your built-in TROM assistant</p>
+</div>
+</div>
+
+<div class="card ai-box">
+<div id="messages" class="messages">
+<div class="msg bot">
+Hi! 👋 I'm TROM AI. Ask me about your schedule, classes, rooms, weather, TROM, simple maths and more.
+</div>
+</div>
+
+<div class="ai-input">
+<input id="aiInput" placeholder="Ask TROM AI something…">
+<button onclick="askAI()">Send</button>
+</div>
+</div>
+
+</section>
+
+
+<!-- COUNTRY -->
+<section id="country" class="page">
+
+<div class="hero">
+<div class="eyebrow">THE REPUBLIC OF MOE</div>
+<h2>TROM COUNTRY</h2>
+<p class="hero-text">
+Explore the fictional country of TROM and its national identity.
 </p>
 </div>
 
-<div class="feature-card" onclick="showPage('country')">
-<div class="feature-icon">🏛️</div>
-<h3>TROM Country</h3>
-<p>
-Discover geography, government, history, cities and national symbols.
+<div class="section">
+<div class="country-grid">
+
+<div class="card country-card">
+<div style="font-size:35px">🗺️</div>
+<h3>Geography</h3>
+<p>Explore the regions, cities, landmarks and geography of TROM.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🏛️</div>
+<h3>Government</h3>
+<p>Learn about the government and national systems of TROM.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">📜</div>
+<h3>History</h3>
+<p>Discover the history and important moments of the Republic of Moe.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">👥</div>
+<h3>Population</h3>
+<p>TROM's population and national statistics can be displayed here.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🏙️</div>
+<h3>Cities</h3>
+<p>Explore TROM's cities and important places.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">💰</div>
+<h3>Currency</h3>
+<p>TROM's national currency information.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🚩</div>
+<h3>Flag</h3>
+<p>TROM's national flag and its meaning.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🎵</div>
+<h3>Anthem</h3>
+<p>The national anthem of the Republic of Moe.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🦁</div>
+<h3>National Animal</h3>
+<p>TROM's national animal.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🎉</div>
+<h3>National Holidays</h3>
+<p>Official national celebrations and holidays.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🌐</div>
+<h3>International</h3>
+<p>TROM's international information and relationships.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">🇹🇷</div>
+<h3>About TROM</h3>
+<p>TROM means The Republic of Moe — the digital national portal for the country.</p>
+</div>
+
+</div>
+</div>
+
+</section>
+
+
+<!-- PROFILE -->
+<section id="profile" class="page">
+
+<div class="section-title">
+<div>
+<h3>My TROM Profile</h3>
+<p>Your personal information</p>
+</div>
+</div>
+
+<div class="profile-layout">
+
+<div class="card profile-center">
+<div class="profile-photo" id="profilePhoto">
+<span id="profileInitial">T</span>
+<img id="profileImage" class="hidden">
+</div>
+
+<h2 id="profileName">Guest</h2>
+<p id="profileRole">Public TROM access</p>
+
+<button class="profile-button" onclick="choosePhoto()">
+📷 Change profile photo
+</button>
+
+<input id="photoInput" type="file" accept="image/*" capture="user" class="hidden">
+
+<button class="profile-button" onclick="logout()">
+Sign out
+</button>
+</div>
+
+<div class="card">
+<div class="info-row">
+<span class="info-label">Citizen ID</span>
+<span class="info-value" id="profileId">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Birthday</span>
+<span class="info-value" id="profileDob">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">School</span>
+<span class="info-value" id="profileSchool">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Grade / Role</span>
+<span class="info-value" id="profileGrade">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Homeroom</span>
+<span class="info-value" id="profileHomeroom">—</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Black points</span>
+<span class="info-value" id="profilePoints">—</span>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- MORE / EVENTS -->
+<section id="more" class="page">
+
+<div class="hero">
+<div class="eyebrow">TROM</div>
+<h2>More</h2>
+<p class="hero-text">
+Events, announcements and more parts of the TROM digital portal.
 </p>
 </div>
 
+<div class="section">
+<div class="country-grid">
+
+<div class="card country-card">
+<div style="font-size:35px">📅</div>
+<h3>Events</h3>
+<p>TROM national events and upcoming activities.</p>
 </div>
 
+<div class="card country-card">
+<div style="font-size:35px">🚨</div>
+<h3>Emergency Information</h3>
+<p>Important emergency and safety information for TROM.</p>
+</div>
+
+<div class="card country-card">
+<div style="font-size:35px">📢</div>
+<h3>Announcements</h3>
+<p>Official TROM announcements.</p>
+</div>
+
+</div>
 </div>
 
 </section>
@@ -1532,927 +1328,391 @@ Discover geography, government, history, cities and national symbols.
 </main>
 
 
-<!-- =========================================================
-SCHEDULE PAGE
-========================================================= -->
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
 
-<section id="schedule" class="page">
+<button class="nav-btn active" data-page="home" onclick="showPage('home')">
+<span>⌂</span>Home
+</button>
 
-<div class="container">
+<button class="nav-btn" data-page="schedule" onclick="showPage('schedule')">
+<span>▦</span>Schedule
+</button>
 
-<div class="page-title">
+<button class="nav-btn" data-page="media" onclick="showPage('media')">
+<span>▶</span>Media
+</button>
 
-<div class="eyebrow">MY TROM</div>
+<button class="nav-btn" data-page="ai" onclick="showPage('ai')">
+<span>✦</span>AI
+</button>
 
-<h2>School & Work Schedule</h2>
+<button class="nav-btn" data-page="country" onclick="showPage('country')">
+<span>◎</span>Country
+</button>
 
-<p>
-Your timetable updates automatically as the day moves forward.
-</p>
+<button class="nav-btn" data-page="profile" onclick="showPage('profile')">
+<span>●</span>Profile
+</button>
 
-</div>
-
-<div class="schedule-shell">
-
-<div class="schedule-header">
-
-<h3 id="schedulePageTitle">
-Today's timetable
-</h3>
-
-<div class="day-badge" id="schedulePageDay">
-—
-</div>
-
-</div>
-
-<div id="fullSchedule" class="schedule-list"></div>
-
-<div class="dismissed">
-Class dismissed at <strong>2:55 PM</strong> on regular days.
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
-NEWS
-========================================================= -->
-
-<section id="news" class="page">
-
-<div class="container">
-
-<div class="page-title">
-
-<div class="eyebrow">TROM MEDIA</div>
-
-<h2>TROM Newsroom</h2>
-
-<p>
-The latest announcements and national updates.
-</p>
-
-</div>
-
-<div class="news-grid">
-
-<div class="news-main">
-
-<span class="tag">TROM NEWS</span>
-
-<h3>
-Welcome to the new TROM digital newsroom.
-</h3>
-
-<p>
-This is the central place for TROM announcements,
-national events, updates and important information.
-</p>
-
-</div>
-
-<div class="news-side">
-
-<div class="news-small">
-
-<div class="date">TROM UPDATE</div>
-
-<h4>Digital services are expanding</h4>
-
-<p>
-More TROM services and information will be added here.
-</p>
-
-</div>
-
-<div class="news-small">
-
-<div class="date">NATIONAL</div>
-
-<h4>TROM Country portal</h4>
-
-<p>
-Explore the country section for national information.
-</p>
-
-</div>
-
-<div class="news-small">
-
-<div class="date">COMING SOON</div>
-
-<h4>More TROM announcements</h4>
-
-<p>
-This newsroom is ready for future news articles.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
-MEDIA
-========================================================= -->
-
-<section id="media" class="page">
-
-<div class="container">
-
-<div class="page-title">
-
-<div class="eyebrow">TROM MEDIA</div>
-
-<h2>Gallery & TROM TV</h2>
-
-<p>
-A home for photographs, videos and broadcasts from TROM.
-</p>
-
-</div>
-
-<div class="media-grid">
-
-<div class="media-card">
-
-<div class="media-image">
-📸
-</div>
-
-<div class="media-content">
-
-<h3>National Gallery</h3>
-
-<p>
-TROM photographs, landmarks, events and important moments
-will appear here.
-</p>
-
-</div>
-
-</div>
-
-
-<div class="media-card">
-
-<div class="media-image">
-📺
-</div>
-
-<div class="media-content">
-
-<h3>TROM TV</h3>
-
-<p>
-A future home for TROM broadcasts, interviews,
-announcements and special programmes.
-</p>
-
-</div>
-
-</div>
-
-
-<div class="media-card">
-
-<div class="media-image">
-🎥
-</div>
-
-<div class="media-content">
-
-<h3>Video Archive</h3>
-
-<p>
-Videos can be added here later without changing the overall design.
-</p>
-
-</div>
-
-</div>
-
-
-<div class="media-card">
-
-<div class="media-image">
-🎉
-</div>
-
-<div class="media-content">
-
-<h3>TROM Events</h3>
-
-<p>
-National celebrations, school events and future public events.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
-COUNTRY
-========================================================= -->
-
-<section id="country" class="page">
-
-<div class="container">
-
-<div class="country-header">
-
-<h2>TROM COUNTRY</h2>
-
-<p>
-The Republic of Moe — national information portal.
-</p>
-
-</div>
-
-<div class="country-grid">
-
-<div class="country-card">
-<h3>🌍 Geography</h3>
-<p>
-Information about the geography, regions, borders,
-landscapes and important locations of TROM.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🏛️ Government</h3>
-<p>
-The government structure, departments, public services
-and national institutions of TROM.
-</p>
-</div>
-
-<div class="country-card">
-<h3>📜 History</h3>
-<p>
-The history and major milestones of the Republic of Moe.
-</p>
-</div>
-
-<div class="country-card">
-<h3>👥 Population</h3>
-<p>
-National population information and future demographic data.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🏙️ Cities</h3>
-<p>
-Explore TROM's cities, districts, landmarks and important places.
-</p>
-</div>
-
-<div class="country-card">
-<h3>💰 Currency</h3>
-<p>
-Information about the official TROM currency and monetary system.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🚩 Flag</h3>
-<p>
-The national flag and its meaning, symbolism and history.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🎵 Anthem</h3>
-<p>
-Information about the national anthem of the Republic of Moe.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🦅 National Animal</h3>
-<p>
-The official national animal and its importance to TROM.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🎊 National Holidays</h3>
-<p>
-National celebrations, public holidays and important dates.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🌐 International</h3>
-<p>
-TROM's international information, relationships and global presence.
-</p>
-</div>
-
-<div class="country-card">
-<h3>🇹🇷 About TROM</h3>
-<p>
-Everything about the Republic of Moe in one central place.
-</p>
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
-AI ASSISTANT
-========================================================= -->
-
-<button class="ai-button" onclick="toggleAI()">✦</button>
-
-<div id="aiPanel" class="ai-panel">
-
-<div class="ai-top">
-
-<strong>✦ TROM Assistant</strong>
-
-<button class="ai-close" onclick="toggleAI()">×</button>
-
-</div>
-
-<div id="aiMessages" class="ai-messages">
-
-<div class="message bot">
-Hi! I'm the TROM Assistant 👋<br><br>
-Ask me about your schedule, TROM, weather, school times,
-classes, Citizen information, or just ask me something!
-</div>
-
-</div>
-
-<div class="ai-input">
-
-<input
-id="aiInput"
-placeholder="Ask TROM..."
-onkeydown="if(event.key==='Enter') sendAI()"
->
-
-<button onclick="sendAI()">↑</button>
-
-</div>
-
-</div>
-
-
-<footer>
-
-<strong>TROM</strong> — The Republic of Moe<br><br>
-
-Digital services of the Republic of Moe
-
-</footer>
+</nav>
 
 </div>
 
 
 <script>
-
 /* =========================================================
-TROM DATA
+TROM — THE REPUBLIC OF MOE
 ========================================================= */
 
-const ACCESS_CODE = "TROM2026";
+const ACCESS_CODE="TROM2026";
+const SCHOOL="Ibn Khuldoon National School";
 
-const profiles = {
+/* ---------------- PROFILES ---------------- */
 
-"2019094": {
+const profiles={
 
-fullName:"Mohammed Chadi Hassoun",
-
-firstName:"Mohammed",
-
+"2019094":{
+id:"2019094",
+name:"Mohammed Chadi Hassoun",
+shortName:"Mohammed",
+type:"student",
 role:"Student",
-
-citizenID:"2019094",
-
-school:"Ibn Khaldun National School",
-
-grade:"6C",
-
-room:"M 25",
-
-birthday:"03/01/2015",
-
-blackPoints:"0",
-
-type:"student"
-
-},
-
-"201115": {
-
-fullName:"Farah Sami Issa",
-
-firstName:"Farah",
-
-role:"Teacher",
-
-citizenID:"201115",
-
-school:"Ibn Khaldun National School",
-
-grade:"Middle School Faculty",
-
-room:"M 38",
-
-birthday:"03/09/1988",
-
-blackPoints:"—",
-
-type:"teacher"
-
-}
-
-};
-
-
-/* =========================================================
-SHARED BELL SCHEDULE
-========================================================= */
-
-const bellSchedule = {
-
-regular:[
-
-{
-name:"Homeroom",
-start:"07:45",
-end:"07:55",
-type:"homeroom"
-},
-
-{
-name:"Transition",
-start:"07:55",
-end:"08:00",
-type:"transition"
-},
-
-{
-period:"P1",
-start:"08:00",
-end:"08:55"
-},
-
-{
-name:"Transition",
-start:"08:55",
-end:"09:00",
-type:"transition"
-},
-
-{
-period:"P2",
-start:"09:00",
-end:"10:00"
-},
-
-{
-name:"Transition",
-start:"10:00",
-end:"10:05",
-type:"transition"
-},
-
-{
-period:"P3",
-start:"10:05",
-end:"11:05"
-},
-
-{
-name:"Break",
-start:"11:05",
-end:"11:35",
-type:"break"
-},
-
-{
-name:"Transition",
-start:"11:35",
-end:"11:40",
-type:"transition"
-},
-
-{
-period:"P4",
-start:"11:40",
-end:"12:40"
-},
-
-{
-name:"Transition",
-start:"12:40",
-end:"12:45",
-type:"transition"
-},
-
-{
-period:"P5",
-start:"12:45",
-end:"13:45"
-},
-
-{
-name:"Break",
-start:"13:45",
-end:"14:00",
-type:"break"
-},
-
-{
-name:"Transition",
-start:"14:00",
-end:"14:05",
-type:"transition"
-},
-
-{
-period:"P6",
-start:"14:05",
-end:"14:55"
-},
-
-{
-name:"After School Activities",
-start:"15:10",
-end:"17:00",
-type:"afterSchool"
-}
-
-],
-
-
-tuesday:[
-
-{
-name:"Homeroom",
-start:"07:45",
-end:"07:55",
-type:"homeroom"
-},
-
-{
-name:"Transition",
-start:"07:55",
-end:"08:00",
-type:"transition"
-},
-
-{
-period:"P1",
-start:"08:00",
-end:"08:45"
-},
-
-{
-name:"Transition",
-start:"08:45",
-end:"08:50",
-type:"transition"
-},
-
-{
-period:"P2",
-start:"08:50",
-end:"09:35"
-},
-
-{
-name:"Transition",
-start:"09:35",
-end:"09:40",
-type:"transition"
-},
-
-{
-period:"P3",
-start:"09:40",
-end:"10:30"
-},
-
-{
-name:"Break",
-start:"10:30",
-end:"10:50",
-type:"break"
-},
-
-{
-name:"Transition",
-start:"10:50",
-end:"10:55",
-type:"transition"
-},
-
-{
-period:"P4",
-start:"10:55",
-end:"11:40"
-},
-
-{
-name:"Transition",
-start:"11:40",
-end:"11:45",
-type:"transition"
-},
-
-{
-period:"P5",
-start:"11:45",
-end:"12:25"
-},
-
-{
-name:"Break",
-start:"12:25",
-end:"12:40",
-type:"break"
-},
-
-{
-name:"Transition",
-start:"12:40",
-end:"12:45",
-type:"transition"
-},
-
-{
-period:"P6",
-start:"12:45",
-end:"13:25"
-}
-
-]
-
-};
-
-
-/* =========================================================
-MOHAMMED SCHEDULE
-========================================================= */
-
-const studentSchedule = {
-
+dob:"03/01/15",
+grade:"Grade 6C",
+homeroom:"M 25",
+points:"0",
+
+schedules:{
 D1:{
-
 P1:["Science 6","M 16"],
 P2:["Mathematics 6","M 40"],
 P3:["Islamic Studies","733"],
 P4:["Individuals and Societies 6","M 24"],
 P5:["Arabic Literature 6","M 14"],
 P6:["English Literature 6","M 25"]
-
 },
 
 D2:{
-
 P1:["Arabic Literature 6","M 14"],
 P2:["Design 6","M 31"],
 P3:["English Literature 6","M 25"],
 P4:["Islamic Studies","733"],
 P5:["Mathematics 6","M 40"],
 P6:["Science 6","M 16"]
-
 },
 
 D3:{
-
 P1:["Mathematics 6","M 40"],
 P2:["Science 6","M 16"],
 P3:["Visual Art 6","715"],
 P4:["English Literature 6","M 25"],
 P5:["Physical and Health Education 6","GYM"],
 P6:["Arabic Literature 6","M 14"]
-
 },
 
 D4:{
-
 P1:["Individuals and Societies 6","M 24"],
 P2:["National Studies 6","733"],
 P3:["Arabic Literature 6","M 14"],
 P4:["Science 6","M 16"],
 P5:["English Literature 6","M 25"],
 P6:["Mathematics 6","M 40"]
-
 },
 
 D5:{
-
 P1:["English Literature 6","M 25"],
 P2:["Mathematics 6","M 40"],
 P3:["Visual Art 6","715"],
 P4:["National Studies 6","733"],
 P5:["Arabic Literature 6","M 14"],
 P6:["Design 6","M 31"]
-
 },
 
 D6:{
-
 P1:["Physical and Health Education 6","GYM"],
 P2:["English Literature 6","M 25"],
 P3:["Individuals and Societies 6","M 24"],
 P4:["Arabic Literature 6","M 14"],
 P5:["Science 6","M 16"],
 P6:["Visual Art 6","715"]
-
 }
+}
+},
 
-};
+"201115":{
+id:"201115",
+name:"Farah Sami Issa",
+shortName:"Farah",
+type:"teacher",
+role:"Teacher",
+dob:"03/09/88",
+grade:"Middle School",
+homeroom:"M 38",
+points:"—",
 
-
-/* =========================================================
-FARAH TEACHER SCHEDULE
-========================================================= */
-
-const teacherSchedule = {
-
+schedules:{
 D1:{
-
 P1:null,
 P2:["Mathematics 6","M 38"],
 P3:["Mathematics 8","M 38"],
 P4:["Mathematics 7","M 38"],
 P5:["Mathematics 8","M 38"],
 P6:null
-
 },
 
 D2:{
-
 P1:["Mathematics 8","M 38"],
 P2:["Mathematics 8","M 38"],
 P3:null,
 P4:null,
 P5:["Mathematics 6","M 38"],
 P6:["Mathematics 7","M 38"]
-
 },
 
 D3:{
-
 P1:["Mathematics 8","M 38"],
 P2:["Mathematics 7","M 38"],
 P3:null,
 P4:null,
 P5:null,
 P6:["Mathematics 8","M 38"]
-
 },
 
 D4:{
-
 P1:["Mathematics 6","M 38"],
 P2:null,
 P3:["Mathematics 8","M 38"],
 P4:null,
 P5:["Mathematics 8","M 38"],
 P6:null
-
 },
 
 D5:{
-
 P1:["Mathematics 6","M 38"],
 P2:null,
 P3:null,
 P4:["Mathematics 7","M 38"],
 P5:null,
 P6:["Mathematics 8","M 38"]
-
 },
 
 D6:{
-
 P1:null,
 P2:["Mathematics 7","M 38"],
 P3:null,
 P4:["Mathematics 8","M 38"],
 P5:null,
 P6:["Mathematics 6","M 38"]
-
 }
-
+}
+}
 };
 
 
-/* =========================================================
-DAY ROTATION
-Change this when you want to enter the school's exact
-D1-D6 calendar.
-========================================================= */
+/* ---------------- BELL SCHEDULE ---------------- */
 
-const dayRotation = {
+const BELL={
 
-0:"D1",
-1:"D2",
-2:null,
-3:"D3",
-4:"D4",
-5:null,
-6:null
+regular:{
+label:"Regular Day",
 
+homeroom:["07:45","07:55"],
+
+periods:{
+P1:["08:00","08:55"],
+P2:["09:00","10:00"],
+P3:["10:05","11:05"],
+P4:["11:40","12:40"],
+P5:["12:45","13:45"],
+P6:["14:05","14:55"]
+},
+
+breaks:[
+["11:05","11:35","Break"],
+["13:45","14:00","Break"]
+],
+
+meetings:null,
+studentEnd:"14:55",
+teacherEnd:"14:55"
+},
+
+tuesday:{
+label:"Short Day",
+
+homeroom:["07:45","07:55"],
+
+periods:{
+P1:["08:00","08:45"],
+P2:["08:50","09:35"],
+P3:["09:40","10:30"],
+P4:["10:55","11:40"],
+P5:["11:45","12:25"],
+P6:["12:45","13:25"]
+},
+
+breaks:[
+["10:30","10:50","Break"],
+["12:25","12:40","Break"]
+],
+
+meetings:["13:30","14:55"],
+
+studentEnd:"13:25",
+teacherEnd:"14:55"
+}
 };
 
 
-/* =========================================================
-GLOBALS
-========================================================= */
+/* ---------------- CYCLE ---------------- */
 
-let currentProfile = null;
-let guestMode = false;
+/*
+September 1, 2026 = Day 1.
+
+Cycle:
+Day 1 → Day 2 → Day 3 → Day 4 → Day 5 → Day 6 → Day 1
+
+Friday and Saturday pause the cycle.
+*/
+
+const CYCLE_REFERENCE={
+year:2026,
+month:9,
+day:1,
+cycle:1
+};
+
+/* Add official school holidays here later.
+Example:
+"2026-12-17":true
+*/
+
+const SCHOOL_HOLIDAYS={};
 
 
-/* =========================================================
-LOGIN
-========================================================= */
-
-function showLogin(){
-
-document.getElementById("loginChoice").style.display="none";
-
-document.getElementById("loginForm")
-.classList.add("show");
-
+function pad(n){
+return String(n).padStart(2,"0");
 }
 
 
-function backToChoice(){
-
-document.getElementById("loginForm")
-.classList.remove("show");
-
-document.getElementById("loginChoice")
-.style.display="grid";
-
+function bahrainNow(){
+return new Date(
+new Date().toLocaleString("en-US",{timeZone:"Asia/Bahrain"})
+);
 }
 
 
-function signIn(){
-
-const id =
-document.getElementById("citizenID").value.trim();
-
-const code =
-document.getElementById("accessCode").value.trim();
-
-const error =
-document.getElementById("loginError");
-
-if(code !== ACCESS_CODE){
-
-error.textContent =
-"Incorrect TROM access code.";
-
-return;
+function dateKey(d){
+return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
 
-if(!profiles[id]){
 
-error.textContent =
-"That Citizen ID is not registered yet.";
-
-return;
+function weekend(d){
+return d.getDay()===5 || d.getDay()===6;
 }
 
-currentProfile = profiles[id];
 
-guestMode=false;
+function holiday(d){
+return !!SCHOOL_HOLIDAYS[dateKey(d)];
+}
 
-openApp();
 
+function cycleForDate(d){
+
+const ref=new Date(
+CYCLE_REFERENCE.year,
+CYCLE_REFERENCE.month-1,
+CYCLE_REFERENCE.day
+);
+
+let cur=new Date(ref);
+let cycle=CYCLE_REFERENCE.cycle;
+
+while(cur<d){
+cur.setDate(cur.getDate()+1);
+
+if(!weekend(cur) && !holiday(cur)){
+cycle++;
+if(cycle>6)cycle=1;
+}
+}
+
+return cycle;
+}
+
+
+function getCycle(d){
+if(weekend(d)||holiday(d))return null;
+return cycleForDate(
+new Date(d.getFullYear(),d.getMonth(),d.getDate())
+);
+}
+
+
+function bellFor(d){
+return d.getDay()===2 ? BELL.tuesday : BELL.regular;
+}
+
+
+/* ---------------- TIME ---------------- */
+
+function hmMinutes(x){
+const [h,m]=x.split(":").map(Number);
+return h*60+m;
+}
+
+
+function time12(x){
+const [h,m]=x.split(":").map(Number);
+const d=new Date(2000,0,1,h,m);
+return d.toLocaleTimeString("en-US",{
+hour:"numeric",
+minute:"2-digit"
+});
+}
+
+
+function duration(sec){
+
+sec=Math.max(0,Math.floor(sec));
+
+const h=Math.floor(sec/3600);
+const m=Math.floor((sec%3600)/60);
+const s=sec%60;
+
+if(h)return `${h}h ${m}m`;
+if(m)return `${m}m ${s}s`;
+return `${s}s`;
+}
+
+
+function greeting(name){
+
+const h=bahrainNow().getHours();
+
+if(h>=5 && h<12)return `Good morning, ${name}`;
+if(h>=12 && h<18)return `Good afternoon, ${name}`;
+
+return `Good evening, ${name}`;
+}
+
+
+/* ---------------- CURRENT PROFILE ---------------- */
+
+let currentProfile=null;
+
+
+function openLogin(){
+document.getElementById("lockActions").classList.add("hidden");
+document.getElementById("loginPanel").classList.remove("hidden");
+document.getElementById("citizenId").focus();
+}
+
+
+function closeLogin(){
+document.getElementById("loginPanel").classList.add("hidden");
+document.getElementById("lockActions").classList.remove("hidden");
 }
 
 
@@ -2460,1316 +1720,1163 @@ function enterGuest(){
 
 currentProfile=null;
 
-guestMode=true;
+document.getElementById("lockScreen").style.display="none";
+document.getElementById("app").style.display="block";
 
-openApp();
-
+updateEverything();
 }
 
 
-function openApp(){
+function signIn(){
 
-document.getElementById("loginScreen")
-.classList.add("hide");
+const id=document.getElementById("citizenId").value.trim();
+const code=document.getElementById("accessCode").value.trim();
 
-document.getElementById("app")
-.classList.add("show");
-
-setupProfile();
-
-updateClock();
-
-updateSchedule();
-
-loadWeather();
-
-setInterval(updateClock,1000);
-
-setInterval(updateSchedule,1000);
-
-setInterval(loadWeather,600000);
-
-}
-
-
-/* =========================================================
-PROFILE
-========================================================= */
-
-function setupProfile(){
-
-const personalSection =
-document.getElementById("personalSection");
-
-if(guestMode){
-
-personalSection.style.display="none";
-
-document.getElementById("navName")
-.textContent="Guest";
-
-document.getElementById("navAvatar")
-.textContent="G";
-
-document.getElementById("welcomeSmall")
-.textContent="Welcome to TROM";
-
-document.getElementById("welcomeName")
-.innerHTML="The Republic<br><span>of Moe.</span>";
-
+if(code!==ACCESS_CODE){
+document.getElementById("loginError").textContent="Incorrect access code.";
 return;
-
 }
 
-personalSection.style.display="block";
+if(!profiles[id]){
+document.getElementById("loginError").textContent="Citizen ID not found.";
+return;
+}
 
-const p=currentProfile;
+currentProfile=profiles[id];
 
-document.getElementById("navName")
-.textContent=p.firstName;
+localStorage.setItem("trom_profile",id);
 
-document.getElementById("navAvatar")
-.textContent=p.firstName[0];
+document.getElementById("lockScreen").style.display="none";
+document.getElementById("app").style.display="block";
 
-document.getElementById("welcomeSmall")
-.textContent="Welcome back, "+p.firstName;
-
-document.getElementById("welcomeName")
-.innerHTML=
-"Welcome,<br><span>"+p.firstName+".</span>";
-
-document.getElementById("profileAvatar")
-.textContent=p.firstName[0];
-
-document.getElementById("profileRole")
-.textContent=
-p.role+" • "+p.school;
-
-document.getElementById("infoID")
-.textContent=p.citizenID;
-
-document.getElementById("infoSchool")
-.textContent=p.school;
-
-document.getElementById("infoGrade")
-.textContent=p.grade;
-
-document.getElementById("infoRoom")
-.textContent=p.room;
-
-document.getElementById("infoBirthday")
-.textContent=p.birthday;
-
-document.getElementById("infoPoints")
-.textContent=p.blackPoints;
-
+updateEverything();
 }
 
 
-/* =========================================================
-CLOCK
-========================================================= */
+function logout(){
 
-function updateClock(){
+localStorage.removeItem("trom_profile");
+currentProfile=null;
 
-const now =
-new Date();
+document.getElementById("app").style.display="none";
+document.getElementById("lockScreen").style.display="flex";
 
-const options={
-timeZone:"Asia/Bahrain",
-hour:"numeric",
-minute:"2-digit",
-second:"2-digit",
-hour12:true
-};
-
-const dateOptions={
-timeZone:"Asia/Bahrain",
-weekday:"long",
-day:"numeric",
-month:"long",
-year:"numeric"
-};
-
-document.getElementById("liveClock")
-.textContent=
-new Intl.DateTimeFormat("en-US",options)
-.format(now);
-
-document.getElementById("liveDate")
-.textContent=
-new Intl.DateTimeFormat("en-US",dateOptions)
-.format(now);
-
-updateGreeting();
-
+document.getElementById("loginPanel").classList.add("hidden");
+document.getElementById("lockActions").classList.remove("hidden");
 }
 
 
-/* =========================================================
-GREETING
-========================================================= */
+/* ---------------- SCHEDULE ITEMS ---------------- */
 
-function updateGreeting(){
+function scheduleItems(profile,d){
 
-if(guestMode) return;
+if(!profile || weekend(d) || holiday(d))return [];
 
-const hour =
-Number(
-new Intl.DateTimeFormat(
-"en-US",
-{
-timeZone:"Asia/Bahrain",
-hour:"numeric",
-hour12:false
-}
-).format(new Date())
-);
+const bell=bellFor(d);
+const cycle=getCycle(d);
 
-let greeting="Good evening";
+if(!cycle)return [];
 
-if(hour>=4 && hour<12)
-greeting="Good morning";
+const data=profile.schedules["D"+cycle]||{};
+const items=[];
 
-else if(hour>=12 && hour<18)
-greeting="Good afternoon";
-
-document.getElementById("profileGreeting")
-.textContent=
-greeting+", "+currentProfile.firstName;
-
-}
-
-
-/* =========================================================
-TIME HELPERS
-========================================================= */
-
-function minutesNow(){
-
-const parts =
-new Intl.DateTimeFormat(
-"en-US",
-{
-timeZone:"Asia/Bahrain",
-hour:"2-digit",
-minute:"2-digit",
-hour12:false
-}
-)
-.formatToParts(new Date());
-
-const hour =
-Number(parts.find(x=>x.type==="hour").value);
-
-const minute =
-Number(parts.find(x=>x.type==="minute").value);
-
-return hour*60+minute;
-
-}
-
-
-function timeToMinutes(time){
-
-const [h,m]=time.split(":").map(Number);
-
-return h*60+m;
-
-}
-
-
-function formatRemaining(seconds){
-
-if(seconds<0) seconds=0;
-
-const h=Math.floor(seconds/3600);
-
-const m=Math.floor((seconds%3600)/60);
-
-const s=seconds%60;
-
-if(h>0)
-return `${h}h ${m}m ${String(s).padStart(2,"0")}s`;
-
-return `${m}m ${String(s).padStart(2,"0")}s`;
-
-}
-
-
-/* =========================================================
-CURRENT DAY
-========================================================= */
-
-function currentWeekday(){
-
-const day =
-new Intl.DateTimeFormat(
-"en-US",
-{
-timeZone:"Asia/Bahrain",
-weekday:"short"
-}
-).format(new Date());
-
-return day;
-
-}
-
-
-function isWeekend(){
-
-const d=currentWeekday();
-
-return d==="Fri" || d==="Sat";
-
-}
-
-
-function isTuesday(){
-
-return currentWeekday()==="Tue";
-
-}
-
-
-function rotationDay(){
-
-const now =
-new Date();
-
-const weekday =
-Number(
-new Intl.DateTimeFormat(
-"en-US",
-{
-timeZone:"Asia/Bahrain",
-weekday:"short"
-}
-).formatToParts(now)
-.find(x=>x.type==="weekday")
-);
-
-return null;
-
-}
-
-
-/*
-The exact D1-D6 rotation is controlled separately.
-Until the school calendar is entered, the page uses
-the weekday fallback below.
-*/
-
-function getCurrentDayCode(){
-
-const d=currentWeekday();
-
-if(d==="Sun") return "D1";
-if(d==="Mon") return "D2";
-if(d==="Tue") return "TUESDAY";
-if(d==="Wed") return "D3";
-if(d==="Thu") return "D4";
-
-return "WEEKEND";
-
-}
-
-
-/* =========================================================
-GET PERSONAL SCHEDULE
-========================================================= */
-
-function getPersonalSchedule(){
-
-if(!currentProfile){
-
-return null;
-
-}
-
-const day=getCurrentDayCode();
-
-if(day==="WEEKEND")
-return [];
-
-if(day==="TUESDAY"){
-
-return buildTuesdaySchedule();
-
-}
-
-if(currentProfile.type==="student"){
-
-return buildSchedule(
-studentSchedule[day],
-bellSchedule.regular
-);
-
-}
-
-return buildSchedule(
-teacherSchedule[day],
-bellSchedule.regular
-);
-
-}
-
-
-/* =========================================================
-BUILD SCHEDULE
-========================================================= */
-
-function buildSchedule(subjects,times){
-
-return times.map(item=>{
-
-if(item.period){
-
-const data =
-subjects[item.period];
-
-return {
-
-name:data ? data[0] : "Free Period",
-
-room:data ? data[1] : "",
-
-start:item.start,
-
-end:item.end,
-
-type:data ? "class" : "free",
-
-period:item.period
-
-};
-
-}
-
-return item;
-
+items.push({
+kind:"homeroom",
+name:"Homeroom",
+room:profile.homeroom,
+start:bell.homeroom[0],
+end:bell.homeroom[1]
 });
 
+const keys=["P1","P2","P3","P4","P5","P6"];
+
+keys.forEach((key,i)=>{
+
+const previous=i===0
+? bell.homeroom
+: bell.periods[keys[i-1]];
+
+const current=bell.periods[key];
+
+const gap=hmMinutes(current[0])-hmMinutes(previous[1]);
+
+if(gap>0){
+
+items.push({
+kind:"transition",
+name:"Transition",
+room:"Get ready",
+start:previous[1],
+end:current[0]
+});
 }
 
+const subject=data[key];
 
-/* =========================================================
-TUESDAY
-========================================================= */
+items.push({
+kind:"period",
+name:subject ? subject[0] : "Free Period",
+room:subject ? subject[1] : (profile.type==="teacher"?"Available":"—"),
+start:current[0],
+end:current[1],
+free:!subject
+});
 
-function buildTuesdaySchedule(){
+const br=bell.breaks.find(x=>x[0]===current[1]);
 
-const base=bellSchedule.tuesday;
+if(br){
+items.push({
+kind:"break",
+name:"Break",
+room:"",
+start:br[0],
+end:br[1]
+});
+}
+});
 
-let subjects;
 
-if(currentProfile.type==="student"){
+/* TUESDAY TEACHER MEETINGS */
 
-/*
-Tuesday follows the same P1-P6 subject structure.
-Exact D-day rotation can be connected once the
-school's D1-D6 calendar is entered.
-*/
+if(profile.type==="teacher" && bell.meetings){
 
-subjects=studentSchedule.D1;
+const p6=bell.periods.P6;
 
-}else{
+if(hmMinutes(bell.meetings[0])>hmMinutes(p6[1])){
 
-subjects=teacherSchedule.D1;
-
+items.push({
+kind:"transition",
+name:"Transition",
+room:"Meeting prep",
+start:p6[1],
+end:bell.meetings[0]
+});
 }
 
-const result=buildSchedule(subjects,base);
-
-if(currentProfile.type==="teacher"){
-
-result.push({
-
+items.push({
+kind:"meeting",
 name:"Faculty / Departmental Meetings",
-
-room:"Staff / Assigned Meeting Room",
-
-start:"13:30",
-
-end:"14:55",
-
-type:"meeting"
-
+room:"Meetings",
+start:bell.meetings[0],
+end:bell.meetings[1]
 });
-
-}else{
-
-result.push({
-
-name:"No after-school activities yet",
-
-room:"—",
-
-start:"13:30",
-
-end:"14:55",
-
-type:"studentAfter"
-
-});
-
 }
 
-return result;
-
+return items;
 }
 
 
-/* =========================================================
-SCHEDULE RENDER
-========================================================= */
+/* ---------------- CURRENT STATE ---------------- */
 
-function updateSchedule(){
+function stateOf(items,d){
+
+const now=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
+
+for(let i=0;i<items.length;i++){
+
+const item=items[i];
+
+const s=hmMinutes(item.start);
+const e=hmMinutes(item.end);
+
+if(now>=s && now<e){
+return {
+type:"current",
+item:item,
+seconds:(e-now)*60
+};
+}
+
+if(now<s){
+return {
+type:i===0?"before":"between",
+item:item,
+seconds:(s-now)*60
+};
+}
+}
+
+return {type:"done"};
+}
+
+
+/* ---------------- PROFILE UI ---------------- */
+
+function updateProfile(){
+
+const guest=!currentProfile;
+
+if(guest){
+
+document.getElementById("heroGreeting").textContent="Welcome to TROM";
+document.getElementById("heroEyebrow").textContent="TROM DIGITAL PORTAL";
+document.getElementById("heroText").textContent=
+"Explore TROM news, weather, media, events and TROM COUNTRY.";
+
+document.getElementById("personalGreeting").textContent="TROM Guest";
+document.getElementById("personalName").textContent="Guest";
+document.getElementById("personalRole").textContent="Public TROM access";
+
+["pId","pSchool","pGrade","pRoom","pPoints","pBirthday"].forEach(id=>{
+document.getElementById(id).textContent="—";
+});
+
+document.getElementById("profileName").textContent="Guest";
+document.getElementById("profileRole").textContent="Public TROM access";
+document.getElementById("profileId").textContent="—";
+document.getElementById("profileDob").textContent="—";
+document.getElementById("profileSchool").textContent="—";
+document.getElementById("profileGrade").textContent="—";
+document.getElementById("profileHomeroom").textContent="—";
+document.getElementById("profilePoints").textContent="—";
+
+document.getElementById("topAvatarText").textContent="T";
+document.getElementById("topAvatarImg").classList.add("hidden");
+
+return;
+}
+
+
+document.getElementById("heroGreeting").textContent=
+greeting(currentProfile.shortName);
+
+document.getElementById("heroEyebrow").textContent=
+`MY TROM • ${currentProfile.role.toUpperCase()}`;
+
+document.getElementById("heroText").textContent=
+currentProfile.type==="student"
+?"Your personalized school day, live schedule and TROM information — all in one place."
+:"Your personalized teaching day, live schedule and TROM information — all in one place.";
+
+document.getElementById("personalGreeting").textContent=
+greeting(currentProfile.shortName);
+
+document.getElementById("personalName").textContent=
+currentProfile.name;
+
+document.getElementById("personalRole").textContent=
+currentProfile.role;
+
+document.getElementById("pId").textContent=currentProfile.id;
+document.getElementById("pSchool").textContent=SCHOOL;
+document.getElementById("pGrade").textContent=currentProfile.grade;
+document.getElementById("pRoom").textContent=currentProfile.homeroom;
+document.getElementById("pPoints").textContent=currentProfile.points;
+document.getElementById("pBirthday").textContent=currentProfile.dob;
+
+document.getElementById("profileName").textContent=currentProfile.name;
+document.getElementById("profileRole").textContent=currentProfile.role;
+document.getElementById("profileId").textContent=currentProfile.id;
+document.getElementById("profileDob").textContent=currentProfile.dob;
+document.getElementById("profileSchool").textContent=SCHOOL;
+document.getElementById("profileGrade").textContent=currentProfile.grade;
+document.getElementById("profileHomeroom").textContent=currentProfile.homeroom;
+document.getElementById("profilePoints").textContent=currentProfile.points;
+
+document.getElementById("topAvatarText").textContent=
+currentProfile.shortName.charAt(0);
+
+loadPhoto();
+}
+
+
+/* ---------------- HOME LIVE INFO ---------------- */
+
+function updateHome(){
+
+const d=bahrainNow();
+
+document.getElementById("heroTime").textContent=
+d.toLocaleTimeString("en-US",{
+hour:"numeric",
+minute:"2-digit",
+second:"2-digit"
+});
+
+document.getElementById("heroDate").textContent=
+d.toLocaleDateString("en-US",{
+weekday:"long",
+month:"long",
+day:"numeric",
+year:"numeric"
+});
+
+document.body.classList.remove(
+"time-morning",
+"time-afternoon",
+"time-evening",
+"time-night"
+);
+
+const h=d.getHours();
+
+if(h>=5 && h<12)
+document.body.classList.add("time-morning");
+else if(h>=12 && h<18)
+document.body.classList.add("time-afternoon");
+else if(h>=18 && h<23)
+document.body.classList.add("time-evening");
+else
+document.body.classList.add("time-night");
+
 
 if(!currentProfile){
 
-return;
+document.getElementById("cycleLabel").textContent="TROM";
+document.getElementById("dayType").textContent="Public portal";
 
+document.getElementById("schoolCountdown").textContent="Explore";
+document.getElementById("schoolCountdownSub").textContent="TROM is open";
+
+document.getElementById("currentHome").textContent="Guest";
+document.getElementById("currentHomeSub").textContent="Sign in for your schedule";
+document.getElementById("currentRoom").textContent="—";
+document.getElementById("currentStatus").textContent="Public access";
+
+return;
 }
 
-const schedule=getPersonalSchedule();
 
-const badge=
-document.getElementById("todayBadge");
+document.getElementById("heroGreeting").textContent=
+greeting(currentProfile.shortName);
 
-const pageBadge=
-document.getElementById("schedulePageDay");
+if(weekend(d)){
 
-const day=getCurrentDayCode();
+document.getElementById("cycleLabel").textContent="Weekend";
+document.getElementById("dayType").textContent="Friday & Saturday";
 
-if(day==="WEEKEND"){
+document.getElementById("schoolCountdown").textContent="Weekend";
+document.getElementById("schoolCountdownSub").textContent="No classes";
 
-badge.textContent="Weekend";
-pageBadge.textContent="Weekend";
+document.getElementById("currentHome").textContent="Weekend";
+document.getElementById("currentHomeSub").textContent="Next school day: Sunday";
+document.getElementById("currentRoom").textContent="—";
+document.getElementById("currentStatus").textContent="No classes";
 
-document.getElementById("todaySchedule")
-.innerHTML=
-`<div class="schedule-row">
-<div class="schedule-subject">Weekend</div>
-<div>Friday & Saturday</div>
+return;
+}
+
+
+if(holiday(d)){
+
+document.getElementById("cycleLabel").textContent="Holiday";
+document.getElementById("dayType").textContent="Cycle paused";
+
+document.getElementById("schoolCountdown").textContent="No school";
+document.getElementById("schoolCountdownSub").textContent="Holiday";
+
+document.getElementById("currentHome").textContent="Holiday";
+document.getElementById("currentHomeSub").textContent="Cycle paused";
+document.getElementById("currentRoom").textContent="—";
+document.getElementById("currentStatus").textContent="Holiday";
+
+return;
+}
+
+
+const cycle=getCycle(d);
+const bell=bellFor(d);
+const items=scheduleItems(currentProfile,d);
+const state=stateOf(items,d);
+
+document.getElementById("cycleLabel").textContent=
+`Day ${cycle}`;
+
+document.getElementById("dayType").textContent=
+bell.label;
+
+
+const end=hmMinutes(
+currentProfile.type==="teacher"
+?bell.teacherEnd
+:bell.studentEnd
+);
+
+const now=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
+
+if(now<end){
+
+document.getElementById("schoolCountdown").textContent=
+duration((end-now)*60);
+
+document.getElementById("schoolCountdownSub").textContent=
+`until ${time12(currentProfile.type==="teacher"?bell.teacherEnd:bell.studentEnd)}`;
+
+}else{
+
+document.getElementById("schoolCountdown").textContent="Finished";
+
+document.getElementById("schoolCountdownSub").textContent=
+`ended ${time12(currentProfile.type==="teacher"?bell.teacherEnd:bell.studentEnd)}`;
+}
+
+
+if(state.type==="current"){
+
+document.getElementById("currentHome").textContent=
+state.item.name;
+
+document.getElementById("currentHomeSub").textContent=
+`${duration(state.seconds)} left`;
+
+document.getElementById("currentRoom").textContent=
+state.item.room||"—";
+
+document.getElementById("currentStatus").textContent=
+state.item.kind==="transition"
+?"Transition"
+:"NOW";
+
+}else if(state.type==="before" || state.type==="between"){
+
+document.getElementById("currentHome").textContent=
+state.item.name;
+
+document.getElementById("currentHomeSub").textContent=
+`in ${duration(state.seconds)}`;
+
+document.getElementById("currentRoom").textContent=
+state.item.room||"—";
+
+document.getElementById("currentStatus").textContent="NEXT";
+
+}else{
+
+document.getElementById("currentHome").textContent="Dismissed";
+
+document.getElementById("currentHomeSub").textContent=
+`Day ended ${time12(currentProfile.type==="teacher"?bell.teacherEnd:bell.studentEnd)}`;
+
+document.getElementById("currentRoom").textContent="—";
+document.getElementById("currentStatus").textContent="DAY COMPLETE";
+}
+}
+
+
+/* ---------------- SCHEDULE PAGE ---------------- */
+
+function renderSchedule(){
+
+const d=bahrainNow();
+
+document.getElementById("scheduleDate").textContent=
+d.toLocaleDateString("en-US",{
+weekday:"long",
+month:"long",
+day:"numeric",
+year:"numeric"
+});
+
+if(weekend(d)){
+
+document.getElementById("scheduleDay").textContent="Weekend";
+document.getElementById("scheduleType").textContent="Friday & Saturday";
+
+document.getElementById("scheduleList").innerHTML=
+`<div class="card">🌿 It's the weekend. There are no school classes scheduled today.</div>`;
+
+return;
+}
+
+
+if(holiday(d)){
+
+document.getElementById("scheduleDay").textContent="Holiday";
+document.getElementById("scheduleType").textContent="Cycle paused";
+
+document.getElementById("scheduleList").innerHTML=
+`<div class="card">🎉 Today is a school holiday. The 6-day cycle is paused.</div>`;
+
+return;
+}
+
+
+const bell=bellFor(d);
+const cycle=getCycle(d);
+
+document.getElementById("scheduleDay").textContent=
+`Day ${cycle}`;
+
+document.getElementById("scheduleType").textContent=
+bell.label;
+
+document.getElementById("scheduleRole").textContent=
+currentProfile ? currentProfile.role : "Guest";
+
+
+if(!currentProfile){
+
+document.getElementById("scheduleList").innerHTML=
+`<div class="card">
+🔐 Sign in with a Citizen ID to see your personalized schedule.
 </div>`;
 
 return;
-
-}
-
-badge.textContent=
-day==="TUESDAY"
-? "Tuesday • Short Day"
-: day;
-
-pageBadge.textContent=badge.textContent;
-
-const list =
-document.getElementById("todaySchedule");
-
-const full =
-document.getElementById("fullSchedule");
-
-renderSchedule(schedule,list);
-
-renderSchedule(schedule,full);
-
-updateCurrentSummary(schedule);
-
-updateSchoolCountdown(schedule);
-
 }
 
 
-/* =========================================================
-RENDER ROWS
-========================================================= */
+const items=scheduleItems(currentProfile,d);
 
-function renderSchedule(schedule,container){
+const now=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
 
-if(!schedule){
+document.getElementById("scheduleList").innerHTML=
+items.map(item=>{
 
-container.innerHTML="";
-
-return;
-
-}
-
-const now=minutesNow();
-
-container.innerHTML="";
-
-schedule.forEach(item=>{
-
-if(item.type==="transition"){
-
-const row=document.createElement("div");
-
-row.className="schedule-row transition";
-
-row.innerHTML=
-`<div>↔</div>
-<div>5-minute transition</div>
-<div></div>
-<div></div>`;
-
-container.appendChild(row);
-
-return;
-
-}
-
-const start=timeToMinutes(item.start);
-
-const end=timeToMinutes(item.end);
+const s=hmMinutes(item.start);
+const e=hmMinutes(item.end);
 
 let state="upcoming";
+let status="UPCOMING";
+let statusClass="status-up";
+let countdown="";
 
-if(now>=end)
+if(now>=e){
+
 state="completed";
+status=item.kind==="break"?"PASSED":"COMPLETED";
+statusClass="status-done";
 
-if(now>=start && now<end)
+}else if(now>=s && now<e){
+
 state="current";
 
-const row=document.createElement("div");
+if(item.kind==="break"){
+status="BREAK";
+statusClass="status-break";
+}else if(item.kind==="transition"){
+status="TRANSITION";
+statusClass="status-up";
+}else{
+status="NOW";
+statusClass="status-now";
+}
 
-row.className=
-"schedule-row "+state;
-
-if(item.type==="break")
-row.classList.add("break");
-
-let statusHTML="";
-
-if(state==="current"){
-
-const secondsLeft =
-Math.max(
-0,
-(end*60) -
-(now*60) -
-(new Date().getSeconds())
-);
-
-statusHTML=
-`<div class="status now">
-<div>● NOW</div>
-<div class="live-count">
-${formatRemaining(secondsLeft)} left
-</div>
-</div>`;
-
-}else if(state==="completed"){
-
-statusHTML=
-`<div class="status done">
-DONE
-</div>`;
+countdown=
+`<div class="row-count">${duration((e-now)*60)} left</div>`;
 
 }else{
 
-const secondsUntil=
-Math.max(
-0,
-(start*60) -
-(now*60) -
-new Date().getSeconds()
-);
-
-statusHTML=
-`<div class="status next">
-UPCOMING
-<div class="live-count">
-in ${formatRemaining(secondsUntil)}
-</div>
-</div>`;
-
+countdown=
+`<div class="row-count">in ${duration((s-now)*60)}</div>`;
 }
 
-let name=item.name;
 
-if(item.type==="break")
-name="☕ "+name;
-
-if(item.type==="meeting")
-name="👥 "+name;
-
-if(item.type==="studentAfter")
-name="🎒 "+name;
-
-if(item.type==="afterSchool")
-name="🎯 "+name;
-
-row.innerHTML=`
-
+return `
+<div class="schedule-row ${state} ${item.kind}">
 <div class="schedule-time">
-${item.start} – ${item.end}
+${time12(item.start)}<br>– ${time12(item.end)}
 </div>
 
 <div>
-
-<div class="schedule-subject">
-${name}
-</div>
-
+<div class="schedule-name">
 ${
-item.room
-?
-`<div class="schedule-room">
-Room: ${item.room}
-</div>`
-:
-""
+item.kind==="break"?"☕":
+item.kind==="transition"?"🔄":
+item.kind==="meeting"?"👥":
+item.kind==="homeroom"?"🏫":""
 }
-
+${item.name}
 </div>
 
 <div class="schedule-room">
-${
-item.period
-? item.period
-: ""
-}
+${item.room||""}
+</div>
 </div>
 
-${statusHTML}
+<div class="status ${statusClass}">
+${status}
+</div>
 
+${countdown}
+</div>`;
+}).join("");
+
+
+const end=hmMinutes(
+currentProfile.type==="teacher"
+?bell.teacherEnd
+:bell.studentEnd
+);
+
+const dismissal=document.getElementById("dismissalCard");
+
+if(now>=end){
+
+dismissal.classList.remove("hidden");
+
+if(currentProfile.type==="student" && d.getDay()===2){
+
+dismissal.innerHTML=`
+🎒 <strong>Short day complete</strong>
+<div style="color:var(--muted);margin-top:5px">
+Class dismissed at 1:25 PM • No afterschool activities yet.
+</div>`;
+
+}else if(currentProfile.type==="teacher" && d.getDay()===2){
+
+dismissal.innerHTML=`
+👩‍🏫 <strong>Meetings complete</strong>
+<div style="color:var(--muted);margin-top:5px">
+Class/work day finished at 2:55 PM.
+</div>`;
+
+}else{
+
+dismissal.innerHTML=`
+🎉 <strong>CLASS DISMISSED</strong>
+<div style="color:var(--muted);margin-top:5px">
+2:55 PM • After-school activities start at 3:10 PM.
+</div>`;
+}
+
+}else{
+
+dismissal.classList.add("hidden");
+}
+}
+
+
+/* ---------------- NEWS ---------------- */
+
+const NEWS=[
+
+{
+icon:"🏛️",
+tag:"National",
+title:"Welcome to the TROM Newsroom",
+text:"A central place for official announcements, national stories and updates from across TROM."
+},
+
+{
+icon:"🌤️",
+tag:"Weather",
+title:"TROM Weather is live",
+text:"TROM Weather uses live Bahrain weather data and presents it inside the TROM portal."
+},
+
+{
+icon:"🤖",
+tag:"Technology",
+title:"TROM AI is online",
+text:"The TROM assistant can answer TROM questions and useful everyday questions."
+},
+
+{
+icon:"🏫",
+tag:"Education",
+title:"My TROM school dashboard",
+text:"Personalized schedules show rooms, transitions, current classes and exact time remaining."
+},
+
+{
+icon:"📺",
+tag:"Media",
+title:"TROM TV",
+text:"A dedicated home for broadcasts, videos, interviews and national coverage."
+},
+
+{
+icon:"🌍",
+tag:"Country",
+title:"TROM COUNTRY",
+text:"Explore geography, government, history, population, cities and national identity."
+}
+
+];
+
+
+function newsCard(n){
+
+return `
+<article class="card news-card">
+<div class="news-image">${n.icon}</div>
+
+<div class="news-body">
+<span class="tag">${n.tag}</span>
+
+<div class="news-title">${n.title}</div>
+
+<div class="news-text">${n.text}</div>
+</div>
+</article>`;
+}
+
+
+function renderNews(){
+
+document.getElementById("homeNews").innerHTML=
+NEWS.slice(0,3).map(newsCard).join("");
+
+document.getElementById("newsGrid").innerHTML=
+NEWS.map(newsCard).join("");
+}
+
+
+/* ---------------- WEATHER ---------------- */
+
+let weatherData=null;
+
+const WEATHER_URL=
+"https://api.open-meteo.com/v1/forecast?latitude=26.0667&longitude=50.5577&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code&timezone=Asia%2FBahrain";
+
+
+const weatherNames={
+0:"Clear sky",
+1:"Mainly clear",
+2:"Partly cloudy",
+3:"Overcast",
+45:"Fog",
+48:"Rime fog",
+51:"Light drizzle",
+53:"Drizzle",
+55:"Heavy drizzle",
+61:"Light rain",
+63:"Rain",
+65:"Heavy rain",
+71:"Light snow",
+73:"Snow",
+75:"Heavy snow",
+80:"Rain showers",
+81:"Rain showers",
+82:"Heavy rain showers",
+95:"Thunderstorm",
+96:"Thunderstorm",
+99:"Thunderstorm"
+};
+
+
+const weatherEmoji={
+0:"☀️",
+1:"🌤️",
+2:"⛅",
+3:"☁️",
+45:"🌫️",
+48:"🌫️",
+51:"🌦️",
+53:"🌦️",
+55:"🌧️",
+61:"🌧️",
+63:"🌧️",
+65:"🌧️",
+71:"🌨️",
+73:"🌨️",
+75:"❄️",
+80:"🌦️",
+81:"🌧️",
+82:"⛈️",
+95:"⛈️",
+96:"⛈️",
+99:"⛈️"
+};
+
+
+function renderWeather(){
+
+const box=document.getElementById("weatherBox");
+
+if(!weatherData){
+
+box.innerHTML=`
+<div class="weather-main">
+<div>
+<div class="weather-temp">—°</div>
+<div class="weather-desc">Loading TROM Weather…</div>
+</div>
+<div style="font-size:60px">🌤️</div>
+</div>`;
+
+return;
+}
+
+
+const c=weatherData.current;
+
+box.innerHTML=`
+<div class="weather-main">
+<div>
+<div class="eyebrow">TROM WEATHER</div>
+
+<div class="weather-temp">
+${Math.round(c.temperature_2m)}°C
+</div>
+
+<div class="weather-desc">
+${weatherNames[c.weather_code]||"Current conditions"}
+</div>
+</div>
+
+<div style="font-size:65px">
+${weatherEmoji[c.weather_code]||"🌤️"}
+</div>
+</div>
+
+<div class="weather-meta">
+<span>🌡️ Feels ${Math.round(c.apparent_temperature)}°C</span>
+<span>💧 ${c.relative_humidity_2m}% humidity</span>
+<span>💨 ${Math.round(c.wind_speed_10m)} km/h</span>
+</div>
+
+<div class="weather-refresh">
+Live Bahrain data • TROM Weather
+</div>
 `;
-
-container.appendChild(row);
-
-});
-
 }
 
 
-/* =========================================================
-CURRENT SUMMARY
-========================================================= */
-
-function updateCurrentSummary(schedule){
-
-if(!schedule || !schedule.length)
-return;
-
-const now=minutesNow();
-
-let current=null;
-let next=null;
-
-schedule.forEach(item=>{
-
-if(!item.start || !item.end)
-return;
-
-const s=timeToMinutes(item.start);
-const e=timeToMinutes(item.end);
-
-if(now>=s && now<e)
-current=item;
-
-if(now<s && !next)
-next=item;
-
-});
-
-const el=
-document.getElementById("currentClassSummary");
-
-if(current){
-
-const secondsLeft =
-current.end.split(":")[0]*3600+
-current.end.split(":")[1]*60-
-(Math.floor(now)*60)-
-new Date().getSeconds();
-
-el.textContent=
-`You are currently in ${current.name}. `+
-`${formatRemaining(Math.max(0,secondsLeft))} remaining.`;
-
-return;
-
-}
-
-if(next){
-
-const diff=
-timeToMinutes(next.start)-now;
-
-el.textContent=
-`Your next period is ${next.name}, `+
-`starting in ${Math.max(0,diff)} minutes.`;
-
-return;
-
-}
-
-el.textContent=
-"Your scheduled school/work day is finished.";
-
-}
-
-
-/* =========================================================
-SCHOOL COUNTDOWN
-========================================================= */
-
-function updateSchoolCountdown(schedule){
-
-if(!schedule || !schedule.length)
-return;
-
-const now=minutesNow();
-
-let current=null;
-let next=null;
-
-for(const item of schedule){
-
-if(!item.start || !item.end)
-continue;
-
-const s=timeToMinutes(item.start);
-const e=timeToMinutes(item.end);
-
-if(now>=s && now<e)
-current=item;
-
-if(now<s && !next)
-next=item;
-
-}
-
-const label=
-document.getElementById("schoolCountdownLabel");
-
-const value=
-document.getElementById("schoolCountdown");
-
-if(current){
-
-label.textContent=
-current.type==="meeting"
-? "Meeting in progress"
-: "Currently";
-
-const end=
-timeToMinutes(current.end);
-
-const remaining=
-(end-now)*60-new Date().getSeconds();
-
-value.textContent=
-`${current.name} • ${formatRemaining(Math.max(0,remaining))}`;
-
-}else if(next){
-
-label.textContent="Next";
-
-const diff=
-timeToMinutes(next.start)-now;
-
-value.textContent=
-`${next.name} in ${Math.max(0,diff)} min`;
-
-}else{
-
-label.textContent="School / work status";
-
-if(isTuesday()){
-
-if(currentProfile.type==="teacher"){
-
-value.textContent=
-"Tuesday meetings / work continue until 2:55 PM";
-
-}else{
-
-value.textContent=
-"No after-school activities yet";
-
-}
-
-}else{
-
-value.textContent=
-"Class dismissed at 2:55 PM";
-
-}
-
-}
-
-}
-
-
-/* =========================================================
-WEATHER
-========================================================= */
-
-async function loadWeather(){
+async function getWeather(){
 
 try{
 
-const url=
-"https://api.open-meteo.com/v1/forecast"+
-"?latitude=26.0667"+
-"&longitude=50.5577"+
-"&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code"+
-"&timezone=Asia%2FBahrain";
+const response=await fetch(
+WEATHER_URL,
+{cache:"no-store"}
+);
 
-const response=
-await fetch(url);
+weatherData=await response.json();
 
-const data=
-await response.json();
+renderWeather();
 
-const current=data.current;
+}catch(e){
 
-document.getElementById("temperature")
-.textContent=
-Math.round(current.temperature_2m)+"°";
-
-document.getElementById("feels")
-.textContent=
-Math.round(current.apparent_temperature)+"°";
-
-document.getElementById("humidity")
-.textContent=
-current.relative_humidity_2m+"%";
-
-document.getElementById("wind")
-.textContent=
-Math.round(current.wind_speed_10m)+" km/h";
-
-const weather=
-weatherText(current.weather_code);
-
-document.getElementById("weatherDescription")
-.textContent=
-weather.text;
-
-document.getElementById("weatherIcon")
-.textContent=
-weather.icon;
-
-}catch(error){
-
-document.getElementById("weatherDescription")
-.textContent=
-"Weather temporarily unavailable.";
-
+document.getElementById("weatherBox").innerHTML=
+"TROM Weather is temporarily unavailable.";
 }
-
 }
 
 
-function weatherText(code){
+/* ---------------- NAVIGATION ---------------- */
 
-if(code===0)
-return {text:"Clear sky",icon:"☀️"};
+function showPage(page){
 
-if([1,2,3].includes(code))
-return {text:"Partly cloudy",icon:"⛅"};
-
-if([45,48].includes(code))
-return {text:"Foggy",icon:"🌫️"};
-
-if([51,53,55,56,57].includes(code))
-return {text:"Drizzle",icon:"🌦️"};
-
-if([61,63,65,66,67].includes(code))
-return {text:"Rain",icon:"🌧️"};
-
-if([80,81,82].includes(code))
-return {text:"Rain showers",icon:"🌦️"};
-
-if([95,96,99].includes(code))
-return {text:"Thunderstorm",icon:"⛈️"};
-
-return {text:"Current conditions",icon:"🌤️"};
-
-}
-
-
-/* =========================================================
-PAGE NAVIGATION
-========================================================= */
-
-function showPage(id){
-
-document.querySelectorAll(".page")
-.forEach(page=>{
-page.classList.remove("active");
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
 });
 
-const page=document.getElementById(id);
+document.getElementById(page).classList.add("active");
 
-if(page)
-page.classList.add("active");
+document.querySelectorAll(".nav-btn").forEach(b=>{
+b.classList.toggle(
+"active",
+b.dataset.page===page
+);
+});
+
+if(page==="schedule"){
+renderSchedule();
+}
+
+if(page==="profile"){
+updateProfile();
+}
 
 window.scrollTo({
 top:0,
 behavior:"smooth"
 });
-
 }
 
 
-/* =========================================================
-AI ASSISTANT
-========================================================= */
+/* ---------------- PHOTO ---------------- */
 
-function toggleAI(){
+function choosePhoto(){
 
-document.getElementById("aiPanel")
-.classList.toggle("open");
+if(!currentProfile)return;
 
+document.getElementById("photoInput").click();
 }
 
 
-function addMessage(text,type){
+document.getElementById("photoInput").addEventListener(
+"change",
+e=>{
 
-const box=
-document.getElementById("aiMessages");
+const file=e.target.files[0];
 
-const msg=
-document.createElement("div");
+if(!file || !currentProfile)return;
 
-msg.className=
-"message "+type;
+const reader=new FileReader();
 
-msg.innerHTML=
-text;
+reader.onload=()=>{
 
-box.appendChild(msg);
+localStorage.setItem(
+"trom_photo_"+currentProfile.id,
+reader.result
+);
 
-box.scrollTop=
-box.scrollHeight;
+loadPhoto();
+};
 
+reader.readAsDataURL(file);
+}
+);
+
+
+function loadPhoto(){
+
+if(!currentProfile)return;
+
+const data=localStorage.getItem(
+"trom_photo_"+currentProfile.id
+);
+
+const img=document.getElementById("profileImage");
+const initial=document.getElementById("profileInitial");
+
+if(data){
+
+img.src=data;
+img.classList.remove("hidden");
+initial.classList.add("hidden");
+
+}else{
+
+img.classList.add("hidden");
+initial.textContent=
+currentProfile.shortName.charAt(0);
+
+initial.classList.remove("hidden");
+}
 }
 
 
-function sendAI(){
+/* ---------------- AI ---------------- */
 
-const input=
-document.getElementById("aiInput");
+function aiAnswer(question){
 
-const question=
-input.value.trim();
+const q=question.toLowerCase().trim();
+const d=bahrainNow();
 
-if(!question)
-return;
+if(/hello|hi|hey|yo/.test(q)){
 
-addMessage(question,"user");
+return currentProfile
+? `Hi ${currentProfile.shortName}! 👋 What would you like to know?`
+: "Hi! 👋 What would you like to know about TROM?";
+}
+
+
+if(/what.*trom|what is trom|trom mean/.test(q)){
+
+return "TROM means The Republic of Moe — the fictional country and digital national portal we're building.";
+}
+
+
+if(/weather|temperature|hot|cold/.test(q)){
+
+if(!weatherData)
+return "I'm loading TROM Weather right now.";
+
+const c=weatherData.current;
+
+return `TROM Weather is ${Math.round(c.temperature_2m)}°C with ${weatherNames[c.weather_code]||"current conditions"}. It feels like ${Math.round(c.apparent_temperature)}°C.`;
+}
+
+
+if(/what time|current time|clock/.test(q)){
+
+return `The current Bahrain time is ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"})}.`;
+}
+
+
+if(/who am i|my name/.test(q)){
+
+return currentProfile
+? `You are signed in as ${currentProfile.name}.`
+: "You're browsing TROM as a guest.";
+}
+
+
+if(/citizen id|my id/.test(q)){
+
+return currentProfile
+? `Your Citizen ID is ${currentProfile.id}.`
+: "Sign in to see your Citizen ID.";
+}
+
+
+if(/birthday|dob|date of birth/.test(q)){
+
+return currentProfile
+? `Your birthday on your TROM profile is ${currentProfile.dob}.`
+: "Sign in to see your birthday.";
+}
+
+
+if(/next class|next lesson|what.*next/.test(q)){
+
+if(!currentProfile)
+return "Sign in to My TROM and I can check your personal schedule.";
+
+const items=scheduleItems(currentProfile,d);
+const now=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
+
+const next=items.find(i=>
+hmMinutes(i.start)>now &&
+(i.kind==="period" || i.kind==="meeting")
+);
+
+return next
+? `Your next scheduled class is ${next.name} at ${time12(next.start)} in ${next.room}.`
+: "You have no more scheduled classes today.";
+}
+
+
+if(/time left|how much time|how long.*left|when.*end/.test(q)){
+
+if(!currentProfile)
+return "Sign in to My TROM and I can calculate your live countdown.";
+
+const state=stateOf(scheduleItems(currentProfile,d),d);
+
+if(state.type==="current")
+return `${state.item.name} has ${duration(state.seconds)} left.`;
+
+if(state.type==="before" || state.type==="between")
+return `${state.item.name} starts in ${duration(state.seconds)}.`;
+
+return "There is no class running right now.";
+}
+
+
+if(/room/.test(q)){
+
+if(!currentProfile)
+return "Sign in to My TROM to check your room.";
+
+const state=stateOf(scheduleItems(currentProfile,d),d);
+
+return state.item
+? `Your current/next location is ${state.item.room||"not specified"}.`
+: `Your homeroom is ${currentProfile.homeroom}.`;
+}
+
+
+if(/tuesday|short day/.test(q)){
+
+return "Tuesday is the short day. P1 is 8:00–8:45, P2 8:50–9:35, P3 9:40–10:30, P4 10:55–11:40, P5 11:45–12:25 and P6 12:45–1:25. Students finish at 1:25 PM. Teachers have Faculty / Departmental Collaborative Meetings from 1:30–2:55 PM.";
+}
+
+
+if(/weekend/.test(q)){
+
+return "Friday and Saturday are the school weekend. The 6-day cycle pauses and continues on the next school day.";
+}
+
+
+if(/math|calculate|plus|minus|times|divide/.test(q)){
+
+const expression=q
+.replace(/[^0-9+\-*/().% ]/g,"")
+.trim();
+
+if(expression && /\d/.test(expression)){
+
+try{
+
+const result=Function(
+`"use strict";return (${expression})`
+)();
+
+if(Number.isFinite(result))
+return `The answer is ${result}.`;
+
+}catch(e){}
+}
+
+return "I can do simple maths. Try something like 27 × 8.";
+}
+
+
+if(/help|what can you do/.test(q)){
+
+return "I can help with TROM, your schedule, live class countdowns, rooms, school times, TROM Weather, simple maths and common questions.";
+}
+
+
+return "I can answer more TROM questions and common questions, but this version uses a built-in assistant rather than a full cloud AI.";
+}
+
+
+function askAI(){
+
+const input=document.getElementById("aiInput");
+const question=input.value.trim();
+
+if(!question)return;
+
+const box=document.getElementById("messages");
+
+box.innerHTML+=`
+<div class="msg user">${question}</div>`;
 
 input.value="";
 
 setTimeout(()=>{
 
-const answer=
-getAIAnswer(question);
+box.innerHTML+=`
+<div class="msg bot">${aiAnswer(question)}</div>`;
 
-addMessage(answer,"bot");
+box.scrollTop=box.scrollHeight;
 
-},350);
+},250);
+}
+
+
+document.getElementById("aiInput").addEventListener(
+"keydown",
+e=>{
+if(e.key==="Enter")askAI();
+}
+);
+
+
+/* ---------------- UPDATE ---------------- */
+
+function updateEverything(){
+
+updateProfile();
+updateHome();
+
+const active=document.querySelector(".page.active");
+
+if(active && active.id==="schedule"){
+renderSchedule();
+}
+}
+
+
+/* ---------------- START ---------------- */
+
+window.addEventListener("load",()=>{
+
+setTimeout(()=>{
+document.getElementById("loading").style.display="none";
+},500);
+
+
+renderNews();
+getWeather();
+
+
+const saved=localStorage.getItem("trom_profile");
+
+if(saved && profiles[saved]){
+
+currentProfile=profiles[saved];
+
+document.getElementById("lockScreen").style.display="none";
+document.getElementById("app").style.display="block";
 
 }
 
 
-function getAIAnswer(question){
+updateEverything();
 
-const q=
-question.toLowerCase();
 
-/* Greeting */
+setInterval(updateEverything,1000);
 
-if(
-q.includes("hello") ||
-q.includes("hi") ||
-q.includes("hey")
-){
-
-return currentProfile
-? `Hi ${currentProfile.firstName}! 👋 I'm your TROM Assistant. What would you like to know?`
-: `Hi! 👋 I'm the TROM Assistant. Ask me about TROM, school times, weather, news or anything I know about.`;
-
-}
-
-
-/* Current user */
-
-if(
-q.includes("who am i") ||
-q.includes("my name")
-){
-
-if(!currentProfile)
-return "You're currently using TROM as a guest.";
-
-return `You're ${currentProfile.fullName}. Your TROM profile identifies you as a ${currentProfile.role}.`;
-
-}
-
-
-/* Citizen ID */
-
-if(
-q.includes("citizen id") ||
-q.includes("my id")
-){
-
-if(!currentProfile)
-return "Citizen ID information is only available after signing in to My TROM.";
-
-return `Your Citizen ID is ${currentProfile.citizenID}.`;
-
-}
-
-
-/* Room */
-
-if(
-q.includes("room") ||
-q.includes("homeroom")
-){
-
-if(!currentProfile)
-return "Sign in to My TROM and I can tell you your personalized room.";
-
-return `Your homeroom is ${currentProfile.room}.`;
-
-}
-
-
-/* Birthday */
-
-if(
-q.includes("birthday") ||
-q.includes("born")
-){
-
-if(!currentProfile)
-return "Sign in to My TROM to view your personal birthday information.";
-
-return `Your birthday is ${currentProfile.birthday}. 🎂`;
-
-}
-
-
-/* School */
-
-if(
-q.includes("school")
-){
-
-return "Ibn Khaldun National School is the school connected to this TROM profile.";
-
-}
-
-
-/* Dismissal */
-
-if(
-q.includes("dismiss") ||
-q.includes("finish school") ||
-q.includes("school finish")
-){
-
-if(isTuesday())
-return currentProfile?.type==="teacher"
-? "Tuesday is the short day. Faculty/departamental meetings are scheduled after the student timetable and can continue toward 2:55 PM."
-: "Tuesday is the short day. The student timetable ends at 1:25 PM, and there are no after-school activities yet.";
-
-return "On regular days, the final class ends at 2:55 PM. 🎒";
-
-}
-
-
-/* Transition */
-
-if(
-q.includes("transition") ||
-q.includes("between classes")
-){
-
-return "There are 5 minutes between classes for transition. ↔️";
-
-}
-
-
-/* Tuesday */
-
-if(
-q.includes("tuesday")
-){
-
-if(currentProfile?.type==="teacher"){
-
-return "Tuesday is the short day. After the six short periods, Faculty / Departmental Collaborative Meetings are scheduled. TROM currently shows the teacher meeting period as 1:30 PM–2:55 PM.";
-
-}
-
-return "Tuesday is the short day. Students finish their six short periods at 1:25 PM. TROM currently shows: “No after-school activities yet.”";
-
-}
-
-
-/* Schedule */
-
-if(
-q.includes("schedule") ||
-q.includes("timetable") ||
-q.includes("class")
-){
-
-return "You can open the Schedule page to see every period, room, transition, current class, completed class and live countdown.";
-
-}
-
-
-/* Current */
-
-if(
-q.includes("what class") ||
-q.includes("current class") ||
-q.includes("now")
-){
-
-const summary=
-document.getElementById("currentClassSummary")
-?.textContent;
-
-return summary || "Open My TROM and I'll show your current schedule.";
-
-}
-
-
-/* Weather */
-
-if(
-q.includes("weather") ||
-q.includes("temperature") ||
-q.includes("hot")
-){
-
-const temp=
-document.getElementById("temperature")
-?.textContent;
-
-const desc=
-document.getElementById("weatherDescription")
-?.textContent;
-
-return `TROM Weather is currently ${temp}, with ${desc}. The displayed weather uses live Bahrain weather data. 🌤️`;
-
-}
-
-
-/* TROM */
-
-if(
-q.includes("what is trom") ||
-q.includes("what's trom") ||
-q.includes("republic of moe")
-){
-
-return "TROM stands for The Republic of Moe — a digital country portal with personalized services, national information, news, media, weather and more.";
-
-}
-
-
-/* News */
-
-if(
-q.includes("news")
-){
-
-return "You can open the Newsroom page for TROM announcements and national updates.";
-
-}
-
-
-/* Media */
-
-if(
-q.includes("tv") ||
-q.includes("gallery") ||
-q.includes("video")
-){
-
-return "TROM Media contains the National Gallery, TROM TV, video archives and event media.";
-
-}
-
-
-/* Country */
-
-if(
-q.includes("country") ||
-q.includes("government") ||
-q.includes("history") ||
-q.includes("cities")
-){
-
-return "Open TROM COUNTRY for geography, government, history, population, cities, currency, flag, anthem, national animal, holidays and international information.";
-
-}
-
-
-/* Thanks */
-
-if(
-q.includes("thank")
-){
-
-return "You're welcome! 😊";
-
-}
-
-
-/* General */
-
-return `
-I'm still learning! 🤖<br><br>
-I can currently help with:
-• your schedule<br>
-• current class and countdowns<br>
-• school dismissal<br>
-• Tuesday information<br>
-• 5-minute transitions<br>
-• your TROM profile<br>
-• weather<br>
-• TROM Newsroom<br>
-• TROM Country<br>
-• TROM Media<br>
-• general TROM questions
-`;
-
-}
-
-
-/* =========================================================
-INITIAL UI
-========================================================= */
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-/*
-Prevent accidental form submission.
-*/
-
-document
-.getElementById("accessCode")
-.addEventListener("keydown",e=>{
-if(e.key==="Enter")
-signIn();
-});
+setInterval(getWeather,10*60*1000);
 
 });
-
 </script>
 
 </body>
