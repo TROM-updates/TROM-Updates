@@ -1,172 +1,146 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f7f8fc">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>TROM — The Republic of Moe</title>
 
-<!-- OCR library for schedule photos -->
+<!-- OCR engine for schedule photos -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <style>
 :root{
 --text:#172033;
---muted:#697386;
---line:rgba(23,32,51,.09);
---card:rgba(255,255,255,.78);
---white:#fff;
---blue:#2878ff;
---purple:#7657ff;
---pink:#ec5ba7;
---green:#18b879;
---orange:#ff9f43;
+--muted:#69758a;
+--line:rgba(20,30,55,.09);
+--card:rgba(255,255,255,.76);
+--blue:#1677ff;
+--purple:#735cff;
+--pink:#ef55a5;
+--green:#19b978;
 --red:#ff3b45;
---shadow:0 20px 60px rgba(40,54,90,.12);
---soft-shadow:0 10px 30px rgba(40,54,90,.08);
+--orange:#ff9f43;
+--shadow:0 22px 65px rgba(40,50,90,.13);
+--soft:0 10px 30px rgba(40,50,90,.09);
 --radius:28px;
 }
 
 *{box-sizing:border-box}
 
-html{
-scroll-behavior:smooth;
-}
+html{scroll-behavior:smooth}
 
 body{
 margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
-color:var(--text);
-background:#f6f8fc;
 min-height:100vh;
+color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",
+"Segoe UI",Roboto,Arial,sans-serif;
+background:#f5f7fc;
 overflow-x:hidden;
 }
 
-button,input,textarea,select{
-font:inherit;
-}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
-button{
-cursor:pointer;
-}
-
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible{
-outline:3px solid rgba(40,120,255,.2);
-outline-offset:2px;
-}
-
-.hidden{
-display:none!important;
-}
-
-/* =========================================================
-DYNAMIC BACKGROUND
-========================================================= */
-
-#dynamicBackground{
+body:before{
+content:"";
 position:fixed;
 inset:0;
 z-index:-5;
-overflow:hidden;
-transition:background 1.5s ease;
+transition:background 1s ease;
+background:
+radial-gradient(circle at 10% 10%,rgba(100,190,255,.28),transparent 28%),
+radial-gradient(circle at 90% 10%,rgba(255,140,200,.22),transparent 27%),
+linear-gradient(135deg,#fbfdff,#f4f6ff 55%,#fff7fb);
 }
 
-#dynamicBackground:before,
-#dynamicBackground:after{
+body.morning:before{
+background:
+radial-gradient(circle at 15% 10%,rgba(255,190,70,.38),transparent 30%),
+radial-gradient(circle at 85% 12%,rgba(100,205,255,.30),transparent 30%),
+linear-gradient(135deg,#fffaf0,#eefaff 55%,#fff5fa);
+}
+
+body.afternoon:before{
+background:
+radial-gradient(circle at 12% 15%,rgba(255,188,70,.28),transparent 28%),
+radial-gradient(circle at 90% 20%,rgba(100,190,255,.26),transparent 28%),
+linear-gradient(135deg,#f0fbff,#f5f4ff 55%,#fff5fa);
+}
+
+body.evening:before{
+background:
+radial-gradient(circle at 20% 12%,rgba(255,137,60,.43),transparent 32%),
+radial-gradient(circle at 82% 15%,rgba(244,84,160,.30),transparent 30%),
+linear-gradient(135deg,#fff0df,#f5edff 52%,#fff0f6);
+}
+
+body.night:before{
+background:
+radial-gradient(circle at 20% 15%,rgba(91,103,220,.27),transparent 30%),
+radial-gradient(circle at 82% 10%,rgba(181,91,238,.22),transparent 28%),
+linear-gradient(135deg,#e9edfa,#f0ebfa 55%,#f7eaf2);
+}
+
+/* Weather atmosphere */
+body.weather-rain:after,
+body.weather-storm:after,
+body.weather-fog:after{
 content:"";
-position:absolute;
-border-radius:50%;
-filter:blur(30px);
-animation:float 18s ease-in-out infinite alternate;
+position:fixed;
+inset:0;
+z-index:-4;
+pointer-events:none;
 }
 
-#dynamicBackground:before{
-width:380px;
-height:380px;
-left:-100px;
-top:20%;
-background:rgba(70,170,255,.18);
+body.weather-rain:after{
+opacity:.25;
+background:repeating-linear-gradient(
+110deg,
+transparent 0 16px,
+rgba(90,145,210,.12) 17px 18px
+);
+animation:rain 1.2s linear infinite;
 }
 
-#dynamicBackground:after{
-width:430px;
-height:430px;
-right:-130px;
-top:45%;
-background:rgba(236,91,167,.14);
-animation-delay:-7s;
+body.weather-storm:after{
+background:rgba(100,100,150,.09);
+animation:flash 4s infinite;
 }
 
-body.morning #dynamicBackground{
-background:
-radial-gradient(circle at 15% 10%,rgba(255,193,88,.35),transparent 30%),
-radial-gradient(circle at 85% 12%,rgba(116,204,255,.30),transparent 30%),
-linear-gradient(135deg,#fffaf0,#edfaff 52%,#fff5fa);
+body.weather-fog:after{
+background:rgba(255,255,255,.25);
+backdrop-filter:blur(2px);
 }
 
-body.afternoon #dynamicBackground{
-background:
-radial-gradient(circle at 15% 15%,rgba(255,184,72,.22),transparent 30%),
-radial-gradient(circle at 90% 10%,rgba(94,187,255,.23),transparent 30%),
-linear-gradient(135deg,#f0fbff,#f7f6ff 55%,#fff5fa);
+@keyframes rain{
+from{transform:translateY(-30px)}
+to{transform:translateY(30px)}
 }
 
-body.evening #dynamicBackground{
-background:
-radial-gradient(circle at 18% 12%,rgba(255,151,67,.38),transparent 30%),
-radial-gradient(circle at 82% 10%,rgba(239,92,159,.28),transparent 30%),
-linear-gradient(135deg,#fff0df,#f6efff 55%,#fff0f6);
+@keyframes flash{
+0%,92%,100%{opacity:0}
+94%{opacity:.7}
+96%{opacity:0}
 }
 
-body.night #dynamicBackground{
-background:
-radial-gradient(circle at 18% 12%,rgba(90,100,220,.23),transparent 28%),
-radial-gradient(circle at 84% 10%,rgba(190,100,240,.18),transparent 27%),
-linear-gradient(135deg,#e9eef9,#f0ebf8 55%,#f7edf4);
+@keyframes rise{
+from{opacity:0;transform:translateY(18px)}
+to{opacity:1;transform:none}
 }
 
-body.weather-cloudy #dynamicBackground{
-background:
-radial-gradient(circle at 20% 12%,rgba(170,185,205,.30),transparent 30%),
-radial-gradient(circle at 85% 10%,rgba(190,200,215,.25),transparent 30%),
-linear-gradient(135deg,#edf1f5,#f1f3f8,#f6f4f7);
+@keyframes pulse{
+0%,100%{transform:scale(1)}
+50%{transform:scale(1.035)}
 }
 
-body.weather-rain #dynamicBackground{
-background:
-radial-gradient(circle at 20% 10%,rgba(88,135,190,.28),transparent 30%),
-radial-gradient(circle at 85% 15%,rgba(120,150,190,.22),transparent 30%),
-linear-gradient(135deg,#dce7f2,#e8edf5,#edf0f5);
-}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-body.weather-storm #dynamicBackground{
-background:
-radial-gradient(circle at 20% 10%,rgba(85,72,150,.30),transparent 30%),
-radial-gradient(circle at 85% 15%,rgba(100,100,150,.25),transparent 30%),
-linear-gradient(135deg,#d9dce8,#e6e5ef,#eeeaf1);
-}
-
-body.weather-clear.night #dynamicBackground{
-background:
-radial-gradient(circle at 18% 12%,rgba(68,81,170,.30),transparent 28%),
-radial-gradient(circle at 80% 12%,rgba(130,82,180,.25),transparent 27%),
-linear-gradient(135deg,#dfe5f5,#e8e1f1,#eee3ec);
-}
-
-@keyframes float{
-to{
-transform:translate(55px,-35px) scale(1.08);
-}
-}
-
-/* =========================================================
-LOCK SCREEN
-========================================================= */
+/* ---------------- LOCK SCREEN ---------------- */
 
 .lock{
 min-height:100vh;
@@ -176,51 +150,51 @@ padding:25px;
 }
 
 .lock-card{
-width:min(510px,100%);
-padding:40px;
+width:min(530px,100%);
+padding:42px;
 border-radius:36px;
-background:rgba(255,255,255,.75);
-border:1px solid rgba(255,255,255,.95);
+background:rgba(255,255,255,.78);
 backdrop-filter:blur(30px);
 -webkit-backdrop-filter:blur(30px);
-box-shadow:0 35px 100px rgba(40,54,90,.18);
-text-align:center;
-animation:appear .6s ease;
+border:1px solid rgba(255,255,255,.95);
+box-shadow:0 35px 100px rgba(45,55,95,.17);
+animation:rise .6s ease;
 }
 
 .logo{
 width:82px;
 height:82px;
+margin:0 auto 18px;
 border-radius:25px;
 display:grid;
 place-items:center;
-margin:0 auto 18px;
 color:white;
+font-size:27px;
 font-weight:950;
-font-size:29px;
 letter-spacing:-2px;
-background:linear-gradient(135deg,#247cff,#7657ff,#ed5ca7);
-box-shadow:0 16px 35px rgba(90,85,220,.25);
+background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));
+box-shadow:0 18px 38px rgba(74,83,220,.25);
 }
 
 .lock h1{
+text-align:center;
 margin:0;
-font-size:46px;
+font-size:44px;
 letter-spacing:-3px;
 }
 
 .lock-sub{
+text-align:center;
 color:var(--muted);
-margin:7px 0 27px;
+margin:8px 0 28px;
 }
 
 .lock-actions{
 display:grid;
-gap:11px;
+gap:12px;
 }
 
-.primary,
-.secondary{
+.primary,.secondary{
 border:0;
 border-radius:17px;
 padding:15px 18px;
@@ -230,8 +204,8 @@ transition:.2s;
 
 .primary{
 color:white;
-background:linear-gradient(135deg,#2878ff,#7657ff);
-box-shadow:0 13px 28px rgba(55,94,220,.23);
+background:linear-gradient(135deg,var(--blue),var(--purple));
+box-shadow:0 12px 28px rgba(60,90,220,.22);
 }
 
 .secondary{
@@ -240,182 +214,211 @@ background:white;
 border:1px solid var(--line);
 }
 
-.primary:hover,
-.secondary:hover{
+.primary:hover,.secondary:hover{
 transform:translateY(-2px);
 }
 
-.small-note{
-font-size:11px;
-color:#8c95a5;
-line-height:1.5;
-margin-top:18px;
+/* ---------------- ACCOUNT CREATION ---------------- */
+
+.create-panel{
+margin-top:20px;
+animation:rise .4s ease;
 }
 
-.login-panel,
-.signup-panel{
-text-align:left;
-animation:appear .35s ease;
+.create-header{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:20px;
 }
 
-.form-title{
-font-size:24px;
+.back{
+border:0;
+background:#f0f3f9;
+width:42px;
+height:42px;
+border-radius:14px;
+}
+
+.create-title{
+font-size:25px;
 font-weight:900;
-margin-bottom:5px;
 }
 
-.form-sub{
+.create-sub{
 color:var(--muted);
 font-size:13px;
-margin-bottom:18px;
+margin-top:2px;
 }
 
 .field{
-margin:11px 0;
+margin:13px 0;
 }
 
 .field label{
 display:block;
-font-size:11px;
-font-weight:850;
-text-transform:uppercase;
-letter-spacing:.08em;
-color:var(--muted);
 margin-bottom:7px;
+font-size:11px;
+font-weight:900;
+text-transform:uppercase;
+letter-spacing:.09em;
+color:var(--muted);
 }
 
 .field input,
-.field textarea,
 .field select{
 width:100%;
+padding:14px;
 border:1px solid var(--line);
-background:rgba(255,255,255,.92);
 border-radius:15px;
-padding:13px 14px;
+outline:none;
+background:white;
 color:var(--text);
 }
 
-.form-buttons{
-display:flex;
-gap:9px;
-margin-top:17px;
+.field input:focus,
+.field select:focus{
+border-color:rgba(22,119,255,.45);
+box-shadow:0 0 0 4px rgba(22,119,255,.08);
 }
 
-.form-buttons button{
-flex:1;
+.upload-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin:15px 0;
 }
 
-.error{
-background:#fff0f1;
-color:#c6202c;
-border-radius:14px;
-padding:11px;
-font-size:12px;
-margin:10px 0;
-}
-
-.photo-upload{
-border:2px dashed rgba(40,120,255,.25);
-background:rgba(240,247,255,.75);
+.upload-box{
+padding:17px;
 border-radius:20px;
-padding:16px;
-text-align:center;
+background:linear-gradient(135deg,#f5f8ff,#fff6fb);
+border:1px solid var(--line);
 }
 
-.photo-preview{
-width:90px;
-height:90px;
-border-radius:25px;
-object-fit:cover;
-margin:8px auto;
-display:block;
-background:#eaf0f8;
+.upload-icon{
+font-size:30px;
 }
 
-.upload-label{
-display:inline-block;
+.upload-title{
+font-weight:850;
+margin-top:8px;
+}
+
+.upload-description{
+font-size:11px;
+color:var(--muted);
+line-height:1.45;
+margin:5px 0 12px;
+}
+
+.file-btn{
+width:100%;
+border:0;
+border-radius:13px;
+padding:11px;
 background:white;
 border:1px solid var(--line);
-border-radius:13px;
-padding:10px 13px;
-font-size:12px;
-font-weight:800;
-cursor:pointer;
+font-weight:750;
+}
+
+.preview{
+width:100%;
+max-height:180px;
+object-fit:cover;
+border-radius:14px;
+margin-top:10px;
+}
+
+.required{
+color:var(--red);
 }
 
 .progress{
-height:7px;
-background:#e7ebf2;
-border-radius:99px;
+height:8px;
+border-radius:20px;
+background:#e9edf4;
 overflow:hidden;
-margin-top:12px;
+margin:12px 0;
 }
 
-.progress div{
+.progress-bar{
 width:0;
 height:100%;
-background:linear-gradient(90deg,#2878ff,#7657ff,#ed5ca7);
-transition:.3s;
+background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));
+transition:.25s;
 }
 
-/* =========================================================
-APP
-========================================================= */
+.ocr-status{
+font-size:12px;
+color:var(--muted);
+line-height:1.5;
+}
+
+.error{
+padding:12px;
+border-radius:14px;
+color:#bd2733;
+background:#fff0f1;
+font-size:12px;
+margin:12px 0;
+}
+
+/* ---------------- APP ---------------- */
 
 .app{
 min-height:100vh;
-padding-bottom:100px;
+padding-bottom:105px;
 }
 
 .topbar{
 position:sticky;
 top:0;
-z-index:50;
+z-index:40;
 height:72px;
 padding:0 22px;
 display:flex;
 align-items:center;
 justify-content:space-between;
-background:rgba(250,252,255,.65);
-backdrop-filter:blur(25px);
--webkit-backdrop-filter:blur(25px);
-border-bottom:1px solid rgba(23,32,51,.06);
+background:rgba(250,252,255,.66);
+backdrop-filter:blur(26px);
+-webkit-backdrop-filter:blur(26px);
+border-bottom:1px solid rgba(20,30,55,.06);
 }
 
 .brand{
+border:0;
+background:none;
 display:flex;
 align-items:center;
 gap:10px;
-border:0;
-background:none;
+font-weight:950;
 color:var(--text);
-font-weight:900;
 }
 
 .brand-mark{
-width:39px;
-height:39px;
-border-radius:13px;
+width:40px;
+height:40px;
 display:grid;
 place-items:center;
+border-radius:13px;
 color:white;
-background:linear-gradient(135deg,#2878ff,#7657ff,#ed5ca7);
-box-shadow:0 8px 18px rgba(80,90,220,.2);
+font-size:13px;
+background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));
 }
 
 .brand-name{
 font-size:18px;
 }
 
-.top-actions{
+.top-right{
 display:flex;
 align-items:center;
-gap:12px;
+gap:14px;
 }
 
-.clock-mini{
+.clock{
 color:var(--muted);
-font-size:13px;
 font-weight:800;
 font-variant-numeric:tabular-nums;
 }
@@ -425,12 +428,13 @@ width:42px;
 height:42px;
 border-radius:50%;
 overflow:hidden;
-border:1px solid rgba(255,255,255,.9);
-background:linear-gradient(135deg,#e0f1ff,#eee7ff);
 display:grid;
 place-items:center;
+background:linear-gradient(135deg,#e1f2ff,#eee5ff);
 font-weight:900;
-color:#58657b;
+color:#56647a;
+border:2px solid white;
+box-shadow:var(--soft);
 }
 
 .avatar img{
@@ -440,202 +444,195 @@ object-fit:cover;
 }
 
 main{
-width:min(1180px,calc(100% - 34px));
+width:min(1200px,calc(100% - 32px));
 margin:auto;
 }
 
 .page{
 display:none;
-padding:32px 0 50px;
-animation:appear .35s ease;
+padding:30px 0 50px;
+animation:rise .4s ease;
 }
 
-.page.active{
-display:block;
-}
+.page.active{display:block}
 
-/* =========================================================
-HOME
-========================================================= */
+/* ---------------- HOME ---------------- */
 
 .hero{
-min-height:350px;
-padding:43px;
-border-radius:36px;
 position:relative;
 overflow:hidden;
+padding:38px;
+min-height:285px;
+border-radius:35px;
 background:
-radial-gradient(circle at 85% 18%,rgba(255,255,255,.9),transparent 25%),
-linear-gradient(125deg,rgba(224,247,255,.9),rgba(239,234,255,.92),rgba(255,235,247,.92));
+radial-gradient(circle at 85% 15%,rgba(255,255,255,.8),transparent 27%),
+linear-gradient(125deg,rgba(224,246,255,.88),rgba(241,235,255,.88),rgba(255,235,246,.9));
 border:1px solid rgba(255,255,255,.95);
 box-shadow:var(--shadow);
 }
 
-.hero:after{
-content:"";
-position:absolute;
-width:280px;
-height:280px;
-border-radius:50%;
-right:-90px;
-bottom:-130px;
-background:linear-gradient(135deg,rgba(40,120,255,.13),rgba(237,91,167,.14));
-}
-
-.hero-grid{
-display:grid;
-grid-template-columns:1.35fr .65fr;
-gap:20px;
-align-items:end;
-position:relative;
-z-index:2;
-}
-
-.eyebrow{
-font-size:11px;
-text-transform:uppercase;
-letter-spacing:.15em;
-font-weight:900;
-color:#687386;
-}
-
 .hero h2{
-font-size:clamp(40px,7vw,70px);
+font-size:clamp(38px,6vw,64px);
+line-height:1;
 letter-spacing:-4px;
-line-height:.98;
-margin:9px 0 13px;
+margin:10px 0;
 }
 
 .hero p{
-max-width:650px;
-color:#5d687b;
+color:#59657a;
+max-width:680px;
 line-height:1.6;
-font-size:16px;
+}
+
+.eyebrow{
+color:#6c778b;
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:.14em;
+font-weight:900;
+}
+
+.hero-info{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.pill{
+padding:9px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.65);
+border:1px solid rgba(255,255,255,.9);
+font-size:12px;
+font-weight:800;
 }
 
 .hero-time{
-padding:23px;
-border-radius:25px;
-background:rgba(255,255,255,.68);
-border:1px solid rgba(255,255,255,.95);
-box-shadow:var(--soft-shadow);
+position:absolute;
+right:28px;
+bottom:28px;
+padding:17px 20px;
+min-width:190px;
 text-align:right;
+border-radius:22px;
+background:rgba(255,255,255,.58);
+backdrop-filter:blur(15px);
 }
 
 .big-time{
-font-size:39px;
+font-size:31px;
 font-weight:900;
-letter-spacing:-2px;
 font-variant-numeric:tabular-nums;
 }
 
 .big-date{
 font-size:12px;
 color:var(--muted);
-margin-top:5px;
+margin-top:4px;
 }
 
-.personal-banner{
-margin-top:18px;
-padding:18px 20px;
-border-radius:22px;
-background:rgba(255,255,255,.72);
-border:1px solid rgba(255,255,255,.95);
-display:flex;
-align-items:center;
-gap:14px;
-}
-
-.personal-banner-photo{
-width:48px;
-height:48px;
-border-radius:16px;
-object-fit:cover;
-background:#e7edf7;
-}
-
-.personal-banner b{
-display:block;
-}
-
-.personal-banner span{
-font-size:12px;
-color:var(--muted);
-}
-
-/* =========================================================
-CARDS
-========================================================= */
+/* ---------------- CARDS ---------------- */
 
 .section-title{
 display:flex;
 justify-content:space-between;
 align-items:end;
-margin:34px 3px 14px;
+margin:30px 3px 13px;
 }
 
 .section-title h3{
 margin:0;
-font-size:25px;
+font-size:24px;
 letter-spacing:-1px;
 }
 
 .section-title p{
-margin:0;
+margin:4px 0 0;
 color:var(--muted);
 font-size:12px;
 }
 
 .grid{
 display:grid;
+gap:15px;
+}
+
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+.card{
+border:1px solid rgba(255,255,255,.92);
+background:var(--card);
+backdrop-filter:blur(22px);
+-webkit-backdrop-filter:blur(22px);
+border-radius:var(--radius);
+box-shadow:var(--soft);
+}
+
+/* Personal */
+.personal{
+padding:23px;
+}
+
+.personal-head{
+display:flex;
+align-items:center;
 gap:16px;
 }
 
-.grid-4{
-grid-template-columns:repeat(4,1fr);
+.personal-photo{
+width:75px;
+height:75px;
+border-radius:23px;
+overflow:hidden;
+display:grid;
+place-items:center;
+background:linear-gradient(135deg,#dff2ff,#eee6ff);
+font-size:26px;
+font-weight:900;
 }
 
-.grid-3{
-grid-template-columns:repeat(3,1fr);
+.personal-photo img{
+width:100%;
+height:100%;
+object-fit:cover;
 }
 
-.grid-2{
-grid-template-columns:repeat(2,1fr);
+.personal-name{
+font-size:24px;
+font-weight:900;
 }
 
-.card{
-background:var(--card);
-backdrop-filter:blur(20px);
--webkit-backdrop-filter:blur(20px);
-border:1px solid rgba(255,255,255,.92);
-border-radius:var(--radius);
-box-shadow:var(--soft-shadow);
+.personal-role{
+color:var(--muted);
+font-size:13px;
+margin-top:3px;
+}
+
+.personal-button{
+margin-left:auto;
 }
 
 .stat{
-padding:21px;
-min-height:145px;
+padding:20px;
+min-height:135px;
 }
 
 .stat-icon{
-width:44px;
-height:44px;
-border-radius:15px;
-display:grid;
-place-items:center;
-font-size:20px;
-background:#eef4ff;
-margin-bottom:15px;
+font-size:25px;
 }
 
 .stat-label{
-font-size:11px;
 color:var(--muted);
+font-size:11px;
 font-weight:800;
+margin-top:12px;
 }
 
 .stat-value{
-font-size:22px;
+font-size:20px;
 font-weight:900;
 margin-top:4px;
 }
@@ -646,78 +643,73 @@ font-size:11px;
 margin-top:4px;
 }
 
-/* =========================================================
-CURRENT CLASS
-========================================================= */
-
-.current-card{
-padding:27px;
-overflow:hidden;
-position:relative;
+/* Current */
+.current{
+padding:24px;
 }
 
-.current-card.now{
-border:2px solid rgba(255,59,69,.45);
-box-shadow:0 18px 45px rgba(255,59,69,.10);
+.current.now{
+border:2px solid rgba(255,59,69,.48);
+box-shadow:0 18px 50px rgba(255,59,69,.11);
+animation:pulse 2.4s infinite;
 }
 
 .now-badge{
-display:inline-flex;
-background:#ff3b45;
+display:inline-block;
 color:white;
+background:var(--red);
 border-radius:999px;
-padding:7px 11px;
+padding:7px 10px;
 font-size:10px;
-font-weight:900;
+font-weight:950;
 letter-spacing:.08em;
 }
 
-.current-class{
-font-size:31px;
+.current-title{
+font-size:30px;
 font-weight:900;
-letter-spacing:-1.3px;
-margin:14px 0 5px;
+letter-spacing:-1.2px;
+margin:13px 0 4px;
 }
 
-.current-room{
+.current-sub{
 color:var(--muted);
 font-size:13px;
 }
 
 .countdown{
-font-size:42px;
+font-size:39px;
 font-weight:900;
 letter-spacing:-2px;
-margin-top:20px;
+margin-top:18px;
 font-variant-numeric:tabular-nums;
 }
 
 .countdown-label{
 color:var(--muted);
 font-size:11px;
-font-weight:700;
 }
 
-/* =========================================================
-WEATHER
-========================================================= */
-
+/* Weather */
 .weather{
-padding:25px;
-min-height:190px;
+padding:23px;
+min-height:180px;
 }
 
 .weather-main{
 display:flex;
 justify-content:space-between;
 align-items:center;
-gap:15px;
 }
 
 .weather-temp{
-font-size:51px;
-font-weight:900;
+font-size:48px;
+font-weight:950;
 letter-spacing:-3px;
+}
+
+.weather-icon{
+font-size:58px;
 }
 
 .weather-desc{
@@ -725,93 +717,129 @@ color:var(--muted);
 font-size:13px;
 }
 
-.weather-icon{
-font-size:60px;
-}
-
 .weather-meta{
 display:flex;
-gap:15px;
+gap:14px;
 flex-wrap:wrap;
 margin-top:20px;
 color:var(--muted);
 font-size:11px;
 }
 
-.weather-refresh{
-color:#8992a1;
+.weather-update{
+color:#8b95a5;
 font-size:10px;
-margin-top:12px;
+margin-top:13px;
 }
 
-/* =========================================================
-SCHEDULE
-========================================================= */
-
-.schedule-shell{
-padding:20px;
+/* News */
+.news-card{
+overflow:hidden;
 }
 
-.schedule-tabs{
+.news-image{
+height:185px;
+background:linear-gradient(135deg,#e5f5ff,#f1e9ff,#ffe8f4);
+overflow:hidden;
+}
+
+.news-image img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.news-body{
+padding:19px;
+}
+
+.tag{
+display:inline-block;
+padding:6px 9px;
+border-radius:999px;
+background:#eef4ff;
+color:#326bc8;
+font-size:9px;
+font-weight:900;
+letter-spacing:.07em;
+}
+
+.news-title{
+font-size:19px;
+font-weight:900;
+margin:10px 0 6px;
+}
+
+.news-text{
+color:var(--muted);
+font-size:13px;
+line-height:1.55;
+}
+
+/* Schedule */
+.schedule-card{
+padding:18px;
+}
+
+.schedule-head{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:14px;
+}
+
+.days{
 display:flex;
 gap:7px;
 overflow:auto;
-padding-bottom:10px;
+padding-bottom:4px;
 }
 
-.day-tab{
+.day{
+flex:0 0 auto;
 border:0;
-border-radius:13px;
-padding:10px 13px;
-background:#f0f3f8;
-color:#687386;
+padding:9px 13px;
+border-radius:999px;
+background:#eef2f8;
 font-size:11px;
 font-weight:850;
-white-space:nowrap;
 }
 
-.day-tab.active{
+.day.active{
+background:linear-gradient(135deg,var(--blue),var(--purple));
 color:white;
-background:linear-gradient(135deg,#2878ff,#7657ff);
 }
 
 .schedule-list{
 display:grid;
-gap:9px;
-margin-top:10px;
+gap:8px;
 }
 
 .schedule-row{
 display:grid;
-grid-template-columns:125px 1fr 100px 120px;
-gap:14px;
+grid-template-columns:100px 1fr 90px 100px;
+gap:12px;
 align-items:center;
-min-height:75px;
-padding:13px 15px;
+padding:13px;
+min-height:67px;
 background:white;
 border:1px solid var(--line);
-border-radius:18px;
-}
-
-.schedule-row.completed{
-background:#f0f2f5;
-color:#9ba3b1;
+border-radius:17px;
 }
 
 .schedule-row.current{
 border:2px solid rgba(255,59,69,.5);
-background:#fff2f3;
+background:#fff7f7;
 }
 
-.schedule-row.transition{
-background:#f5f2ff;
-border-style:dashed;
+.schedule-row.done{
+opacity:.48;
 }
 
 .schedule-time{
+font-size:11px;
 font-weight:850;
-font-size:12px;
-font-variant-numeric:tabular-nums;
 }
 
 .schedule-name{
@@ -822,303 +850,87 @@ font-weight:850;
 .schedule-room{
 color:var(--muted);
 font-size:11px;
-margin-top:3px;
+margin-top:2px;
 }
 
-.schedule-status{
+.status{
 text-align:right;
-font-size:10px;
-font-weight:900;
-text-transform:uppercase;
-}
-
-.status-now{color:#e12b36}
-.status-next{color:#3972d0}
-.status-done{color:#9ba3b1}
-.status-free{color:#18a96e}
-
-/* =========================================================
-NEWS
-========================================================= */
-
-.news-card{
-overflow:hidden;
-}
-
-.news-image{
-height:190px;
-overflow:hidden;
-background:linear-gradient(135deg,#e5f5ff,#eee7ff,#ffe8f4);
-}
-
-.news-image img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.news-placeholder{
-width:100%;
-height:100%;
-display:grid;
-place-items:center;
-font-size:55px;
-}
-
-.news-body{
-padding:19px;
-}
-
-.tag{
-display:inline-block;
-padding:6px 8px;
-border-radius:999px;
-background:#edf3ff;
-color:#3970c9;
 font-size:9px;
-font-weight:900;
+font-weight:950;
 text-transform:uppercase;
 }
 
-.news-title{
-font-size:19px;
-font-weight:900;
-margin:11px 0 6px;
-letter-spacing:-.5px;
-}
+.status.now{color:var(--red)}
+.status.done{color:#8d98aa}
+.status.next{color:#4775c6}
 
-.news-text{
-color:var(--muted);
-font-size:13px;
-line-height:1.55;
-}
-
-/* =========================================================
-MEDIA
-========================================================= */
-
-.media-card{
+/* Media */
+.media{
 padding:20px;
-min-height:180px;
 }
 
 .media-art{
-height:100px;
-border-radius:19px;
+height:120px;
+border-radius:20px;
 display:grid;
 place-items:center;
-font-size:38px;
-background:linear-gradient(135deg,#e2f5ff,#eee7ff,#ffe9f5);
-margin-bottom:14px;
+font-size:43px;
+background:linear-gradient(135deg,#dff4ff,#f0e7ff,#ffe8f4);
 }
 
 .media-title{
-font-size:17px;
 font-weight:900;
+margin-top:14px;
 }
 
 .media-sub{
 color:var(--muted);
-font-size:11px;
+font-size:12px;
 margin-top:4px;
 }
 
-/* =========================================================
-PROFILE
-========================================================= */
-
-.profile-card{
-padding:27px;
+/* AI */
+.ai{
+overflow:hidden;
 }
 
-.profile-head{
+.ai-head{
+padding:20px;
 display:flex;
 align-items:center;
-gap:18px;
-}
-
-.profile-big{
-width:90px;
-height:90px;
-border-radius:28px;
-overflow:hidden;
-display:grid;
-place-items:center;
-background:linear-gradient(135deg,#dff3ff,#eee7ff);
-color:#53617a;
-font-size:30px;
-font-weight:900;
-}
-
-.profile-big img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.profile-name{
-font-size:28px;
-font-weight:900;
-letter-spacing:-1px;
-}
-
-.profile-role{
-color:var(--muted);
-font-size:13px;
-margin-top:3px;
-}
-
-.detail-grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:10px;
-margin-top:23px;
-}
-
-.detail{
-padding:14px;
-border-radius:16px;
-background:#f5f7fa;
-}
-
-.detail b{
-display:block;
-color:var(--muted);
-font-size:10px;
-text-transform:uppercase;
-letter-spacing:.06em;
-margin-bottom:5px;
-}
-
-.detail span{
-font-size:13px;
-font-weight:800;
-}
-
-/* =========================================================
-COUNTRY
-========================================================= */
-
-.country-card{
-padding:25px;
-min-height:150px;
-}
-
-.country-icon{
-font-size:29px;
-margin-bottom:13px;
-}
-
-.country-title{
-font-size:18px;
-font-weight:900;
-}
-
-.country-text{
-color:var(--muted);
-font-size:13px;
-line-height:1.55;
-margin-top:5px;
-}
-
-/* =========================================================
-AI
-========================================================= */
-
-.ai-layout{
-display:grid;
-grid-template-columns:290px 1fr;
-gap:17px;
-}
-
-.ai-side{
-padding:22px;
-}
-
-.ai-side h3{
-margin:0 0 6px;
-}
-
-.ai-side p{
-color:var(--muted);
-font-size:12px;
-line-height:1.5;
-}
-
-.quick{
-display:grid;
-gap:8px;
-margin-top:17px;
-}
-
-.quick button{
-text-align:left;
-border:1px solid var(--line);
-background:white;
-border-radius:14px;
-padding:11px;
-font-size:11px;
-font-weight:750;
-}
-
-.chat{
-min-height:600px;
-display:flex;
-flex-direction:column;
-overflow:hidden;
-}
-
-.chat-head{
-padding:19px;
-display:flex;
 gap:12px;
-align-items:center;
 border-bottom:1px solid var(--line);
 }
 
-.ai-dot{
-width:44px;
-height:44px;
-border-radius:15px;
+.ai-icon{
+width:45px;
+height:45px;
 display:grid;
 place-items:center;
+border-radius:15px;
 color:white;
-font-weight:900;
-background:linear-gradient(135deg,#2878ff,#7657ff,#ed5ca7);
-}
-
-.chat-head b{
-font-size:16px;
-}
-
-.chat-head small{
-display:block;
-color:var(--muted);
-font-size:10px;
-margin-top:2px;
+background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));
 }
 
 .messages{
-flex:1;
+height:400px;
+overflow:auto;
 padding:20px;
 display:flex;
 flex-direction:column;
 gap:10px;
-overflow:auto;
-max-height:450px;
 }
 
 .msg{
-max-width:78%;
-padding:13px 15px;
-border-radius:18px;
+max-width:80%;
+padding:12px 14px;
+border-radius:17px;
 font-size:13px;
-line-height:1.55;
+line-height:1.5;
 white-space:pre-wrap;
 }
 
 .msg.bot{
-align-self:flex-start;
 background:white;
 border:1px solid var(--line);
 }
@@ -1126,362 +938,280 @@ border:1px solid var(--line);
 .msg.user{
 align-self:flex-end;
 color:white;
-background:linear-gradient(135deg,#2878ff,#7657ff);
+background:linear-gradient(135deg,var(--blue),var(--purple));
 }
 
-.chat-input{
+.ai-input{
 display:flex;
 gap:8px;
 padding:14px;
 border-top:1px solid var(--line);
 }
 
-.chat-input input{
+.ai-input input{
 flex:1;
 min-width:0;
-border:1px solid var(--line);
-border-radius:15px;
 padding:13px;
+border-radius:14px;
+border:1px solid var(--line);
+outline:none;
 }
 
-.send{
+.ai-input button{
 border:0;
-border-radius:15px;
+border-radius:14px;
 padding:0 17px;
 color:white;
+background:linear-gradient(135deg,var(--blue),var(--purple));
 font-weight:850;
-background:linear-gradient(135deg,#2878ff,#7657ff);
 }
 
-/* =========================================================
-MORE / SETTINGS
-========================================================= */
-
-.settings-card{
-padding:23px;
+/* Country */
+.country{
+padding:22px;
+min-height:145px;
 }
 
-.settings-row{
+.country-icon{
+font-size:27px;
+}
+
+.country-title{
+font-size:18px;
+font-weight:900;
+margin-top:10px;
+}
+
+.country-text{
+color:var(--muted);
+font-size:12px;
+line-height:1.5;
+margin-top:4px;
+}
+
+/* Profile */
+.profile{
+padding:27px;
+}
+
+.profile-top{
 display:flex;
 align-items:center;
+gap:18px;
+}
+
+.profile-large{
+width:100px;
+height:100px;
+border-radius:30px;
+overflow:hidden;
+display:grid;
+place-items:center;
+font-size:34px;
+font-weight:950;
+background:linear-gradient(135deg,#dff2ff,#eee7ff);
+}
+
+.profile-large img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.profile-name{
+font-size:29px;
+font-weight:950;
+}
+
+.profile-role{
+color:var(--muted);
+font-size:13px;
+margin-top:4px;
+}
+
+.details{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+margin-top:22px;
+}
+
+.detail{
+padding:14px;
+border-radius:16px;
+background:#f6f8fc;
+}
+
+.detail b{
+display:block;
+color:var(--muted);
+font-size:9px;
+text-transform:uppercase;
+letter-spacing:.07em;
+}
+
+.detail span{
+display:block;
+font-weight:800;
+font-size:13px;
+margin-top:4px;
+}
+
+/* More */
+.more{
+padding:22px;
+}
+
+.setting{
+padding:16px 0;
+border-bottom:1px solid var(--line);
+display:flex;
 justify-content:space-between;
 gap:15px;
-padding:14px 0;
-border-bottom:1px solid var(--line);
 }
 
-.settings-row:last-child{
-border-bottom:0;
-}
+.setting:last-child{border:0}
 
-.settings-row b{
-font-size:13px;
-}
+.setting b{font-size:13px}
 
-.settings-row span{
+.setting span{
+display:block;
 color:var(--muted);
 font-size:11px;
-display:block;
 margin-top:3px;
 }
 
-/* =========================================================
-NAVIGATION
-========================================================= */
-
-.bottom-nav{
+/* Navigation */
+.nav{
 position:fixed;
-z-index:80;
 left:50%;
-bottom:14px;
+bottom:13px;
 transform:translateX(-50%);
-width:min(760px,calc(100% - 24px));
-height:76px;
-padding:8px;
+z-index:50;
+width:min(780px,calc(100% - 22px));
+height:73px;
+padding:7px;
 display:flex;
-align-items:center;
 justify-content:space-around;
-background:rgba(255,255,255,.8);
+background:rgba(255,255,255,.79);
 backdrop-filter:blur(27px);
 -webkit-backdrop-filter:blur(27px);
-border:1px solid rgba(255,255,255,.95);
-border-radius:26px;
-box-shadow:0 20px 60px rgba(42,55,88,.17);
+border:1px solid rgba(255,255,255,.96);
+border-radius:25px;
+box-shadow:0 22px 65px rgba(40,50,90,.18);
 }
 
-.nav-btn{
+.nav button{
 flex:1;
-height:100%;
 border:0;
 background:transparent;
 border-radius:18px;
-color:#7b8597;
+color:#7a8497;
+font-size:10px;
+font-weight:850;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 gap:3px;
-font-size:9px;
-font-weight:850;
-transition:.2s;
 }
 
-.nav-icon{
-font-size:20px;
-}
-
-.nav-btn.active{
+.nav button.active{
+color:#236bd7;
 background:#edf3ff;
-color:#2873df;
 }
 
-.nav-btn:hover{
-transform:translateY(-2px);
-}
+.nav-icon{font-size:20px}
 
-/* =========================================================
-TOAST / LOADING
-========================================================= */
-
+/* Toast */
 .toast{
 position:fixed;
-z-index:200;
 left:50%;
-bottom:105px;
+bottom:100px;
 transform:translateX(-50%) translateY(15px);
-background:#182033;
+z-index:100;
 color:white;
+background:#172033;
 padding:12px 15px;
-border-radius:15px;
-font-size:11px;
+border-radius:14px;
+font-size:12px;
 opacity:0;
 pointer-events:none;
 transition:.25s;
-box-shadow:var(--shadow);
 }
 
 .toast.show{
 opacity:1;
-transform:translateX(-50%) translateY(0);
+transform:translateX(-50%);
 }
 
-.loading{
-position:fixed;
-inset:0;
-z-index:300;
-background:#f7f9fd;
-display:grid;
-place-items:center;
-transition:.5s;
-}
+/* ---------------- MOBILE ---------------- */
 
-.loading.hide{
-opacity:0;
-pointer-events:none;
-}
-
-.loader{
-width:76px;
-height:76px;
-border-radius:24px;
-display:grid;
-place-items:center;
-color:white;
-font-size:24px;
-font-weight:900;
-background:linear-gradient(135deg,#2878ff,#7657ff,#ed5ca7);
-animation:pulse 1.5s infinite;
-}
-
-@keyframes appear{
-from{
-opacity:0;
-transform:translateY(14px);
-}
-to{
-opacity:1;
-transform:none;
-}
-}
-
-@keyframes pulse{
-50%{transform:scale(1.04)}
-}
-
-/* =========================================================
-MOBILE
-========================================================= */
-
-@media(max-width:900px){
-
-.grid-4{
-grid-template-columns:repeat(2,1fr);
-}
-
-.hero-grid{
-grid-template-columns:1fr;
-}
-
+@media(max-width:850px){
+.g4{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:1fr 1fr}
 .hero-time{
+position:static;
+margin-top:25px;
 text-align:left;
 }
-
-.detail-grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-.ai-layout{
-grid-template-columns:1fr;
-}
-
-}
-
-@media(max-width:650px){
-
-main{
-width:calc(100% - 20px);
-}
-
-.topbar{
-height:64px;
-padding:0 12px;
-}
-
-.clock-mini{
-display:none;
-}
-
-.brand-name{
-font-size:16px;
-}
-
-.page{
-padding-top:22px;
-}
-
-.hero{
-padding:27px 22px;
-border-radius:27px;
-}
-
-.hero h2{
-font-size:47px;
-}
-
-.grid-4,
-.grid-3,
-.grid-2{
-grid-template-columns:1fr;
-}
-
-.detail-grid{
-grid-template-columns:1fr 1fr;
-}
-
-.schedule-shell{
-padding:11px;
-}
-
+.hero{min-height:0}
 .schedule-row{
-grid-template-columns:85px 1fr;
-gap:7px;
+grid-template-columns:90px 1fr 70px;
+}
+.schedule-row .room-col{display:none}
+.details{grid-template-columns:1fr 1fr}
 }
 
-.schedule-status{
-text-align:left;
-}
-
-.profile-head{
-flex-wrap:wrap;
-}
-
-.lock-card{
-padding:28px 22px;
-}
-
-.lock h1{
-font-size:40px;
-}
-
-.bottom-nav{
-height:70px;
-}
-
-.nav-icon{
-font-size:18px;
-}
-
-}
-
-/* =========================================================
-STARS FOR CLEAR NIGHT
-========================================================= */
-
-body.clear-night .app{
-position:relative;
-}
-
-body.clear-night .app:before{
-content:"✦ · ✧ · ✦ · ✧ · ✦";
-position:fixed;
-top:80px;
-left:10%;
-right:10%;
-height:100px;
-color:rgba(90,80,160,.3);
-font-size:18px;
-letter-spacing:18px;
-pointer-events:none;
-z-index:-1;
+@media(max-width:600px){
+main{width:calc(100% - 18px)}
+.topbar{height:64px;padding:0 12px}
+.clock{display:none}
+.brand-name{font-size:16px}
+.page{padding-top:20px}
+.hero{padding:25px 20px;border-radius:27px}
+.hero h2{font-size:43px}
+.g2,.g3,.g4{grid-template-columns:1fr}
+.upload-grid{grid-template-columns:1fr}
+.details{grid-template-columns:1fr 1fr}
+.personal-button{display:none}
+.profile-top{align-items:flex-start}
+.profile-name{font-size:23px}
+.nav{height:69px}
+.nav button{font-size:8px}
+.nav-icon{font-size:18px}
 }
 </style>
 </head>
 
 <body>
 
-<div id="dynamicBackground"></div>
-
 <!-- =========================================================
-LOCK / LOGIN / ACCOUNT CREATION
+LOCK / LOGIN
 ========================================================= -->
 
 <section id="lockScreen" class="lock">
-
 <div class="lock-card">
 
-<div class="logo">TROM</div>
+<div class="logo">TR</div>
 
 <h1>TROM</h1>
+<p class="lock-sub">The Republic of Moe • Digital National Portal</p>
 
-<p class="lock-sub">
-The Republic of Moe<br>
-Digital National Portal
-</p>
-
-<!-- MAIN OPTIONS -->
 <div id="lockActions" class="lock-actions">
-
-<button class="primary" id="personalBtn">
-👤 Sign in to My TROM
-</button>
-
-<button class="secondary" id="createAccountBtn">
-✨ Create a TROM Account
-</button>
-
-<button class="secondary" id="guestBtn">
-🌐 Continue as Guest
-</button>
-
+<button class="primary" id="personalBtn">👤 Sign in to My TROM</button>
+<button class="secondary" id="createBtn">✨ Create a TROM Account</button>
+<button class="secondary" id="guestBtn">🌎 Continue as Guest</button>
 </div>
 
-
 <!-- LOGIN -->
-<div id="loginPanel" class="login-panel hidden">
-
-<div class="form-title">Welcome back</div>
-<div class="form-sub">
-Sign in to your personalized TROM account.
+<div id="loginPanel" class="hidden">
+<div class="create-header">
+<button class="back" id="loginBack">‹</button>
+<div>
+<div class="create-title">Sign in</div>
+<div class="create-sub">Open your personalized TROM</div>
+</div>
 </div>
 
 <div class="field">
@@ -1490,139 +1220,139 @@ Sign in to your personalized TROM account.
 </div>
 
 <div class="field">
-<label>Access Code</label>
+<label>Access code</label>
 <input id="accessCode" type="password" placeholder="Enter access code">
 </div>
 
 <div id="loginError" class="error hidden"></div>
 
-<div class="form-buttons">
-<button class="secondary" id="backBtn">Back</button>
-<button class="primary" id="loginBtn">Sign In</button>
+<button class="primary" id="loginBtn" style="width:100%">
+Sign in
+</button>
 </div>
-
-</div>
-
 
 <!-- CREATE ACCOUNT -->
-<div id="signupPanel" class="signup-panel hidden">
+<div id="createPanel" class="hidden create-panel">
 
-<div class="form-title">Create your TROM Account</div>
-
-<div class="form-sub">
-Build your personalized TROM experience.
+<div class="create-header">
+<button class="back" id="createBack">‹</button>
+<div>
+<div class="create-title">Create your TROM account</div>
+<div class="create-sub">Build your own personalized TROM</div>
+</div>
 </div>
 
 <div class="field">
-<label>Full name *</label>
-<input id="signupName" placeholder="Your full name">
+<label>Full name <span class="required">*</span></label>
+<input id="newName" placeholder="Your full name">
 </div>
 
 <div class="field">
-<label>Birthday *</label>
-<input id="signupBirthday" type="date">
+<label>Birthday <span class="required">*</span></label>
+<input id="newDob" type="date">
 </div>
 
 <div class="field">
-<label>Job / Role *</label>
-<input id="signupRole" placeholder="Student, Teacher, Engineer...">
+<label>Job / role <span class="required">*</span></label>
+<input id="newRole" placeholder="Student, Teacher, Engineer...">
 </div>
 
 <div class="field">
-<label>Email *</label>
-<input id="signupEmail" type="email" placeholder="name@example.com">
+<label>Email <span class="required">*</span></label>
+<input id="newEmail" type="email" placeholder="you@example.com">
 </div>
 
 <div class="field">
-<label>School / Workplace</label>
-<input id="signupSchool" placeholder="Optional">
+<label>School / organization</label>
+<input id="newSchool" placeholder="School or organization">
 </div>
+
+<div class="field">
+<label>Grade / department</label>
+<input id="newGrade" placeholder="Grade 6C / Mathematics / etc.">
+</div>
+
+<div class="field">
+<label>Homeroom / workplace</label>
+<input id="newRoom" placeholder="M25 / Office 4 / etc.">
+</div>
+
+<div class="upload-grid">
 
 <!-- SELFIE -->
-<div class="field">
-<label>Profile photo / Selfie *</label>
+<div class="upload-box">
+<div class="upload-icon">🤳</div>
+<div class="upload-title">
+Your profile photo <span class="required">*</span>
+</div>
+<div class="upload-description">
+Take a selfie or choose a photo from your Photos library.
+</div>
 
-<div class="photo-upload">
-
-<img id="selfiePreview" class="photo-preview" alt="Profile preview">
-
-<label class="upload-label">
-📷 Take a selfie
 <input
 id="selfieInput"
 type="file"
 accept="image/*"
 capture="user"
-hidden
+class="hidden"
 >
-</label>
 
-<div style="font-size:10px;color:#7d8798;margin-top:8px">
-This photo becomes your TROM profile picture.
-</div>
+<button class="file-btn" id="selfieBtn">
+📷 Take / choose photo
+</button>
 
+<img id="selfiePreview" class="preview hidden">
 </div>
-</div>
-
 
 <!-- SCHEDULE -->
-<div class="field">
-<label>Schedule photo *</label>
-
-<div class="photo-upload">
-
-<div style="font-size:28px;margin-bottom:7px">
-📅
+<div class="upload-box">
+<div class="upload-icon">📅</div>
+<div class="upload-title">
+Your schedule <span class="required">*</span>
+</div>
+<div class="upload-description">
+Choose a photo of your schedule from Photos. TROM will read it and build your digital schedule.
 </div>
 
-<label class="upload-label">
-📸 Take / upload schedule
 <input
 id="scheduleInput"
 type="file"
 accept="image/*"
-capture="environment"
-hidden
+class="hidden"
 >
-</label>
 
-<div id="scheduleFileName"
-style="font-size:10px;color:#7d8798;margin-top:8px">
-No schedule selected
-</div>
+<button class="file-btn" id="scheduleBtn">
+🖼️ Choose from Photos
+</button>
+
+<img id="schedulePreview" class="preview hidden">
 
 <div id="ocrProgress" class="progress hidden">
-<div id="ocrBar"></div>
+<div id="ocrBar" class="progress-bar"></div>
 </div>
 
-<div id="ocrStatus"
-style="font-size:10px;color:#687386;margin-top:8px">
+<div id="ocrStatus" class="ocr-status"></div>
 </div>
 
 </div>
-</div>
 
+<div id="createError" class="error hidden"></div>
 
-<div id="signupError" class="error hidden"></div>
-
-<div class="form-buttons">
-<button class="secondary" id="signupBack">Back</button>
-<button class="primary" id="createBtn">
-Create Account
+<button class="primary" id="buildAccountBtn" style="width:100%">
+✨ Create my TROM account
 </button>
-</div>
 
-<div class="small-note">
-TROM accounts created on this GitHub Pages version are stored
-locally in the browser. A real online account system would require
-a database/backend.
-</div>
+<p style="font-size:10px;color:#8a93a4;line-height:1.5;margin-top:13px">
+Your new account is stored locally in this browser. You can edit your profile and schedule later.
+</p>
 
 </div>
 
+<div style="font-size:10px;color:#8b95a5;text-align:center;margin-top:20px">
+TROM • The Republic of Moe
+</div>
 </div>
 </section>
-
 
 <!-- =========================================================
 APP
@@ -1633,46 +1363,29 @@ APP
 <header class="topbar">
 
 <button class="brand" onclick="showPage('home')">
-<span class="brand-mark">T</span>
+<span class="brand-mark">TR</span>
 <span class="brand-name">TROM</span>
 </button>
 
-<div class="top-actions">
+<div class="top-right">
+<div id="miniClock" class="clock">00:00</div>
 
-<span id="miniClock" class="clock-mini">
-00:00
-</span>
-
-<button id="topAvatar" class="avatar">
-
-<span id="topAvatarText">T</span>
-
-<img id="topAvatarImg"
-class="hidden"
-alt="Profile">
-
+<button class="avatar" id="topAvatar">
+<span id="avatarLetter">T</span>
+<img id="avatarImg" class="hidden">
 </button>
-
 </div>
 
 </header>
 
-
 <main>
 
-<!-- =======================================================
-HOME
-======================================================= -->
-
+<!-- HOME -->
 <section id="page-home" class="page active">
 
 <div class="hero">
 
-<div class="hero-grid">
-
-<div>
-
-<div id="heroEyebrow" class="eyebrow">
+<div class="eyebrow" id="heroEyebrow">
 TROM DIGITAL PORTAL
 </div>
 
@@ -1680,161 +1393,323 @@ TROM DIGITAL PORTAL
 Welcome to TROM
 </h2>
 
-<p id="heroText">
-Your digital gateway to TROM news, weather,
-schedules, media, AI and TROM COUNTRY.
+<p id="heroDescription">
+Your digital gateway to TROM news, weather, media, services and TROM COUNTRY.
 </p>
 
+<div class="hero-info">
+<span class="pill" id="cyclePill">Loading cycle…</span>
+<span class="pill" id="heroWeatherPill">🌤️ Loading weather…</span>
+<span class="pill" id="heroDatePill">Loading date…</span>
 </div>
 
 <div class="hero-time">
-
-<div id="heroTime" class="big-time">
-00:00:00
-</div>
-
-<div id="heroDate" class="big-date">
-Loading...
+<div id="heroTime" class="big-time">00:00:00</div>
+<div id="heroDate" class="big-date">Loading…</div>
 </div>
 
 </div>
-
-</div>
-
-
-<div id="personalBanner"
-class="personal-banner hidden">
-
-<img id="personalBannerPhoto"
-class="personal-banner-photo"
-alt="">
-
-<div>
-<b id="personalBannerTitle">
-Your TROM
-</b>
-<span id="personalBannerSub">
-Personalized digital services
-</span>
-</div>
-
-</div>
-
-</div>
-
 
 <!-- PERSONAL -->
-<div id="personalHomeSection">
+<div id="personalSection">
 
 <div class="section-title">
 <div>
 <h3>Your TROM</h3>
-<p>Personalized for your account</p>
+<p>Personal information and live school day</p>
 </div>
 </div>
 
-<div class="grid grid-4">
+<div class="grid g2">
+
+<div class="card personal">
+
+<div class="personal-head">
+
+<div class="personal-photo">
+<span id="personalLetter">T</span>
+<img id="personalPhoto" class="hidden">
+</div>
+
+<div>
+<div id="personalName" class="personal-name">Guest</div>
+<div id="personalRole" class="personal-role">
+Public TROM access
+</div>
+</div>
+
+<button class="secondary personal-button"
+onclick="showPage('profile')">
+My Profile
+</button>
+
+</div>
+
+</div>
+
+<div id="homeCurrent" class="card current">
+<div class="eyebrow">YOUR DAY</div>
+<div class="current-title">Loading…</div>
+<div class="current-sub">Checking your schedule</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- GUEST -->
+<div id="guestSection" class="section-title hidden">
+<div>
+<h3>Explore TROM</h3>
+<p>Sign in or create an account for personalized features</p>
+</div>
+</div>
+
+<!-- WEATHER + NEWS -->
+<div class="section-title">
+<div>
+<h3>Today</h3>
+<p>Live information</p>
+</div>
+</div>
+
+<div class="grid g2">
+
+<div id="weatherCard" class="card weather"></div>
+
+<article class="card news-card">
+
+<div class="news-image">
+<img src="IMG_4410.jpeg"
+alt="iPhone 18 Pro"
+onerror="this.style.display='none';this.parentElement.innerHTML='<span style=&quot;font-size:50px&quot;>📱</span>'">
+</div>
+
+<div class="news-body">
+<span class="tag">TROM NEWS</span>
+
+<div class="news-title">
+New cameras being installed in the TROM
+</div>
+
+<div class="news-text">
+New cameras are being installed across TROM to improve security,
+monitoring and the overall digital infrastructure.
+The new system brings TROM into a new generation of technology.
+</div>
+</div>
+
+</article>
+
+</div>
+
+<!-- QUICK STATS -->
+<div class="section-title">
+<div>
+<h3>Quick access</h3>
+<p>Your most important TROM services</p>
+</div>
+</div>
+
+<div class="grid g4">
 
 <div class="card stat">
 <div class="stat-icon">📅</div>
-<div class="stat-label">TODAY</div>
-<div id="homeDay" class="stat-value">—</div>
-<div id="homeDaySub" class="stat-small">Loading...</div>
+<div class="stat-label">SCHEDULE</div>
+<div class="stat-value">Your day</div>
+<div class="stat-small">Live classes & countdowns</div>
 </div>
 
 <div class="card stat">
-<div class="stat-icon">🔴</div>
-<div class="stat-label">RIGHT NOW</div>
-<div id="homeCurrent" class="stat-value">—</div>
-<div id="homeCurrentSub" class="stat-small">Loading...</div>
+<div class="stat-icon">📰</div>
+<div class="stat-label">NEWSROOM</div>
+<div class="stat-value">Latest</div>
+<div class="stat-small">TROM announcements</div>
 </div>
 
 <div class="card stat">
-<div class="stat-icon">➡️</div>
-<div class="stat-label">NEXT</div>
-<div id="homeNext" class="stat-value">—</div>
-<div id="homeNextSub" class="stat-small">Loading...</div>
+<div class="stat-icon">🤖</div>
+<div class="stat-label">TROM AI</div>
+<div class="stat-value">Ask anything</div>
+<div class="stat-small">General + TROM questions</div>
 </div>
 
 <div class="card stat">
-<div class="stat-icon">🏫</div>
-<div class="stat-label">SCHOOL / WORK</div>
-<div id="homeEnd" class="stat-value">—</div>
-<div id="homeEndSub" class="stat-small">Loading...</div>
+<div class="stat-icon">🌍</div>
+<div class="stat-label">TROM COUNTRY</div>
+<div class="stat-value">Explore</div>
+<div class="stat-small">The Republic of Moe</div>
 </div>
 
 </div>
 
-</div>
+</section>
 
-
-<!-- GUEST -->
-<div id="guestHomeSection" class="hidden">
+<!-- SCHEDULE -->
+<section id="page-schedule" class="page">
 
 <div class="section-title">
 <div>
-<h3>Explore TROM</h3>
-<p>Public digital services</p>
+<h3>Your Schedule</h3>
+<p id="scheduleSubtitle">Automatically generated from your schedule</p>
 </div>
 </div>
 
-<div class="card personal-card" style="padding:25px">
-<h3 style="margin:0 0 6px">
-🌐 You're browsing as a guest
-</h3>
-<p style="color:var(--muted);font-size:13px">
-Create a TROM Account to unlock your personal schedule,
-profile, live school information and personalized TROM AI.
-</p>
-<button class="primary" onclick="openSignup()" style="margin-top:8px">
-Create a TROM Account
-</button>
-</div>
+<div class="card schedule-card">
 
-</div>
-
-
-<!-- CURRENT -->
-<div class="section-title">
+<div class="schedule-head">
 <div>
-<h3>Right now</h3>
-<p>Automatically updates every second</p>
+<b id="scheduleToday">Today</b>
+<div id="scheduleType" style="font-size:11px;color:var(--muted)">
+Loading…
 </div>
 </div>
 
-<div id="homeCurrentCard" class="card current-card">
-Loading your day...
+<span id="scheduleCycle" class="pill">Day —</span>
 </div>
 
+<div id="dayButtons" class="days"></div>
 
-<!-- WEATHER -->
-<div class="section-title">
-<div>
-<h3>TROM Weather</h3>
-<p>Live Bahrain weather</p>
-</div>
+<div id="scheduleList" class="schedule-list"></div>
+
 </div>
 
-<div id="homeWeather" class="card weather">
-Loading TROM Weather...
-</div>
-
+</section>
 
 <!-- NEWS -->
+<section id="page-news" class="page">
+
 <div class="section-title">
 <div>
 <h3>TROM Newsroom</h3>
-<p>Latest national updates</p>
+<p>Latest news and announcements</p>
 </div>
-<button class="secondary" onclick="showPage('news')">
-View all
-</button>
 </div>
 
-<div id="homeNews" class="grid grid-3"></div>
+<div class="grid g2">
 
+<article class="card news-card">
+
+<div class="news-image">
+<img src="IMG_4410.jpeg"
+alt="iPhone 18 Pro"
+onerror="this.style.display='none';this.parentElement.innerHTML='<span style=&quot;font-size:50px&quot;>📱</span>'">
+</div>
+
+<div class="news-body">
+
+<span class="tag">TECHNOLOGY</span>
+
+<div class="news-title">
+New cameras being installed in the TROM
+</div>
+
+<div class="news-text">
+TROM has begun installing a new generation of cameras.
+The project is designed to expand TROM's security and
+monitoring infrastructure while introducing newer technology
+throughout the Republic.
+</div>
+
+</div>
+
+</article>
+
+<article class="card news-card">
+<div class="news-image">
+<span style="font-size:55px">🏛️</span>
+</div>
+
+<div class="news-body">
+<span class="tag">NATIONAL</span>
+<div class="news-title">Welcome to the TROM Newsroom</div>
+<div class="news-text">
+Follow TROM announcements, events, technology updates,
+community stories and national information here.
+</div>
+</div>
+</article>
+
+</div>
+
+</section>
+
+<!-- MEDIA -->
+<section id="page-media" class="page">
+
+<div class="section-title">
+<div>
+<h3>TROM Media</h3>
+<p>Watch, explore and discover</p>
+</div>
+</div>
+
+<div class="grid g3">
+
+<div class="card media">
+<div class="media-art">📺</div>
+<div class="media-title">TROM TV</div>
+<div class="media-sub">Official TROM video platform</div>
+</div>
+
+<div class="card media">
+<div class="media-art">🖼️</div>
+<div class="media-title">TROM Gallery</div>
+<div class="media-sub">Photos from TROM</div>
+</div>
+
+<div class="card media">
+<div class="media-art">🎬</div>
+<div class="media-title">Featured</div>
+<div class="media-sub">Featured TROM content</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- AI -->
+<section id="page-ai" class="page">
+
+<div class="section-title">
+<div>
+<h3>TROM AI</h3>
+<p>A general assistant with TROM knowledge</p>
+</div>
+</div>
+
+<div class="card ai">
+
+<div class="ai-head">
+<div class="ai-icon">✦</div>
+<div>
+<b>TROM AI</b>
+<div style="font-size:11px;color:var(--muted)">
+TROM assistant • general questions • your personal data
+</div>
+</div>
+</div>
+
+<div id="messages" class="messages">
+<div class="msg bot">
+Hi! 👋 I'm TROM AI.
+
+I can answer questions about your TROM schedule and information, and I can also answer general questions.
+</div>
+</div>
+
+<div class="ai-input">
+<input id="aiInput" placeholder="Ask TROM AI anything…">
+<button id="aiSend">Send</button>
+</div>
+
+</div>
+
+</section>
 
 <!-- COUNTRY -->
+<section id="page-country" class="page">
+
 <div class="section-title">
 <div>
 <h3>TROM COUNTRY</h3>
@@ -1842,34 +1717,50 @@ View all
 </div>
 </div>
 
-<div class="grid grid-4">
+<div class="grid g3">
 
-<div class="card country-card">
+<div class="card country">
 <div class="country-icon">🏛️</div>
 <div class="country-title">Government</div>
 <div class="country-text">
-Explore TROM's government and national departments.
+Explore TROM's government and national institutions.
 </div>
 </div>
 
-<div class="card country-card">
+<div class="card country">
 <div class="country-icon">🌆</div>
 <div class="country-title">Cities</div>
 <div class="country-text">
-Discover places and communities across TROM.
+Discover the cities and places of TROM.
 </div>
 </div>
 
-<div class="card country-card">
+<div class="card country">
 <div class="country-icon">📊</div>
-<div class="country-title">Statistics</div>
+<div class="country-title">National Statistics</div>
 <div class="country-text">
-National information and digital statistics.
+National information and statistics.
 </div>
 </div>
 
-<div class="card country-card">
-<div class="country-icon">🌍</div>
+<div class="card country">
+<div class="country-icon">📜</div>
+<div class="country-title">Constitution</div>
+<div class="country-text">
+The foundational rules and information of TROM.
+</div>
+</div>
+
+<div class="card country">
+<div class="country-icon">🎉</div>
+<div class="country-title">National Events</div>
+<div class="country-text">
+Events and celebrations across TROM.
+</div>
+</div>
+
+<div class="card country">
+<div class="country-icon">🌐</div>
 <div class="country-title">International</div>
 <div class="country-text">
 TROM's international connections and information.
@@ -1880,174 +1771,72 @@ TROM's international connections and information.
 
 </section>
 
-
-<!-- =======================================================
-MY TROM
-======================================================= -->
-
+<!-- PROFILE -->
 <section id="page-profile" class="page">
 
 <div class="section-title">
 <div>
 <h3>My TROM</h3>
-<p>Your personal digital identity</p>
+<p>Your personal TROM account</p>
 </div>
 </div>
 
-<div class="card profile-card">
+<div class="card profile">
 
-<div class="profile-head">
+<div class="profile-top">
 
-<div class="profile-big">
-
-<span id="profileInitial">
-M
-</span>
-
-<img id="profileBigImg"
-class="hidden"
-alt="Profile">
-
+<div class="profile-large">
+<span id="profileLetter">T</span>
+<img id="profileImage" class="hidden">
 </div>
 
-<div style="flex:1">
-
-<div id="profileName" class="profile-name">
-Guest
-</div>
-
-<div id="profileRole" class="profile-role">
-Public TROM access
+<div>
+<div id="profileName" class="profile-name">Guest</div>
+<div id="profileRole" class="profile-role">Public TROM access</div>
 </div>
 
 </div>
 
-<button class="secondary"
-id="changePhotoBtn">
-📷 Change photo
-</button>
-
-<input
-id="changePhotoInput"
-type="file"
-accept="image/*"
-capture="user"
-class="hidden"
->
-
-</div>
-
-
-<div class="detail-grid">
+<div class="details">
 
 <div class="detail">
 <b>Citizen ID</b>
-<span id="dId">—</span>
+<span id="profileId">—</span>
 </div>
 
 <div class="detail">
 <b>Birthday</b>
-<span id="dDob">—</span>
+<span id="profileDob">—</span>
 </div>
 
 <div class="detail">
 <b>Email</b>
-<span id="dEmail">—</span>
+<span id="profileEmail">—</span>
 </div>
 
 <div class="detail">
-<b>Role</b>
-<span id="dRole">—</span>
-</div>
-
-<div class="detail">
-<b>School / Workplace</b>
-<span id="dSchool">—</span>
+<b>School</b>
+<span id="profileSchool">—</span>
 </div>
 
 <div class="detail">
 <b>Grade / Department</b>
-<span id="dGrade">—</span>
+<span id="profileGrade">—</span>
 </div>
 
 <div class="detail">
-<b>Homeroom</b>
-<span id="dHomeroom">—</span>
+<b>Homeroom / Workplace</b>
+<span id="profileRoom">—</span>
+</div>
+
+<div class="detail">
+<b>Today's cycle</b>
+<span id="profileCycle">—</span>
 </div>
 
 <div class="detail">
 <b>Account</b>
-<span id="dAccount">—</span>
-</div>
-
-</div>
-
-</div>
-
-
-<div class="section-title">
-<div>
-<h3>Right now</h3>
-<p>Live personal schedule</p>
-</div>
-</div>
-
-<div id="profileCurrentCard"
-class="card current-card">
-</div>
-
-
-<div class="section-title">
-<div>
-<h3>Your information</h3>
-<p>Personal TROM services</p>
-</div>
-</div>
-
-<div class="grid grid-2">
-
-<div class="card settings-card">
-
-<div class="settings-row">
-<div>
-<b>📅 Personal Schedule</b>
-<span>Your uploaded schedule is converted into TROM's digital format.</span>
-</div>
-<button class="secondary"
-onclick="showPage('schedule')">
-Open
-</button>
-</div>
-
-<div class="settings-row">
-<div>
-<b>🤖 Personal TROM AI</b>
-<span>Ask about your schedule and general questions.</span>
-</div>
-<button class="secondary"
-onclick="showPage('ai')">
-Open
-</button>
-</div>
-
-</div>
-
-<div class="card settings-card">
-
-<div class="settings-row">
-<div>
-<b>🔐 Account type</b>
-<span>Local TROM account</span>
-</div>
-<span>Active</span>
-</div>
-
-<div class="settings-row">
-<div>
-<b>📸 Profile photo</b>
-<span>Your selfie is used throughout TROM.</span>
-</div>
-<span>Saved</span>
+<span id="profileAccount">—</span>
 </div>
 
 </div>
@@ -2056,392 +1845,54 @@ Open
 
 </section>
 
-
-<!-- =======================================================
-SCHEDULE
-======================================================= -->
-
-<section id="page-schedule" class="page">
-
-<div class="section-title">
-<div>
-<h3>Schedule</h3>
-<p>Your automatically generated timetable</p>
-</div>
-</div>
-
-<div class="card schedule-shell">
-
-<div class="schedule-tabs">
-
-<button class="day-tab" data-cycle="1">DAY 1</button>
-<button class="day-tab" data-cycle="2">DAY 2</button>
-<button class="day-tab" data-cycle="3">DAY 3</button>
-<button class="day-tab" data-cycle="4">DAY 4</button>
-<button class="day-tab" data-cycle="5">DAY 5</button>
-<button class="day-tab" data-cycle="6">DAY 6</button>
-
-</div>
-
-<div id="scheduleTitle"
-style="font-weight:900;margin:10px 0">
-</div>
-
-<div id="scheduleList"
-class="schedule-list">
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-NEWS
-======================================================= -->
-
-<section id="page-news" class="page">
-
-<div class="section-title">
-<div>
-<h3>TROM Newsroom</h3>
-<p>News and national updates</p>
-</div>
-</div>
-
-<div id="newsGrid"
-class="grid grid-3">
-</div>
-
-</section>
-
-
-<!-- =======================================================
-MEDIA
-======================================================= -->
-
-<section id="page-media" class="page">
-
-<div class="section-title">
-<div>
-<h3>TROM Media</h3>
-<p>Television, video and photography</p>
-</div>
-</div>
-
-<div class="grid grid-3">
-
-<div class="card media-card">
-<div class="media-art">📺</div>
-<div class="media-title">TROM TV</div>
-<div class="media-sub">
-Official TROM broadcasts and programs.
-</div>
-</div>
-
-<div class="card media-card">
-<div class="media-art">🖼️</div>
-<div class="media-title">TROM Gallery</div>
-<div class="media-sub">
-Photos from across the Republic of Moe.
-</div>
-</div>
-
-<div class="card media-card">
-<div class="media-art">🎬</div>
-<div class="media-title">Video Library</div>
-<div class="media-sub">
-Previous TROM broadcasts and videos.
-</div>
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-AI
-======================================================= -->
-
-<section id="page-ai" class="page">
-
-<div class="section-title">
-<div>
-<h3>TROM AI</h3>
-<p>Your general-purpose digital assistant</p>
-</div>
-</div>
-
-<div class="ai-layout">
-
-<div class="card ai-side">
-
-<h3>🤖 TROM AI</h3>
-
-<p>
-TROM AI can understand your personal TROM information
-and can also answer general questions.
-</p>
-
-<div class="quick">
-
-<button data-question="What is my next class?">
-📅 What's my next class?
-</button>
-
-<button data-question="What time does school finish?">
-🏫 When does school finish?
-</button>
-
-<button data-question="What's the weather?">
-🌤️ What's the weather?
-</button>
-
-<button data-question="Tell me about Ancient Egypt.">
-🌍 Ask a general question
-</button>
-
-</div>
-
-</div>
-
-
-<div class="card chat">
-
-<div class="chat-head">
-
-<div class="ai-dot">
-AI
-</div>
-
-<div>
-<b>TROM AI</b>
-<small>
-TROM knowledge + general AI
-</small>
-</div>
-
-</div>
-
-<div id="messages"
-class="messages">
-
-<div class="msg bot">
-Hi! I'm TROM AI. Ask me about your schedule, TROM,
-the weather, or almost anything else.
-</div>
-
-</div>
-
-<div class="chat-input">
-
-<input
-id="chatInput"
-placeholder="Ask TROM AI anything..."
->
-
-<button id="sendBtn"
-class="send">
-Send
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-COUNTRY
-======================================================= -->
-
-<section id="page-country" class="page">
-
-<div class="section-title">
-<div>
-<h3>TROM COUNTRY</h3>
-<p>The Republic of Moe</p>
-</div>
-</div>
-
-<div class="grid grid-3">
-
-<div class="card country-card">
-<div class="country-icon">🏛️</div>
-<div class="country-title">Government</div>
-<div class="country-text">
-National government and public departments.
-</div>
-</div>
-
-<div class="card country-card">
-<div class="country-icon">📜</div>
-<div class="country-title">Constitution</div>
-<div class="country-text">
-The laws and foundations of TROM.
-</div>
-</div>
-
-<div class="card country-card">
-<div class="country-icon">🏙️</div>
-<div class="country-title">Cities</div>
-<div class="country-text">
-Explore TROM's cities and communities.
-</div>
-</div>
-
-<div class="card country-card">
-<div class="country-icon">📊</div>
-<div class="country-title">National Statistics</div>
-<div class="country-text">
-National information and statistics.
-</div>
-</div>
-
-<div class="card country-card">
-<div class="country-icon">🚆</div>
-<div class="country-title">Transport</div>
-<div class="country-text">
-Transportation and infrastructure.
-</div>
-</div>
-
-<div class="card country-card">
-<div class="country-icon">🌍</div>
-<div class="country-title">International</div>
-<div class="country-text">
-TROM's international connections.
-</div>
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-MORE
-======================================================= -->
-
+<!-- MORE -->
 <section id="page-more" class="page">
 
 <div class="section-title">
 <div>
 <h3>More</h3>
-<p>TROM services and settings</p>
+<p>TROM services and account controls</p>
 </div>
 </div>
 
-<div class="grid grid-2">
+<div class="card more">
 
-<div class="card settings-card">
+<div class="setting">
+<div>
+<b>🌅 Time atmosphere</b>
+<span>Automatically changes with Bahrain time.</span>
+</div>
+<b>Automatic</b>
+</div>
 
-<h3 style="margin-top:0">
-Services
-</h3>
+<div class="setting">
+<div>
+<b>🌤️ Weather atmosphere</b>
+<span>Live weather changes the TROM background.</span>
+</div>
+<b>Live</b>
+</div>
 
-<div class="settings-row">
+<div class="setting">
+<div>
+<b>📅 Schedule OCR</b>
+<span>Your uploaded schedule photo can be converted into digital classes.</span>
+</div>
+<b>On</b>
+</div>
+
+<div class="setting">
 <div>
 <b>🤖 TROM AI</b>
-<span>General and TROM assistance</span>
+<span>General AI and TROM-specific assistance.</span>
 </div>
-<button class="secondary"
-onclick="showPage('ai')">
-Open
-</button>
+<button class="secondary" onclick="showPage('ai')">Open</button>
 </div>
 
-<div class="settings-row">
-<div>
-<b>📰 Newsroom</b>
-<span>Latest TROM news</span>
-</div>
-<button class="secondary"
-onclick="showPage('news')">
-Open
-</button>
-</div>
-
-<div class="settings-row">
-<div>
-<b>📺 Media</b>
-<span>TROM TV and gallery</span>
-</div>
-<button class="secondary"
-onclick="showPage('media')">
-Open
-</button>
-</div>
-
-<div class="settings-row">
-<div>
-<b>🌍 TROM COUNTRY</b>
-<span>National portal</span>
-</div>
-<button class="secondary"
-onclick="showPage('country')">
-Open
-</button>
-</div>
-
-</div>
-
-
-<div class="card settings-card">
-
-<h3 style="margin-top:0">
-Account
-</h3>
-
-<div class="settings-row">
-
-<div>
-<b id="moreAccountName">
-Guest
-</b>
-
-<span id="moreAccountSub">
-Public TROM access
-</span>
-</div>
-
-<button class="secondary"
-id="logoutBtn">
+<div style="padding-top:18px">
+<button id="logoutBtn" class="secondary" style="width:100%">
 Log out
 </button>
-
-</div>
-
-<div class="settings-row">
-
-<div>
-<b>🌤️ Dynamic atmosphere</b>
-<span>
-Changes with live weather and Bahrain time.
-</span>
-</div>
-
-<span>Auto</span>
-
-</div>
-
-<div class="settings-row">
-
-<div>
-<b>⏱️ Live schedule</b>
-<span>
-Countdown updates every second.
-</span>
-</div>
-
-<span>On</span>
-
-</div>
-
 </div>
 
 </div>
@@ -2450,45 +1901,40 @@ Countdown updates every second.
 
 </main>
 
+<!-- NAVIGATION -->
+<nav class="nav">
 
-<!-- =========================================================
-BOTTOM NAV
-========================================================= -->
-
-<nav class="bottom-nav">
-
-<button class="nav-btn active"
-data-page="home">
+<button class="active" data-page="home">
 <span class="nav-icon">⌂</span>
 Home
 </button>
 
-<button class="nav-btn"
-data-page="profile">
+<button data-page="profile">
 <span class="nav-icon">👤</span>
 My TROM
 </button>
 
-<button class="nav-btn"
-data-page="schedule">
+<button data-page="schedule">
 <span class="nav-icon">▦</span>
 Schedule
 </button>
 
-<button class="nav-btn"
-data-page="news">
+<button data-page="news">
 <span class="nav-icon">📰</span>
 News
 </button>
 
-<button class="nav-btn"
-data-page="media">
+<button data-page="media">
 <span class="nav-icon">▶</span>
 Media
 </button>
 
-<button class="nav-btn"
-data-page="more">
+<button data-page="ai">
+<span class="nav-icon">✦</span>
+AI
+</button>
+
+<button data-page="more">
 <span class="nav-icon">•••</span>
 More
 </button>
@@ -2499,26 +1945,33 @@ More
 
 <div id="toast" class="toast"></div>
 
-<div id="loading" class="loading">
-<div class="loader">T</div>
-</div>
-
-
 <script>
 /* =========================================================
-TROM — THE REPUBLIC OF MOE
+TROM CORE
 ========================================================= */
 
-const TROM_ACCESS_CODE = "TROM2026";
+const ACCESS_CODE = "TROM2026";
 
 const WEATHER_URL =
-"https://api.open-meteo.com/v1/forecast?latitude=26.0667&longitude=50.5577"+
+"https://api.open-meteo.com/v1/forecast"+
+"?latitude=26.0667"+
+"&longitude=50.5577"+
 "&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code"+
 "&timezone=Asia%2FBahrain";
 
+const SCHOOL = "Ibn Khuldoon National School";
+
+const $ = id => document.getElementById(id);
+
+let currentProfile = null;
+let guestMode = false;
+let weatherData = null;
+let weatherUpdated = null;
+let selectedScheduleDay = null;
+let pendingSchedule = null;
 
 /* =========================================================
-ORIGINAL TROM PROFILES
+EXISTING TROM PROFILES
 ========================================================= */
 
 const builtInProfiles = {
@@ -2531,9 +1984,9 @@ role:"Student",
 type:"student",
 dob:"03/01/15",
 email:"",
-school:"Ibn Khuldoon National School",
+school:SCHOOL,
 grade:"Grade 6C",
-homeroom:"M 25",
+room:"M 25",
 
 schedules:{
 D1:{
@@ -2544,7 +1997,6 @@ P4:["Individuals and Societies 6","M 24"],
 P5:["Arabic Literature 6","M 14"],
 P6:["English Literature 6","M 25"]
 },
-
 D2:{
 P1:["Arabic Literature 6","M 14"],
 P2:["Design 6","M 31"],
@@ -2553,7 +2005,6 @@ P4:["Islamic Studies","733"],
 P5:["Mathematics 6","M 40"],
 P6:["Science 6","M 16"]
 },
-
 D3:{
 P1:["Mathematics 6","M 40"],
 P2:["Science 6","M 16"],
@@ -2562,7 +2013,6 @@ P4:["English Literature 6","M 25"],
 P5:["Physical and Health Education 6","GYM"],
 P6:["Arabic Literature 6","M 14"]
 },
-
 D4:{
 P1:["Individuals and Societies 6","M 24"],
 P2:["National Studies 6","733"],
@@ -2571,7 +2021,6 @@ P4:["Science 6","M 16"],
 P5:["English Literature 6","M 25"],
 P6:["Mathematics 6","M 40"]
 },
-
 D5:{
 P1:["English Literature 6","M 25"],
 P2:["Mathematics 6","M 40"],
@@ -2580,7 +2029,6 @@ P4:["National Studies 6","733"],
 P5:["Arabic Literature 6","M 14"],
 P6:["Design 6","M 31"]
 },
-
 D6:{
 P1:["Physical and Health Education 6","GYM"],
 P2:["English Literature 6","M 25"],
@@ -2592,7 +2040,6 @@ P6:["Visual Art 6","715"]
 }
 },
 
-
 "201115":{
 id:"201115",
 name:"Farah Sami Issa",
@@ -2601,9 +2048,9 @@ role:"Teacher",
 type:"teacher",
 dob:"03/09/88",
 email:"",
-school:"Ibn Khuldoon National School",
+school:SCHOOL,
 grade:"Middle School",
-homeroom:"M 38",
+room:"M 38",
 
 schedules:{
 D1:{
@@ -2614,7 +2061,6 @@ P4:["Mathematics 7","M 38"],
 P5:["Mathematics 8","M 38"],
 P6:null
 },
-
 D2:{
 P1:["Mathematics 8","M 38"],
 P2:["Mathematics 8","M 38"],
@@ -2623,7 +2069,6 @@ P4:null,
 P5:["Mathematics 6","M 38"],
 P6:["Mathematics 7","M 38"]
 },
-
 D3:{
 P1:["Mathematics 8","M 38"],
 P2:["Mathematics 7","M 38"],
@@ -2632,7 +2077,6 @@ P4:null,
 P5:null,
 P6:["Mathematics 8","M 38"]
 },
-
 D4:{
 P1:["Mathematics 6","M 38"],
 P2:null,
@@ -2641,7 +2085,6 @@ P4:null,
 P5:["Mathematics 8","M 38"],
 P6:null
 },
-
 D5:{
 P1:["Mathematics 6","M 38"],
 P2:null,
@@ -2650,7 +2093,6 @@ P4:["Mathematics 7","M 38"],
 P5:null,
 P6:["Mathematics 8","M 38"]
 },
-
 D6:{
 P1:null,
 P2:["Mathematics 7","M 38"],
@@ -2664,7 +2106,6 @@ P6:["Mathematics 6","M 38"]
 
 };
 
-
 /* =========================================================
 BELL SCHEDULE
 ========================================================= */
@@ -2672,6 +2113,8 @@ BELL SCHEDULE
 const BELL = {
 
 regular:{
+homeroom:["07:45","07:55"],
+
 periods:{
 P1:["08:00","08:55"],
 P2:["09:00","10:00"],
@@ -2686,10 +2129,13 @@ breaks:[
 ["13:45","14:00","Break"]
 ],
 
-end:"14:55"
+studentEnd:"14:55",
+teacherEnd:"14:55"
 },
 
 tuesday:{
+homeroom:["07:45","07:55"],
+
 periods:{
 P1:["08:00","08:45"],
 P2:["08:50","09:35"],
@@ -2704,29 +2150,26 @@ breaks:[
 ["12:25","12:40","Break"]
 ],
 
-end:"13:25",
-teacherMeeting:["13:30","14:55"]
+meetings:["13:30","14:55"],
+
+studentEnd:"13:25",
+teacherEnd:"14:55"
 }
 
 };
 
+/* September 1 2026 = Day 1 */
+const CYCLE_REFERENCE = {
+y:2026,
+m:9,
+d:1,
+cycle:1
+};
+
+const CYCLE_OVERRIDES = {};
 
 /* =========================================================
-STATE
-========================================================= */
-
-let profiles = {...builtInProfiles};
-let currentProfile = null;
-let guestMode = false;
-let weatherData = null;
-let weatherLastUpdated = null;
-let selectedScheduleDay = null;
-
-const $ = id => document.getElementById(id);
-
-
-/* =========================================================
-HELPERS
+BASIC HELPERS
 ========================================================= */
 
 function pad(n){
@@ -2734,9 +2177,7 @@ return String(n).padStart(2,"0");
 }
 
 function toast(message){
-
 const el=$("toast");
-
 el.textContent=message;
 el.classList.add("show");
 
@@ -2747,9 +2188,7 @@ el.classList.remove("show");
 },2800);
 }
 
-
 function escapeHTML(value){
-
 return String(value ?? "")
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
@@ -2758,19 +2197,13 @@ return String(value ?? "")
 .replace(/'/g,"&#039;");
 }
 
-
-function minutes(hm){
-
-const [h,m]=hm.split(":").map(Number);
-
+function minutes(str){
+const [h,m]=str.split(":").map(Number);
 return h*60+m;
 }
 
-
-function timeLabel(hm){
-
-const [h,m]=hm.split(":").map(Number);
-
+function timeLabel(str){
+const [h,m]=str.split(":").map(Number);
 const d=new Date(2000,0,1,h,m);
 
 return d.toLocaleTimeString("en-US",{
@@ -2779,28 +2212,23 @@ minute:"2-digit"
 });
 }
 
-
 function duration(seconds){
-
 seconds=Math.max(0,Math.floor(seconds));
 
 const h=Math.floor(seconds/3600);
 const m=Math.floor((seconds%3600)/60);
 const s=seconds%60;
 
-if(h>0)return `${h}h ${m}m ${s}s`;
-
-if(m>0)return `${m}m ${s}s`;
-
+if(h)return `${h}h ${m}m ${s}s`;
+if(m)return `${m}m ${s}s`;
 return `${s}s`;
 }
-
 
 /* =========================================================
 BAHRAIN TIME
 ========================================================= */
 
-function bahrain(){
+function bahrainTime(date=new Date()){
 
 const parts=new Intl.DateTimeFormat("en-GB",{
 timeZone:"Asia/Bahrain",
@@ -2812,38 +2240,46 @@ hour:"2-digit",
 minute:"2-digit",
 second:"2-digit",
 hour12:false
-}).formatToParts(new Date());
+}).formatToParts(date);
 
-const o={};
+const obj={};
 
-parts.forEach(x=>o[x.type]=x.value);
+parts.forEach(x=>{
+obj[x.type]=x.value;
+});
 
 return {
-year:Number(o.year),
-month:Number(o.month),
-day:Number(o.day),
-weekday:o.weekday,
-hour:Number(o.hour),
-minute:Number(o.minute),
-second:Number(o.second)
+year:Number(obj.year),
+month:Number(obj.month),
+day:Number(obj.day),
+weekday:obj.weekday,
+hour:Number(obj.hour),
+minute:Number(obj.minute),
+second:Number(obj.second)
 };
 }
 
+function dateKey(p){
+return `${p.year}-${pad(p.month)}-${pad(p.day)}`;
+}
+
+function weekend(p){
+return p.weekday==="Fri" || p.weekday==="Sat";
+}
 
 /* =========================================================
-SCHOOL CYCLE
+CYCLE
 ========================================================= */
 
-const CYCLE_REFERENCE={
-y:2026,
-m:9,
-d:1,
-cycle:1
-};
+function getCycle(p=bahrainTime()){
 
-function cycleDay(p=bahrain()){
+const key=dateKey(p);
 
-const start=new Date(Date.UTC(
+if(CYCLE_OVERRIDES[key]){
+return CYCLE_OVERRIDES[key];
+}
+
+const ref=new Date(Date.UTC(
 CYCLE_REFERENCE.y,
 CYCLE_REFERENCE.m-1,
 CYCLE_REFERENCE.d
@@ -2858,7 +2294,7 @@ p.day
 let count=0;
 
 for(
-let d=new Date(start);
+let d=new Date(ref);
 d<=current;
 d.setUTCDate(d.getUTCDate()+1)
 ){
@@ -2868,164 +2304,144 @@ const weekday=d.getUTCDay();
 if(weekday!==5 && weekday!==6){
 count++;
 }
-
 }
+
+if(count<1)return "H";
 
 return ((count-1)%6)+1;
 }
 
-
-function weekend(p){
-
-return p.weekday==="Fri" || p.weekday==="Sat";
-}
-
+/* =========================================================
+BELL TYPE
+========================================================= */
 
 function bellFor(p){
-
 return p.weekday==="Tue"
 ? BELL.tuesday
 : BELL.regular;
 }
 
-
 /* =========================================================
-SCHEDULE ITEMS
+SCHEDULE ENGINE
 ========================================================= */
 
-function scheduleItems(profile,p=bahrain()){
+function getItems(profile,p){
 
-if(!profile || weekend(p)){
-return [];
-}
+if(weekend(p))return [];
 
 const bell=bellFor(p);
+const cycle=getCycle(p);
 
-const day=cycleDay(p);
+if(cycle==="H")return [];
 
-const data=profile.schedules?.[`D${day}`] || {};
+const day=profile.schedules["D"+cycle] || {};
+const items=[];
 
-const result=[];
+items.push({
+kind:"homeroom",
+name:"Homeroom",
+room:profile.room || "",
+start:bell.homeroom[0],
+end:bell.homeroom[1]
+});
 
 const periods=["P1","P2","P3","P4","P5","P6"];
 
-periods.forEach((period,index)=>{
+periods.forEach((pk,index)=>{
 
-const times=bell.periods[period];
+const previous =
+index===0
+? bell.homeroom
+: bell.periods[periods[index-1]];
 
-if(index>0){
+const current=bell.periods[pk];
 
-const previous=bell.periods[periods[index-1]];
-
-const gap=minutes(times[0])-minutes(previous[1]);
+const gap=
+minutes(current[0])-minutes(previous[1]);
 
 if(gap===5){
 
-result.push({
+items.push({
 kind:"transition",
 name:"Transition",
 room:"Get ready",
 start:previous[1],
-end:times[0]
+end:current[0]
 });
 
 }
 
-}
+const data=day[pk];
 
-const item=data[period];
-
-result.push({
-
+items.push({
 kind:"period",
-
-period,
-
-name:item?.[0] || "Free Period",
-
-room:item?.[1] || "Available",
-
-start:times[0],
-
-end:times[1],
-
-free:!item
-
+name:data ? data[0] : "Free Period",
+room:data ? data[1] : "",
+start:current[0],
+end:current[1],
+free:!data,
+period:pk
 });
 
 const breakItem=bell.breaks.find(
-x=>x[0]===times[1]
+x=>x[0]===current[1]
 );
 
 if(breakItem){
 
-result.push({
-
+items.push({
 kind:"break",
-
 name:breakItem[2],
-
 room:"",
-
 start:breakItem[0],
-
 end:breakItem[1]
-
 });
 
 }
 
 });
 
+if(profile.type==="teacher" && bell.meetings){
 
-if(
-profile.type==="teacher" &&
-bell.teacherMeeting
-){
+items.push({
+kind:"transition",
+name:"Transition",
+room:"Meeting prep",
+start:BELL.tuesday.periods.P6[1],
+end:"13:30"
+});
 
-result.push({
-
+items.push({
 kind:"meeting",
-
 name:"Faculty / Departmental Meetings",
-
 room:"Meetings",
-
-start:bell.teacherMeeting[0],
-
-end:bell.teacherMeeting[1]
-
+start:bell.meetings[0],
+end:bell.meetings[1]
 });
 
 }
 
-return result;
+return items;
 }
-
 
 /* =========================================================
-CURRENT STATE
+CURRENT SCHEDULE STATE
 ========================================================= */
 
-function currentState(profile,p=bahrain()){
-
-const items=scheduleItems(profile,p);
+function currentState(items,p){
 
 if(!items.length){
-
-return {
-type:"weekend"
-};
-
+return {kind:"complete"};
 }
 
-const now=p.hour*60+
+const now=
+p.hour*60+
 p.minute+
 p.second/60;
 
-for(let i=0;i<items.length;i++){
+let upcoming=null;
 
-const item=items[i];
+for(const item of items){
 
 const start=minutes(item.start);
 const end=minutes(item.end);
@@ -3033,167 +2449,79 @@ const end=minutes(item.end);
 if(now>=start && now<end){
 
 return {
-type:"current",
+kind:"current",
 item,
-seconds:Math.max(
-0,
-Math.floor((end-now)*60)
-)
+seconds:Math.round((end-now)*60)
 };
 
 }
 
+if(now<start && !upcoming){
+
+upcoming=item;
+
 }
 
-const next=items.find(
-x=>minutes(x.start)>now
-);
+}
 
-if(next){
+if(upcoming){
 
 return {
-type:"next",
-item:next,
-seconds:Math.max(
-0,
-Math.floor((minutes(next.start)-now)*60)
-)
+kind:"before",
+item:upcoming,
+seconds:Math.round((minutes(upcoming.start)-now)*60)
 };
 
 }
 
-return {
-type:"complete"
-};
+return {kind:"complete"};
 }
-
 
 /* =========================================================
-CLOCK + GREETING + ATMOSPHERE
+GREETING
 ========================================================= */
 
-function updateClock(){
+function greeting(name){
 
-const p=bahrain();
+const hour=bahrainTime().hour;
 
-$("heroTime").textContent=
-`${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}`;
-
-$("miniClock").textContent=
-`${pad(p.hour)}:${pad(p.minute)}`;
-
-const date=new Date(Date.UTC(
-p.year,
-p.month-1,
-p.day,
-12
-));
-
-$("heroDate").textContent=
-new Intl.DateTimeFormat("en-US",{
-timeZone:"Asia/Bahrain",
-weekday:"long",
-month:"long",
-day:"numeric",
-year:"numeric"
-}).format(date);
-
-
-/* EXACT GREETING TIMES */
-
-let greeting="Good evening";
-
-if(p.hour>=5 && p.hour<12){
-greeting="Good morning";
+if(hour>=5 && hour<12){
+return `Good morning, ${name}`;
 }
 
-else if(p.hour>=12 && p.hour<18){
-greeting="Good afternoon";
+if(hour>=12 && hour<18){
+return `Good afternoon, ${name}`;
 }
 
-else{
-greeting="Good evening";
+return `Good evening, ${name}`;
 }
-
-
-if(currentProfile){
-
-$("heroGreeting").textContent=
-`${greeting}, ${currentProfile.shortName}`;
-
-}else{
-
-$("heroGreeting").textContent=
-`${greeting}`;
-
-}
-
-
-/* TIME BACKGROUND */
-
-document.body.classList.remove(
-"morning",
-"afternoon",
-"evening",
-"night"
-);
-
-if(p.hour>=5 && p.hour<12){
-document.body.classList.add("morning");
-}
-
-else if(p.hour>=12 && p.hour<18){
-document.body.classList.add("afternoon");
-}
-
-else if(p.hour>=18 && p.hour<23){
-document.body.classList.add("evening");
-}
-
-else{
-document.body.classList.add("night");
-}
-
-
-updateWeatherAtmosphere();
-
-}
-
 
 /* =========================================================
 WEATHER
 ========================================================= */
 
-const weatherText={
-
+const weatherNames={
 0:"Clear sky",
 1:"Mainly clear",
 2:"Partly cloudy",
 3:"Overcast",
-
 45:"Fog",
 48:"Rime fog",
-
 51:"Light drizzle",
 53:"Drizzle",
 55:"Heavy drizzle",
-
 61:"Light rain",
 63:"Rain",
 65:"Heavy rain",
-
 80:"Rain showers",
 81:"Rain showers",
 82:"Heavy rain showers",
-
 95:"Thunderstorm",
 96:"Thunderstorm",
 99:"Thunderstorm"
-
 };
 
-const weatherEmoji={
-
+const weatherIcons={
 0:"☀️",
 1:"🌤️",
 2:"⛅",
@@ -3212,69 +2540,43 @@ const weatherEmoji={
 95:"⛈️",
 96:"⛈️",
 99:"⛈️"
-
 };
 
-
-function updateWeatherAtmosphere(){
+function setWeatherAtmosphere(){
 
 document.body.classList.remove(
-"weather-cloudy",
 "weather-rain",
 "weather-storm",
-"weather-clear",
-"clear-night"
+"weather-fog"
 );
 
 if(!weatherData)return;
 
 const code=weatherData.current.weather_code;
 
-if(
-[61,63,65,80,81,82].includes(code)
-){
-document.body.classList.add("weather-rain");
-}
-
-else if(
-[95,96,99].includes(code)
-){
+if([95,96,99].includes(code)){
 document.body.classList.add("weather-storm");
 }
-
-else if(
-[2,3,45,48].includes(code)
-){
-document.body.classList.add("weather-cloudy");
+else if([45,48].includes(code)){
+document.body.classList.add("weather-fog");
 }
-
-else{
-
-document.body.classList.add("weather-clear");
-
-const p=bahrain();
-
-if(p.hour>=18 || p.hour<5){
-document.body.classList.add("clear-night");
+else if([51,53,55,61,63,65,80,81,82].includes(code)){
+document.body.classList.add("weather-rain");
 }
-
 }
-
-}
-
 
 function renderWeather(){
 
-const target=$("homeWeather");
+const el=$("weatherCard");
 
 if(!weatherData){
 
-target.innerHTML=`
+el.innerHTML=`
+<div class="eyebrow">TROM WEATHER</div>
 <div class="weather-main">
 <div>
-<div class="eyebrow">TROM WEATHER</div>
 <div class="weather-temp">—°</div>
-<div class="weather-desc">Loading live Bahrain weather...</div>
+<div class="weather-desc">Loading live Bahrain weather…</div>
 </div>
 <div class="weather-icon">🌤️</div>
 </div>
@@ -3284,75 +2586,64 @@ return;
 }
 
 const c=weatherData.current;
-
 const code=c.weather_code;
 
-target.innerHTML=`
+el.innerHTML=`
+
+<div class="eyebrow">TROM WEATHER • BAHRAIN</div>
 
 <div class="weather-main">
 
 <div>
-
-<div class="eyebrow">
-TROM WEATHER • BAHRAIN
-</div>
-
 <div class="weather-temp">
 ${Math.round(c.temperature_2m)}°C
 </div>
 
 <div class="weather-desc">
-${weatherText[code] || "Current conditions"}
+${weatherNames[code] || "Current conditions"}
 </div>
-
 </div>
 
 <div class="weather-icon">
-${weatherEmoji[code] || "🌤️"}
+${weatherIcons[code] || "🌤️"}
 </div>
 
 </div>
 
 <div class="weather-meta">
 
-<span>
-🌡️ Feels ${Math.round(c.apparent_temperature)}°C
-</span>
+<span>🌡️ Feels ${Math.round(c.apparent_temperature)}°C</span>
 
-<span>
-💧 Humidity ${c.relative_humidity_2m}%
-</span>
+<span>💧 ${c.relative_humidity_2m}% humidity</span>
 
-<span>
-💨 Wind ${Math.round(c.wind_speed_10m)} km/h
-</span>
+<span>💨 ${Math.round(c.wind_speed_10m)} km/h</span>
 
 </div>
 
-<div class="weather-refresh">
+<div class="weather-update">
 Live Bahrain data • Updated ${
-weatherLastUpdated
-? new Date(weatherLastUpdated)
-.toLocaleTimeString([],{
+weatherUpdated
+? new Date(weatherUpdated).toLocaleTimeString([],{
 hour:"numeric",
 minute:"2-digit"
 })
 : "now"
 }
 </div>
+
 `;
 
-updateWeatherAtmosphere();
+$("heroWeatherPill").textContent=
+`${weatherIcons[code] || "🌤️"} ${Math.round(c.temperature_2m)}°C • ${weatherNames[code] || "Weather"}`;
 
+setWeatherAtmosphere();
 }
-
 
 async function fetchWeather(){
 
 try{
 
-const response=
-await fetch(
+const response=await fetch(
 WEATHER_URL,
 {cache:"no-store"}
 );
@@ -3361,171 +2652,170 @@ if(!response.ok){
 throw new Error("Weather unavailable");
 }
 
-weatherData=
-await response.json();
+weatherData=await response.json();
+weatherUpdated=Date.now();
 
-weatherLastUpdated=
-Date.now();
+}catch(error){
 
-}
-
-catch(error){
-
-console.warn(error);
+console.warn("TROM Weather:",error);
 
 }
 
 renderWeather();
+}
+
+/* =========================================================
+TIME
+========================================================= */
+
+function updateTime(){
+
+const p=bahrainTime();
+
+$("miniClock").textContent=
+`${pad(p.hour)}:${pad(p.minute)}`;
+
+$("heroTime").textContent=
+`${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}`;
+
+const date=new Date(Date.UTC(
+p.year,
+p.month-1,
+p.day,
+12
+));
+
+$("heroDate").textContent=
+new Intl.DateTimeFormat("en-US",{
+timeZone:"Asia/Bahrain",
+weekday:"long",
+month:"long",
+day:"numeric",
+year:"numeric"
+}).format(date);
+
+$("heroDatePill").textContent=
+new Intl.DateTimeFormat("en-US",{
+timeZone:"Asia/Bahrain",
+weekday:"long",
+month:"short",
+day:"numeric"
+}).format(date);
+
+document.body.classList.remove(
+"morning",
+"afternoon",
+"evening",
+"night"
+);
+
+if(p.hour>=5 && p.hour<12){
+document.body.classList.add("morning");
+}
+else if(p.hour>=12 && p.hour<18){
+document.body.classList.add("afternoon");
+}
+else if(p.hour>=18){
+document.body.classList.add("evening");
+}
+else{
+document.body.classList.add("night");
+}
+
+if(currentProfile){
+
+$("heroGreeting").textContent=
+greeting(currentProfile.shortName);
+
+$("heroEyebrow").textContent=
+`MY TROM • ${currentProfile.role.toUpperCase()}`;
 
 }
 
+const cycle=getCycle(p);
+
+$("cyclePill").textContent=
+weekend(p)
+? "🌿 Weekend"
+: `📅 Day ${cycle}`;
+
+$("profileCycle").textContent=
+weekend(p)
+? "Weekend"
+: `Day ${cycle}`;
+
+updateCurrentCard();
+
+if($("page-schedule").classList.contains("active")){
+renderSchedule();
+}
+}
 
 /* =========================================================
-HOME
+HOME CURRENT
 ========================================================= */
 
-function updateHome(){
+function updateCurrentCard(){
 
-const p=bahrain();
+const el=$("homeCurrent");
 
 if(!currentProfile){
 
-$("personalHomeSection")
-.classList.add("hidden");
+el.className="card current";
 
-$("guestHomeSection")
-.classList.remove("hidden");
-
-$("personalBanner")
-.classList.add("hidden");
-
-$("homeCurrentCard").innerHTML=`
-<div class="eyebrow">
-GUEST MODE
-</div>
-
-<div class="current-class">
-Explore TROM
-</div>
-
-<div class="current-room">
-Create a TROM Account to unlock your personal dashboard.
+el.innerHTML=`
+<div class="eyebrow">PERSONALIZATION</div>
+<div class="current-title">Create your TROM account</div>
+<div class="current-sub">
+Add your photo, birthday and schedule to unlock your personalized day.
 </div>
 `;
 
 return;
-
 }
 
-
-$("personalHomeSection")
-.classList.remove("hidden");
-
-$("guestHomeSection")
-.classList.add("hidden");
-
-$("personalBanner")
-.classList.remove("hidden");
-
-
-const photo=localStorage.getItem(
-`trom_photo_${currentProfile.id}`
-);
-
-if(photo){
-
-$("personalBannerPhoto").src=photo;
-
-}
-
-$("personalBannerTitle").textContent=
-`My TROM • ${currentProfile.shortName}`;
-
-$("personalBannerSub").textContent=
-`${currentProfile.role} • Citizen ${currentProfile.id}`;
-
+const p=bahrainTime();
 
 if(weekend(p)){
 
-$("homeDay").textContent="Weekend";
-$("homeDaySub").textContent=
-"Friday & Saturday";
+el.className="card current";
 
-$("homeCurrent").textContent="No school";
-$("homeCurrentSub").textContent=
-"Enjoy your weekend";
-
-$("homeNext").textContent="Sunday";
-$("homeNextSub").textContent=
-`Day ${cycleDay({...p,day:p.day+1})}`;
-
-$("homeEnd").textContent="—";
-$("homeEndSub").textContent=
-"No school today";
-
-$("homeCurrentCard").innerHTML=`
-
-<div class="eyebrow">
-WEEKEND
+el.innerHTML=`
+<div class="eyebrow">WEEKEND</div>
+<div class="current-title">Enjoy your weekend 🌿</div>
+<div class="current-sub">
+Friday and Saturday are weekends.
 </div>
-
-<div class="current-class">
-Enjoy your weekend 🌿
-</div>
-
-<div class="current-room">
-Friday and Saturday are school weekends.
-</div>
-
 `;
 
 return;
 }
 
-
-const day=cycleDay(p);
-
 const state=currentState(
-currentProfile,
+getItems(currentProfile,p),
 p
 );
 
-$("homeDay").textContent=
-`Day ${day}`;
+if(state.kind==="current"){
 
-$("homeDaySub").textContent=
-p.weekday==="Tue"
-? "Tuesday • Short Day"
-: "Regular Day";
+el.className="card current now";
 
+const isTransition=
+state.item.kind==="transition";
 
-if(state.type==="current"){
+el.innerHTML=`
 
-$("homeCurrent").textContent=
-state.item.name;
+<span class="now-badge">
+${isTransition ? "🔄 TRANSITION" : "🔴 NOW"}
+</span>
 
-$("homeCurrentSub").textContent=
-`${state.item.room} • ${duration(state.seconds)}`;
-
-$("homeCurrentCard").className=
-"card current-card now";
-
-$("homeCurrentCard").innerHTML=`
-
-<div class="now-badge">
-🔴 NOW
-</div>
-
-<div class="current-class">
+<div class="current-title">
 ${escapeHTML(state.item.name)}
 </div>
 
-<div class="current-room">
-${escapeHTML(state.item.room)}
-•
-${timeLabel(state.item.start)}
-–
-${timeLabel(state.item.end)}
+<div class="current-sub">
+${escapeHTML(state.item.room || "Scheduled")}
+• ${timeLabel(state.item.start)}–${timeLabel(state.item.end)}
 </div>
 
 <div class="countdown">
@@ -3533,38 +2823,29 @@ ${duration(state.seconds)}
 </div>
 
 <div class="countdown-label">
-remaining
+${isTransition ? "transition time remaining" : "remaining"}
 </div>
 
 `;
 
+return;
 }
 
+if(state.kind==="before"){
 
-else if(state.type==="next"){
+el.className="card current";
 
-$("homeCurrent").textContent=
-"Between classes";
+el.innerHTML=`
 
-$("homeCurrentSub").textContent=
-`Next: ${state.item.name}`;
+<div class="eyebrow">UP NEXT</div>
 
-$("homeCurrentCard").className=
-"card current-card";
-
-$("homeCurrentCard").innerHTML=`
-
-<div class="eyebrow">
-UP NEXT
-</div>
-
-<div class="current-class">
+<div class="current-title">
 ${escapeHTML(state.item.name)}
 </div>
 
-<div class="current-room">
-${escapeHTML(state.item.room)}
-• starts ${timeLabel(state.item.start)}
+<div class="current-sub">
+${escapeHTML(state.item.room || "Scheduled")}
+• ${timeLabel(state.item.start)}
 </div>
 
 <div class="countdown">
@@ -3577,131 +2858,98 @@ until it starts
 
 `;
 
+return;
 }
-
-
-else{
-
-$("homeCurrent").textContent=
-"Finished";
-
-$("homeCurrentSub").textContent=
-"School day complete";
-
-$("homeCurrentCard").className=
-"card current-card";
-
-$("homeCurrentCard").innerHTML=`
-
-<div class="eyebrow">
-DAY COMPLETE
-</div>
-
-<div class="current-class">
-Class dismissed 🎉
-</div>
-
-<div class="current-room">
-Your scheduled day has finished.
-</div>
-
-`;
-
-}
-
-
-/* NEXT */
-
-const items=scheduleItems(
-currentProfile,
-p
-);
-
-const now=
-p.hour*60+
-p.minute+
-p.second/60;
-
-const next=items.find(
-x=>minutes(x.start)>now
-);
-
-if(next){
-
-$("homeNext").textContent=
-next.name;
-
-$("homeNextSub").textContent=
-`${timeLabel(next.start)} • ${next.room}`;
-
-}else{
-
-$("homeNext").textContent=
-"Finished";
-
-$("homeNextSub").textContent=
-"No more items today";
-
-}
-
-
-/* END */
 
 const bell=bellFor(p);
 
-const end=
-currentProfile.type==="teacher" &&
-bell.teacherMeeting
-? bell.teacherMeeting[1]
-: bell.end;
+el.className="card current";
 
-$("homeEnd").textContent=
-timeLabel(end);
+el.innerHTML=`
 
-$("homeEndSub").textContent=
+<div class="eyebrow">DAY COMPLETE</div>
+
+<div class="current-title">
+Class dismissed 🎉
+</div>
+
+<div class="current-sub">
+${currentProfile.type==="teacher"
+? "Workday"
+: "School day"}
+ended at ${timeLabel(
 currentProfile.type==="teacher"
-? "Workday ends"
-: "School ends";
+? bell.teacherEnd
+: bell.studentEnd
+)}.
+</div>
 
+`;
 }
-
 
 /* =========================================================
 PROFILE UI
 ========================================================= */
 
-function updateProfileUI(){
+function loadPhoto(profile){
 
-if(!currentProfile){
+const photo=
+localStorage.getItem(
+"trom_photo_"+profile.id
+);
 
-$("profileName").textContent="Guest";
-$("profileRole").textContent=
-"Public TROM access";
+if(!photo){
 
-$("moreAccountName").textContent=
-"Guest";
+$("avatarImg").classList.add("hidden");
+$("profileImage").classList.add("hidden");
+$("personalPhoto").classList.add("hidden");
 
-$("moreAccountSub").textContent=
-"Public TROM access";
-
-$("topAvatarText").textContent="T";
-$("topAvatarImg").classList.add("hidden");
-
-$("profileInitial").textContent="T";
-$("profileBigImg").classList.add("hidden");
+$("avatarLetter").classList.remove("hidden");
+$("profileLetter").classList.remove("hidden");
+$("personalLetter").classList.remove("hidden");
 
 return;
 }
 
+$("avatarImg").src=photo;
+$("avatarImg").classList.remove("hidden");
+$("avatarLetter").classList.add("hidden");
 
-$("heroEyebrow").textContent=
-`MY TROM • ${currentProfile.role.toUpperCase()}`;
+$("profileImage").src=photo;
+$("profileImage").classList.remove("hidden");
+$("profileLetter").classList.add("hidden");
 
-$("heroText").textContent=
-currentProfile.type==="student"
-? "Your personalized school day, schedule, weather and TROM services — all in one place."
-: "Your personalized workday, schedule, weather and TROM services — all in one place.";
+$("personalPhoto").src=photo;
+$("personalPhoto").classList.remove("hidden");
+$("personalLetter").classList.add("hidden");
+}
 
+function updateProfileUI(){
+
+if(!currentProfile){
+
+$("personalName").textContent="Guest";
+$("personalRole").textContent="Public TROM access";
+
+$("profileName").textContent="Guest";
+$("profileRole").textContent="Public TROM access";
+
+$("profileId").textContent="—";
+$("profileDob").textContent="—";
+$("profileEmail").textContent="—";
+$("profileSchool").textContent="—";
+$("profileGrade").textContent="—";
+$("profileRoom").textContent="—";
+$("profileAccount").textContent="Guest";
+
+return;
+}
+
+$("personalName").textContent=
+currentProfile.name;
+
+$("personalRole").textContent=
+`${currentProfile.role} • ${currentProfile.id}`;
 
 $("profileName").textContent=
 currentProfile.name;
@@ -3709,471 +2957,184 @@ currentProfile.name;
 $("profileRole").textContent=
 currentProfile.role;
 
-
-$("dId").textContent=
+$("profileId").textContent=
 currentProfile.id;
 
-$("dDob").textContent=
+$("profileDob").textContent=
 currentProfile.dob;
 
-$("dEmail").textContent=
+$("profileEmail").textContent=
 currentProfile.email || "Not provided";
 
-$("dRole").textContent=
-currentProfile.role;
+$("profileSchool").textContent=
+currentProfile.school || SCHOOL;
 
-$("dSchool").textContent=
-currentProfile.school || "Not provided";
-
-$("dGrade").textContent=
+$("profileGrade").textContent=
 currentProfile.grade || "Not provided";
 
-$("dHomeroom").textContent=
-currentProfile.homeroom || "Not provided";
+$("profileRoom").textContent=
+currentProfile.room || "Not provided";
 
-$("dAccount").textContent=
-currentProfile.isCustom
+$("profileAccount").textContent=
+currentProfile.created
 ? "Personal TROM Account"
 : "TROM Profile";
-
-
-$("moreAccountName").textContent=
-currentProfile.name;
-
-$("moreAccountSub").textContent=
-`${currentProfile.role} • ${currentProfile.id}`;
-
 
 const initial=
 currentProfile.shortName
 .charAt(0)
 .toUpperCase();
 
-$("profileInitial").textContent=
-initial;
+$("avatarLetter").textContent=initial;
+$("profileLetter").textContent=initial;
+$("personalLetter").textContent=initial;
 
-$("topAvatarText").textContent=
-initial;
+loadPhoto(currentProfile);
 
-
-loadProfilePhoto();
-
+$("heroDescription").textContent=
+currentProfile.type==="teacher"
+? "Your personalized teaching day, schedule, TROM information and digital services — all in one place."
+: "Your personalized school day, schedule, TROM information and digital services — all in one place.";
 }
-
-
-function loadProfilePhoto(){
-
-if(!currentProfile)return;
-
-const photo=
-localStorage.getItem(
-`trom_photo_${currentProfile.id}`
-);
-
-if(photo){
-
-$("profileBigImg").src=photo;
-$("profileBigImg").classList.remove("hidden");
-
-$("topAvatarImg").src=photo;
-$("topAvatarImg").classList.remove("hidden");
-
-$("profileInitial").classList.add("hidden");
-$("topAvatarText").classList.add("hidden");
-
-}
-
-else{
-
-$("profileBigImg").classList.add("hidden");
-$("topAvatarImg").classList.add("hidden");
-
-$("profileInitial").classList.remove("hidden");
-$("topAvatarText").classList.remove("hidden");
-
-}
-
-}
-
 
 /* =========================================================
-PROFILE LIVE CARD
+NAVIGATION
 ========================================================= */
 
-function renderCurrentProfile(){
+function showPage(name){
 
-if(!currentProfile){
+document.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
 
-$("profileCurrentCard").innerHTML=`
-<div class="eyebrow">
-GUEST
-</div>
-<div class="current-class">
-Sign in to see your personal schedule.
-</div>
-`;
+const page=$("page-"+name);
 
-return;
+if(page){
+page.classList.add("active");
 }
 
-const p=bahrain();
-
-if(weekend(p)){
-
-$("profileCurrentCard").className=
-"card current-card";
-
-$("profileCurrentCard").innerHTML=`
-
-<div class="eyebrow">
-WEEKEND
-</div>
-
-<div class="current-class">
-Enjoy your weekend 🌿
-</div>
-
-<div class="current-room">
-Friday and Saturday.
-</div>
-`;
-
-return;
-}
-
-const state=
-currentState(
-currentProfile,
-p
+document.querySelectorAll(".nav button")
+.forEach(button=>{
+button.classList.toggle(
+"active",
+button.dataset.page===name
 );
+});
 
-if(state.type==="current"){
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
-$("profileCurrentCard").className=
-"card current-card now";
-
-$("profileCurrentCard").innerHTML=`
-
-<div class="now-badge">
-🔴 NOW
-</div>
-
-<div class="current-class">
-${escapeHTML(state.item.name)}
-</div>
-
-<div class="current-room">
-${escapeHTML(state.item.room)}
-•
-${timeLabel(state.item.start)}
-–
-${timeLabel(state.item.end)}
-</div>
-
-<div class="countdown">
-${duration(state.seconds)}
-</div>
-
-<div class="countdown-label">
-remaining
-</div>
-`;
-
+if(name==="schedule"){
+renderSchedule();
 }
 
-else if(state.type==="next"){
-
-$("profileCurrentCard").className=
-"card current-card";
-
-$("profileCurrentCard").innerHTML=`
-
-<div class="eyebrow">
-UP NEXT
-</div>
-
-<div class="current-class">
-${escapeHTML(state.item.name)}
-</div>
-
-<div class="current-room">
-${escapeHTML(state.item.room)}
-• starts ${timeLabel(state.item.start)}
-</div>
-
-<div class="countdown">
-${duration(state.seconds)}
-</div>
-
-<div class="countdown-label">
-until it starts
-</div>
-`;
-
+if(name==="profile"){
+updateProfileUI();
+}
 }
 
-else{
-
-$("profileCurrentCard").className=
-"card current-card";
-
-$("profileCurrentCard").innerHTML=`
-
-<div class="eyebrow">
-DAY COMPLETE
-</div>
-
-<div class="current-class">
-Class dismissed 🎉
-</div>
-
-<div class="current-room">
-Your scheduled day has finished.
-</div>
-`;
-
-}
-
-}
-
+window.showPage=showPage;
 
 /* =========================================================
 SCHEDULE PAGE
 ========================================================= */
 
-function renderSchedule(dayOverride=null){
+function renderSchedule(){
 
 if(!currentProfile){
 
-$("scheduleTitle").textContent=
-"Sign in to view your personal schedule.";
+$("scheduleSubtitle").textContent=
+"Sign in or create an account to use your personal schedule.";
 
-$("scheduleList").innerHTML="";
+$("scheduleList").innerHTML=`
+<div style="padding:30px;text-align:center;color:var(--muted)">
+👤 Your personal schedule will appear here after you create an account.
+</div>
+`;
 
 return;
 }
 
+$("scheduleSubtitle").textContent=
+"Live schedule • automatically updates every second";
 
-const p=bahrain();
+const p=bahrainTime();
+const todayCycle=getCycle(p);
 
-const today=
-cycleDay(p);
+if(selectedScheduleDay===null){
+selectedScheduleDay=
+typeof todayCycle==="number"
+? todayCycle
+: 1;
+}
 
-const day=
-dayOverride ||
-selectedScheduleDay ||
-today;
+$("scheduleToday").textContent=
+weekend(p)
+? "Weekend"
+: `Day ${selectedScheduleDay}`;
 
-selectedScheduleDay=day;
+$("scheduleType").textContent=
+p.weekday==="Tue"
+? "Tuesday • Short Day"
+: "Regular Day";
 
+$("scheduleCycle").textContent=
+`Day ${selectedScheduleDay}`;
 
-document.querySelectorAll(".day-tab")
-.forEach(button=>{
+$("dayButtons").innerHTML=
+[1,2,3,4,5,6].map(day=>`
 
-button.classList.toggle(
-"active",
-Number(button.dataset.cycle)===day
-);
+<button
+class="day ${day===selectedScheduleDay?"active":""}"
+onclick="selectScheduleDay(${day})">
+Day ${day}
+</button>
 
-});
+`).join("");
 
-
-$("scheduleTitle").textContent=
-`Day ${day} ${
-day===today
-? "• Today"
-: ""
-}`;
-
-
-const fakeParts={
+const fakeDate={
 ...p
 };
 
-const profile=currentProfile;
-
-const bell=
-p.weekday==="Tue"
-? BELL.tuesday
-: BELL.regular;
-
-const data=
-profile.schedules?.[`D${day}`] || {};
-
-const items=[];
-
-const periods=[
-"P1",
-"P2",
-"P3",
-"P4",
-"P5",
-"P6"
-];
-
-
-periods.forEach((period,index)=>{
-
-const times=
-bell.periods[period];
-
-if(index>0){
-
-const previous=
-bell.periods[periods[index-1]];
-
-if(
-minutes(times[0])-
-minutes(previous[1])===5
-){
-
-items.push({
-
-kind:"transition",
-
-name:"Transition",
-
-room:"Get ready",
-
-start:previous[1],
-
-end:times[0]
-
-});
-
-}
-
-}
-
-
-const value=
-data[period];
-
-
-items.push({
-
-kind:"period",
-
-name:value?.[0] || "Free Period",
-
-room:value?.[1] || "Available",
-
-start:times[0],
-
-end:times[1],
-
-free:!value
-
-});
-
-
-const br=
-bell.breaks.find(
-x=>x[0]===times[1]
+const items=getItemsForDay(
+currentProfile,
+selectedScheduleDay,
+p
 );
 
-if(br){
+const isToday=
+typeof todayCycle==="number" &&
+todayCycle===selectedScheduleDay;
 
-items.push({
+$("scheduleList").innerHTML=
+items.map(item=>{
 
-kind:"break",
+let state="upcoming";
 
-name:br[2],
-
-room:"",
-
-start:br[0],
-
-end:br[1]
-
-});
-
-}
-
-});
-
-
-if(
-profile.type==="teacher" &&
-bell.teacherMeeting
-){
-
-items.push({
-
-kind:"meeting",
-
-name:"Faculty / Departmental Meetings",
-
-room:"Meetings",
-
-start:bell.teacherMeeting[0],
-
-end:bell.teacherMeeting[1]
-
-});
-
-}
-
+if(isToday){
 
 const now=
 p.hour*60+
 p.minute+
 p.second/60;
 
+if(now>=minutes(item.end)){
+state="done";
+}
+else if(
+now>=minutes(item.start) &&
+now<minutes(item.end)
+){
+state="current";
+}
 
-$("scheduleList").innerHTML=
-items.map(item=>{
+}
 
-const start=minutes(item.start);
-const end=minutes(item.end);
-
-let state="upcoming";
 let status="UPCOMING";
 
-if(day===today){
-
-if(
-now>=start &&
-now<end
-){
-
-state="current";
-status="🔴 NOW";
-
-}
-
-else if(now>=end){
-
-state="completed";
-status="COMPLETED";
-
-}
-
-}
-
-
-if(item.kind==="transition"){
-
-state="transition";
-status="TRANSITION";
-
-}
-
-
-if(item.kind==="break"){
-
-state="transition";
-status="BREAK";
-
-}
-
-
-if(item.free){
-
-status="FREE";
-
-}
-
+if(state==="done")status="COMPLETED";
+if(state==="current")status="🔴 NOW";
 
 return `
 
@@ -4181,12 +3142,11 @@ return `
 
 <div class="schedule-time">
 ${timeLabel(item.start)}
-–
+<br>
 ${timeLabel(item.end)}
 </div>
 
 <div>
-
 <div class="schedule-name">
 ${escapeHTML(item.name)}
 </div>
@@ -4194,26 +3154,20 @@ ${escapeHTML(item.name)}
 <div class="schedule-room">
 ${escapeHTML(item.room || "")}
 </div>
-
 </div>
 
-<div class="schedule-time">
-${duration(
-Math.max(
-0,
-(end-start)*60
-)
-)}
+<div class="room-col">
+${item.room
+? `<span class="pill">${escapeHTML(item.room)}</span>`
+: ""}
 </div>
 
-<div class="schedule-status ${
+<div class="status ${
 state==="current"
-? "status-now"
-: state==="completed"
-? "status-done"
-: item.free
-? "status-free"
-: "status-next"
+? "now"
+: state==="done"
+? "done"
+: "next"
 }">
 ${status}
 </div>
@@ -4224,192 +3178,805 @@ ${status}
 
 }).join("");
 
+}
+
+function selectScheduleDay(day){
+selectedScheduleDay=day;
+renderSchedule();
+}
+
+window.selectScheduleDay=selectScheduleDay;
+
+function getItemsForDay(profile,cycle,p){
+
+const bell=
+p.weekday==="Tue"
+? BELL.tuesday
+: BELL.regular;
+
+const data=
+profile.schedules["D"+cycle] || {};
+
+const items=[];
+
+items.push({
+kind:"homeroom",
+name:"Homeroom",
+room:profile.room || "",
+start:bell.homeroom[0],
+end:bell.homeroom[1]
+});
+
+const periods=["P1","P2","P3","P4","P5","P6"];
+
+periods.forEach((pk,index)=>{
+
+const previous=
+index===0
+? bell.homeroom
+: bell.periods[periods[index-1]];
+
+const current=bell.periods[pk];
+
+if(
+minutes(current[0])-minutes(previous[1])===5
+){
+
+items.push({
+kind:"transition",
+name:"Transition",
+room:"Get ready",
+start:previous[1],
+end:current[0]
+});
 
 }
 
+const subject=data[pk];
+
+items.push({
+kind:"period",
+name:subject
+? subject[0]
+: "Free Period",
+room:subject
+? subject[1]
+: "",
+start:current[0],
+end:current[1]
+});
+
+const br=bell.breaks.find(
+x=>x[0]===current[1]
+);
+
+if(br){
+
+items.push({
+kind:"break",
+name:br[2],
+room:"",
+start:br[0],
+end:br[1]
+});
+
+}
+
+});
+
+if(profile.type==="teacher" && bell.meetings){
+
+items.push({
+kind:"transition",
+name:"Transition",
+room:"Meeting prep",
+start:bell.periods.P6[1],
+end:"13:30"
+});
+
+items.push({
+kind:"meeting",
+name:"Faculty / Departmental Meetings",
+room:"Meetings",
+start:"13:30",
+end:"14:55"
+});
+
+}
+
+return items;
+}
 
 /* =========================================================
-NEWS
+ACCOUNT CREATION
 ========================================================= */
 
-const NEWS=[
+function openCreate(){
 
-{
-tag:"TROM SECURITY",
-title:"New cameras being installed in TROM",
-text:"New security cameras are being installed across TROM to improve safety, monitoring and the protection of public spaces.",
-image:"IMG_4410.jpeg"
-},
+$("lockActions").classList.add("hidden");
+$("createPanel").classList.remove("hidden");
 
-{
-tag:"NATIONAL",
-title:"TROM expands its digital services",
-text:"New digital services are being developed to make information and everyday services easier to access.",
-icon:"💻"
-},
-
-{
-tag:"COMMUNITY",
-title:"TROM community events continue",
-text:"Communities across TROM continue preparing events and activities for citizens.",
-icon:"🎉"
+$("newName").focus();
 }
 
+function closeCreate(){
+
+$("createPanel").classList.add("hidden");
+$("lockActions").classList.remove("hidden");
+
+$("createError").classList.add("hidden");
+}
+
+function makeCitizenID(){
+
+let id;
+
+do{
+
+id=
+"9"+
+Math.floor(
+100000+
+Math.random()*899999
+);
+
+}while(
+localStorage.getItem("trom_account_"+id)
+);
+
+return id;
+}
+
+function formatBirthday(value){
+
+if(!value)return "";
+
+const [y,m,d]=value.split("-");
+
+return `${d}/${m}/${y.slice(2)}`;
+}
+
+/* =========================================================
+PHOTO PICKERS
+========================================================= */
+
+$("selfieBtn").addEventListener(
+"click",
+()=>{
+$("selfieInput").click();
+}
+);
+
+$("scheduleBtn").addEventListener(
+"click",
+()=>{
+$("scheduleInput").click();
+}
+);
+
+$("selfieInput").addEventListener(
+"change",
+event=>{
+
+const file=event.target.files?.[0];
+
+if(!file)return;
+
+const reader=new FileReader();
+
+reader.onload=()=>{
+
+$("selfiePreview").src=reader.result;
+$("selfiePreview").classList.remove("hidden");
+
+};
+
+reader.readAsDataURL(file);
+
+}
+);
+
+/* =========================================================
+SCHEDULE PHOTO OCR
+========================================================= */
+
+$("scheduleInput").addEventListener(
+"change",
+async event=>{
+
+const file=event.target.files?.[0];
+
+if(!file)return;
+
+const previewReader=new FileReader();
+
+previewReader.onload=()=>{
+
+$("schedulePreview").src=
+previewReader.result;
+
+$("schedulePreview")
+.classList
+.remove("hidden");
+
+};
+
+previewReader.readAsDataURL(file);
+
+await readSchedulePhoto(file);
+
+}
+);
+
+async function readSchedulePhoto(file){
+
+$("ocrProgress")
+.classList
+.remove("hidden");
+
+$("ocrStatus").textContent=
+"Reading your schedule photo…";
+
+$("ocrBar").style.width="5%";
+
+try{
+
+const result=
+await Tesseract.recognize(
+file,
+"eng",
+{
+logger:data=>{
+
+if(data.status==="recognizing text"){
+
+const progress=
+Math.round(
+(data.progress || 0)*100
+);
+
+$("ocrBar").style.width=
+Math.max(5,progress)+"%";
+
+$("ocrStatus").textContent=
+`Reading schedule… ${progress}%`;
+
+}
+
+}
+}
+);
+
+$("ocrBar").style.width="100%";
+
+const text=
+result.data.text || "";
+
+pendingSchedule=
+parseScheduleText(text);
+
+const total=
+Object.values(pendingSchedule)
+.reduce(
+(sum,day)=>
+sum+
+Object.values(day)
+.filter(Boolean)
+.length,
+0
+);
+
+if(total){
+
+$("ocrStatus").innerHTML=
+`✓ Schedule detected. TROM found approximately <b>${total}</b> scheduled items and will build your digital schedule.`;
+
+toast(
+"Schedule successfully read!"
+);
+
+}else{
+
+$("ocrStatus").innerHTML=
+`⚠️ I couldn't confidently read the schedule. The photo is saved and you can still create the account, then edit the schedule later.`;
+
+}
+
+}catch(error){
+
+console.error(error);
+
+$("ocrStatus").textContent=
+"Could not read the schedule photo. Try a clearer photo.";
+
+}
+
+}
+
+/* =========================================================
+OCR PARSER
+========================================================= */
+
+function blankSchedule(){
+
+return {
+D1:{},
+D2:{},
+D3:{},
+D4:{},
+D5:{},
+D6:{}
+};
+
+}
+
+function parseScheduleText(text){
+
+const schedule=blankSchedule();
+
+const lines=
+text
+.split(/\r?\n/)
+.map(x=>x.trim())
+.filter(Boolean);
+
+let currentDay=1;
+
+for(let i=0;i<lines.length;i++){
+
+const original=lines[i];
+
+const dayMatch=
+original.match(
+/\b(?:day|d)\s*([1-6])\b/i
+);
+
+if(dayMatch){
+
+currentDay=
+Number(dayMatch[1]);
+
+continue;
+}
+
+const timeMatch=
+original.match(
+/(\d{1,2})\s*[:.]\s*(\d{2})\s*(?:-|–|—|to)\s*(\d{1,2})\s*[:.]\s*(\d{2})/i
+);
+
+if(!timeMatch){
+
+const shortTime=
+original.match(
+/(\d{1,2})\s*[:.]\s*(\d{2})/
+);
+
+if(shortTime){
+
+const hour=
+Number(shortTime[1]);
+
+const minute=
+Number(shortTime[2]);
+
+if(hour>=7 && hour<=15){
+
+const subject=
+cleanSubject(
+original
+.replace(shortTime[0],"")
+);
+
+if(subject){
+
+addOCRItem(
+schedule,
+currentDay,
+subject
+);
+
+}
+
+}
+
+}
+
+continue;
+}
+
+const startHour=
+Number(timeMatch[1]);
+
+const startMinute=
+Number(timeMatch[2]);
+
+const endHour=
+Number(timeMatch[3]);
+
+const endMinute=
+Number(timeMatch[4]);
+
+if(
+startHour<7 ||
+startHour>15
+)continue;
+
+let rest=
+original.replace(
+timeMatch[0],
+""
+);
+
+rest=cleanSubject(rest);
+
+if(!rest)continue;
+
+const period=
+periodFromStart(
+`${pad(startHour)}:${pad(startMinute)}`
+);
+
+if(period){
+
+schedule["D"+currentDay][period]=[
+rest,
+findRoom(rest) || ""
 ];
 
-
-function newsCard(article){
-
-return `
-
-<article class="card news-card">
-
-<div class="news-image">
-
-${
-article.image
-
-?
-
-`<img
-src="${article.image}"
-alt="${escapeHTML(article.title)}"
-onerror="this.style.display='none';this.nextElementSibling.style.display='grid';"
->
-<div
-class="news-placeholder"
-style="display:none"
->
-📷
-</div>`
-
-:
-
-`<div class="news-placeholder">
-${article.icon}
-</div>`
 }
-
-</div>
-
-<div class="news-body">
-
-<span class="tag">
-${article.tag}
-</span>
-
-<div class="news-title">
-${article.title}
-</div>
-
-<div class="news-text">
-${article.text}
-</div>
-
-</div>
-
-</article>
-
-`;
-}
-
-
-function renderNews(){
-
-$("homeNews").innerHTML=
-NEWS
-.slice(0,3)
-.map(newsCard)
-.join("");
-
-$("newsGrid").innerHTML=
-NEWS
-.map(newsCard)
-.join("");
 
 }
 
+/*
+If OCR didn't recognize Day 1–6 labels,
+use the detected rows sequentially.
+*/
+const total=
+Object.values(schedule)
+.reduce(
+(sum,d)=>
+sum+
+Object.keys(d).length,
+0
+);
+
+if(total===0){
+
+const detected=
+lines
+.map(line=>{
+const match=
+line.match(
+/(\d{1,2})\s*[:.]\s*(\d{2}).*(?:-|–|—|to)\s*(\d{1,2})\s*[:.]\s*(\d{2})\s*(.*)/i
+);
+
+if(!match)return null;
+
+const subject=
+cleanSubject(match[5]);
+
+return subject
+? {subject}
+: null;
+
+})
+.filter(Boolean);
+
+detected
+.slice(0,6)
+.forEach((x,index)=>{
+
+schedule.D1[
+"P"+(index+1)
+]=[
+x.subject,
+""
+];
+
+});
+
+}
+
+return schedule;
+}
+
+function cleanSubject(value){
+
+return String(value || "")
+.replace(/\b(room|rm)\s*[:.]?\s*/ig," ")
+.replace(/\s+/g," ")
+.replace(/^[\-\–—:|]+/,"")
+.trim()
+.slice(0,70);
+
+}
+
+function findRoom(value){
+
+const match=
+String(value)
+.match(
+/\b(?:M\s*)?\d{1,3}\b|\bGYM\b|\bLAB\b/i
+);
+
+return match
+? match[0]
+: "";
+
+}
+
+function periodFromStart(start){
+
+const mapping={
+"08:00":"P1",
+"08:50":"P2",
+"09:00":"P2",
+"09:40":"P3",
+"10:05":"P3",
+"10:55":"P4",
+"11:40":"P4",
+"11:45":"P5",
+"12:45":"P6",
+"14:05":"P6"
+};
+
+return mapping[start] || null;
+}
+
+function addOCRItem(
+schedule,
+day,
+subject
+){
+
+const keys=[
+"P1","P2","P3",
+"P4","P5","P6"
+];
+
+for(const key of keys){
+
+if(!schedule["D"+day][key]){
+
+schedule["D"+day][key]=[
+subject,
+findRoom(subject)
+];
+
+return;
+
+}
+
+}
+
+}
+
+/* =========================================================
+CREATE ACCOUNT
+========================================================= */
+
+$("buildAccountBtn").addEventListener(
+"click",
+()=>{
+createAccount();
+}
+);
+
+function createAccount(){
+
+const name=
+$("newName").value.trim();
+
+const dob=
+$("newDob").value;
+
+const role=
+$("newRole").value.trim();
+
+const email=
+$("newEmail").value.trim();
+
+const school=
+$("newSchool").value.trim();
+
+const grade=
+$("newGrade").value.trim();
+
+const room=
+$("newRoom").value.trim();
+
+const selfieFile=
+$("selfieInput").files?.[0];
+
+const scheduleFile=
+$("scheduleInput").files?.[0];
+
+if(!name ||
+!dob ||
+!role ||
+!email ||
+!selfieFile ||
+!scheduleFile){
+
+showCreateError(
+"Please complete all required fields and add both your profile photo and schedule photo."
+);
+
+return;
+}
+
+const reader1=new FileReader();
+const reader2=new FileReader();
+
+reader1.onload=()=>{
+
+const photoData=
+reader1.result;
+
+reader2.onload=()=>{
+
+const schedulePhoto=
+reader2.result;
+
+const id=
+makeCitizenID();
+
+const shortName=
+name.split(/\s+/)[0];
+
+const profile={
+
+id,
+name,
+shortName,
+role,
+type:
+/teacher|professor|staff/i.test(role)
+? "teacher"
+: "student",
+
+dob:
+formatBirthday(dob),
+
+email,
+
+school:
+school || SCHOOL,
+
+grade:
+grade || "Not provided",
+
+room:
+room || "Not provided",
+
+created:true,
+
+schedules:
+pendingSchedule ||
+blankSchedule()
+
+};
+
+localStorage.setItem(
+"trom_account_"+id,
+JSON.stringify(profile)
+);
+
+localStorage.setItem(
+"trom_photo_"+id,
+photoData
+);
+
+localStorage.setItem(
+"trom_schedule_photo_"+id,
+schedulePhoto
+);
+
+localStorage.setItem(
+"trom_session",
+id
+);
+
+currentProfile=profile;
+guestMode=false;
+
+toast(
+"Your TROM account has been created!"
+);
+
+setTimeout(()=>{
+startApp();
+},300);
+
+};
+
+reader2.readAsDataURL(scheduleFile);
+
+};
+
+reader1.readAsDataURL(selfieFile);
+
+}
+
+function showCreateError(message){
+
+$("createError").textContent=
+message;
+
+$("createError")
+.classList
+.remove("hidden");
+
+}
+
+/* =========================================================
+ALL PROFILES
+========================================================= */
+
+function getProfile(id){
+
+if(builtInProfiles[id]){
+return builtInProfiles[id];
+}
+
+const saved=
+localStorage.getItem(
+"trom_account_"+id
+);
+
+if(saved){
+
+try{
+return JSON.parse(saved);
+}catch(e){
+return null;
+}
+
+}
+
+return null;
+}
 
 /* =========================================================
 LOGIN
 ========================================================= */
 
-function openLogin(){
-
-$("lockActions")
-.classList.add("hidden");
-
-$("signupPanel")
-.classList.add("hidden");
-
-$("loginPanel")
-.classList.remove("hidden");
-
-$("citizenId").focus();
-
-}
-
-
-function closePanels(){
-
-$("loginPanel")
-.classList.add("hidden");
-
-$("signupPanel")
-.classList.add("hidden");
-
-$("lockActions")
-.classList.remove("hidden");
-
-$("loginError")
-.classList.add("hidden");
-
-$("signupError")
-.classList.add("hidden");
-
-}
-
-
 function enterProfile(){
 
 const id=
-$("citizenId")
-.value
-.trim();
+$("citizenId").value.trim();
 
 const code=
-$("accessCode")
-.value;
+$("accessCode").value;
 
-if(code!==TROM_ACCESS_CODE){
+if(code!==ACCESS_CODE){
 
 $("loginError").textContent=
 "That TROM access code is not correct.";
 
 $("loginError")
-.classList.remove("hidden");
+.classList
+.remove("hidden");
 
 return;
-
 }
 
+const profile=
+getProfile(id);
 
-if(!profiles[id]){
+if(!profile){
 
 $("loginError").textContent=
 "Citizen ID not found.";
 
 $("loginError")
-.classList.remove("hidden");
+.classList
+.remove("hidden");
 
 return;
-
 }
 
-
-currentProfile=
-profiles[id];
-
+currentProfile=profile;
 guestMode=false;
 
 localStorage.setItem(
@@ -4417,14 +3984,12 @@ localStorage.setItem(
 id
 );
 
-localStorage.removeItem(
-"trom_guest"
-);
-
 startApp();
-
 }
 
+/* =========================================================
+GUEST
+========================================================= */
 
 function enterGuest(){
 
@@ -4436,818 +4001,42 @@ localStorage.setItem(
 "1"
 );
 
-localStorage.removeItem(
-"trom_session"
-);
-
 startApp();
 
 }
 
-
 /* =========================================================
-CREATE ACCOUNT
-========================================================= */
-
-function openSignup(){
-
-$("lockActions")
-.classList.add("hidden");
-
-$("loginPanel")
-.classList.add("hidden");
-
-$("signupPanel")
-.classList.remove("hidden");
-
-}
-
-
-function generateCitizenID(){
-
-let id;
-
-do{
-
-id=
-"TROM"+
-Math.floor(
-100000+
-Math.random()*900000
-);
-
-}while(profiles[id]);
-
-return id;
-}
-
-
-function formatBirthday(value){
-
-if(!value)return "";
-
-const [year,month,day]=
-value.split("-");
-
-return `${day}/${month}/${year.slice(-2)}`;
-
-}
-
-
-/* =========================================================
-SELFIE
-========================================================= */
-
-$("selfieInput").addEventListener(
-"change",
-event=>{
-
-const file=
-event.target.files?.[0];
-
-if(!file)return;
-
-const reader=
-new FileReader();
-
-reader.onload=()=>{
-
-$("selfiePreview").src=
-reader.result;
-
-$("selfiePreview")
-.dataset.photo=
-reader.result;
-
-};
-
-reader.readAsDataURL(file);
-
-}
-);
-
-
-/* =========================================================
-SCHEDULE OCR
-========================================================= */
-
-let schedulePhotoData=null;
-let detectedScheduleText="";
-
-
-$("scheduleInput").addEventListener(
-"change",
-async event=>{
-
-const file=
-event.target.files?.[0];
-
-if(!file)return;
-
-$("scheduleFileName").textContent=
-file.name;
-
-const reader=
-new FileReader();
-
-reader.onload=async()=>{
-
-schedulePhotoData=
-reader.result;
-
-await readSchedulePhoto(
-schedulePhotoData
-);
-
-};
-
-reader.readAsDataURL(file);
-
-}
-);
-
-
-async function readSchedulePhoto(image){
-
-$("ocrProgress")
-.classList.remove("hidden");
-
-$("ocrStatus").textContent=
-"Reading your schedule...";
-
-
-try{
-
-const result=
-await Tesseract.recognize(
-image,
-"eng",
-{
-logger:data=>{
-
-if(data.status==="recognizing text"){
-
-const progress=
-Math.round(
-data.progress*100
-);
-
-$("ocrBar")
-.style.width=
-`${progress}%`;
-
-$("ocrStatus").textContent=
-`Reading schedule... ${progress}%`;
-
-}
-
-}
-}
-);
-
-
-detectedScheduleText=
-result.data.text || "";
-
-
-$("ocrStatus").textContent=
-"Schedule detected. TROM is building your timetable.";
-
-buildScheduleFromOCR(
-detectedScheduleText
-);
-
-
-}
-
-catch(error){
-
-console.error(error);
-
-$("ocrStatus").textContent=
-"The photo could not be read. You can still create the account and edit the schedule later.";
-
-}
-
-}
-
-
-/* =========================================================
-AUTOMATIC SCHEDULE BUILDER
-========================================================= */
-
-function normaliseOCR(text){
-
-return text
-.replace(/\r/g,"\n")
-.replace(/[|]/g," ")
-.replace(/\s+/g," ")
-.trim();
-
-}
-
-
-function detectSubject(text){
-
-const subjects=[
-
-"English Literature",
-"Mathematics",
-"Science",
-"Arabic Literature",
-"Arabic",
-"National Studies",
-"Individuals and Societies",
-"Physical and Health Education",
-"Physical Education",
-"Visual Art",
-"Design",
-"Islamic Studies",
-"History",
-"Geography",
-"Biology",
-"Chemistry",
-"Physics",
-"Computer Science",
-"Art",
-"Music",
-"Drama"
-
-];
-
-const lower=text.toLowerCase();
-
-const found=
-subjects.find(
-subject=>
-lower.includes(
-subject.toLowerCase()
-)
-);
-
-return found || null;
-
-}
-
-
-function detectRoom(text){
-
-const match=
-text.match(
-/\b(?:M\s*)?\d{1,3}\b|\bGYM\b/i
-);
-
-if(!match)return "";
-
-return match[0]
-.replace(/\s+/g," ")
-.trim();
-
-}
-
-
-function parseTime(text){
-
-const match=
-text.match(
-/\b(\d{1,2})[:.](\d{2})\s*(am|pm)?/i
-);
-
-if(!match)return null;
-
-let h=
-Number(match[1]);
-
-const m=
-Number(match[2]);
-
-const meridiem=
-match[3]?.toLowerCase();
-
-if(meridiem==="pm" && h<12){
-h+=12;
-}
-
-if(meridiem==="am" && h===12){
-h=0;
-}
-
-if(h>23 || m>59)return null;
-
-return `${pad(h)}:${pad(m)}`;
-
-}
-
-
-function buildScheduleFromOCR(text){
-
-const cleaned=
-normaliseOCR(text);
-
-const detected={};
-
-for(let day=1;day<=6;day++){
-
-detected[`D${day}`]={
-P1:null,
-P2:null,
-P3:null,
-P4:null,
-P5:null,
-P6:null
-};
-
-}
-
-
-/*
-Try to identify subjects and rooms.
-
-The OCR output can vary depending on the schedule
-design, so this uses multiple signals instead of
-expecting one exact layout.
-*/
-
-const lines=
-text
-.split("\n")
-.map(x=>x.trim())
-.filter(Boolean);
-
-
-let currentDay=1;
-let periodIndex=0;
-
-
-for(const line of lines){
-
-const dayMatch=
-line.match(
-/\b(?:day|d)\s*([1-6])\b/i
-);
-
-if(dayMatch){
-
-currentDay=
-Number(dayMatch[1]);
-
-periodIndex=0;
-
-continue;
-
-}
-
-
-const subject=
-detectSubject(line);
-
-if(!subject)continue;
-
-
-const room=
-detectRoom(line);
-
-
-const time=
-parseTime(line);
-
-
-let targetPeriod=null;
-
-
-if(time){
-
-const t=
-minutes(time);
-
-const bell=
-BELL.regular.periods;
-
-for(const p of Object.keys(bell)){
-
-const start=
-minutes(bell[p][0]);
-
-const end=
-minutes(bell[p][1]);
-
-if(t>=start-8 && t<=end+8){
-
-targetPeriod=p;
-break;
-
-}
-
-}
-
-}
-
-
-if(!targetPeriod){
-
-const periods=[
-"P1",
-"P2",
-"P3",
-"P4",
-"P5",
-"P6"
-];
-
-targetPeriod=
-periods[
-Math.min(
-periodIndex,
-periods.length-1
-)
-];
-
-periodIndex++;
-
-}
-
-
-detected[`D${currentDay}`]
-[targetPeriod]=[
-subject,
-room || "—"
-];
-
-}
-
-
-/*
-If OCR could not confidently extract anything,
-create a schedule structure anyway. The user can
-edit the generated values later.
-*/
-
-let foundSomething=false;
-
-for(let d=1;d<=6;d++){
-
-for(const p of [
-"P1","P2","P3",
-"P4","P5","P6"
-]){
-
-if(
-detected[`D${d}`][p]
-){
-
-foundSomething=true;
-
-}
-
-}
-
-}
-
-
-if(!foundSomething){
-
-$("ocrStatus").textContent=
-"The photo was saved, but TROM could not confidently read the timetable. You can add the classes after creating the account.";
-
-return;
-
-}
-
-
-window.detectedNewSchedule=
-detected;
-
-
-$("ocrStatus").textContent=
-"✓ TROM automatically created a digital schedule from the photo.";
-
-}
-
-
-/* =========================================================
-CREATE ACCOUNT
-========================================================= */
-
-$("createBtn").addEventListener(
-"click",
-createAccount
-);
-
-
-function createAccount(){
-
-const name=
-$("signupName")
-.value
-.trim();
-
-const birthday=
-$("signupBirthday")
-.value;
-
-const role=
-$("signupRole")
-.value
-.trim();
-
-const email=
-$("signupEmail")
-.value
-.trim();
-
-const school=
-$("signupSchool")
-.value
-.trim();
-
-const selfie=
-$("selfiePreview")
-.dataset.photo;
-
-const schedule=
-schedulePhotoData;
-
-
-if(
-!name ||
-!birthday ||
-!role ||
-!email ||
-!selfie ||
-!schedule
-){
-
-$("signupError").textContent=
-"Please complete your name, birthday, role, email, selfie and schedule photo.";
-
-$("signupError")
-.classList.remove("hidden");
-
-return;
-
-}
-
-
-const id=
-generateCitizenID();
-
-
-const shortName=
-name
-.trim()
-.split(/\s+/)[0];
-
-
-const newProfile={
-
-id,
-
-name,
-
-shortName,
-
-role,
-
-type:
-/teacher|professor|staff|employee/i.test(role)
-? "teacher"
-: "student",
-
-dob:
-formatBirthday(birthday),
-
-email,
-
-school:
-school || "TROM",
-
-grade:
-role,
-
-homeroom:
-"Not set",
-
-isCustom:true,
-
-schedules:
-window.detectedNewSchedule ||
-{
-D1:{},
-D2:{},
-D3:{},
-D4:{},
-D5:{},
-D6:{}
-}
-
-};
-
-
-profiles[id]=
-newProfile;
-
-
-/*
-Save the account locally.
-*/
-
-const savedAccounts=
-JSON.parse(
-localStorage.getItem(
-"trom_accounts"
-) || "{}"
-);
-
-savedAccounts[id]=
-newProfile;
-
-localStorage.setItem(
-"trom_accounts",
-JSON.stringify(
-savedAccounts
-)
-);
-
-
-localStorage.setItem(
-`trom_photo_${id}`,
-selfie
-);
-
-
-localStorage.setItem(
-`trom_schedule_photo_${id}`,
-schedule
-);
-
-
-localStorage.setItem(
-"trom_session",
-id
-);
-
-localStorage.removeItem(
-"trom_guest"
-);
-
-
-currentProfile=
-newProfile;
-
-guestMode=false;
-
-
-$("signupError")
-.classList.add("hidden");
-
-
-toast(
-`Welcome to TROM, ${shortName}!`
-);
-
-
-setTimeout(
-startApp,
-450
-);
-
-}
-
-
-/* =========================================================
-LOAD CUSTOM ACCOUNTS
-========================================================= */
-
-function loadCustomAccounts(){
-
-try{
-
-const saved=
-JSON.parse(
-localStorage.getItem(
-"trom_accounts"
-) || "{}"
-);
-
-Object.assign(
-profiles,
-saved
-);
-
-}
-
-catch(error){
-
-console.warn(
-"Could not load custom accounts",
-error
-);
-
-}
-
-}
-
-
-/* =========================================================
-APP START
+START APP
 ========================================================= */
 
 function startApp(){
 
 $("lockScreen")
-.classList.add("hidden");
+.classList
+.add("hidden");
 
 $("app")
-.classList.remove("hidden");
+.classList
+.remove("hidden");
 
+$("personalSection")
+.classList
+.toggle(
+"hidden",
+!currentProfile
+);
+
+$("guestSection")
+.classList
+.toggle(
+"hidden",
+!!currentProfile
+);
 
 updateProfileUI();
-
-renderNews();
-
-updateAll();
-
+updateTime();
 fetchWeather();
-
 }
-
-
-function updateAll(){
-
-updateClock();
-
-updateHome();
-
-renderCurrentProfile();
-
-if(
-$("page-schedule")
-.classList
-.contains("active")
-){
-
-renderSchedule();
-
-}
-
-}
-
-
-/* =========================================================
-NAVIGATION
-========================================================= */
-
-function showPage(page){
-
-document
-.querySelectorAll(".page")
-.forEach(
-x=>x.classList.remove("active")
-);
-
-
-const target=
-$(`page-${page}`);
-
-if(target){
-
-target.classList.add("active");
-
-}
-
-
-document
-.querySelectorAll(".nav-btn")
-.forEach(
-button=>{
-button.classList.toggle(
-"active",
-button.dataset.page===page
-);
-}
-);
-
-
-if(page==="schedule"){
-renderSchedule();
-}
-
-if(page==="profile"){
-renderCurrentProfile();
-}
-
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
-}
-
-
-window.showPage=
-showPage;
-
 
 /* =========================================================
 LOGOUT
@@ -5256,7 +4045,6 @@ LOGOUT
 $("logoutBtn").addEventListener(
 "click",
 ()=>{
-
 localStorage.removeItem(
 "trom_session"
 );
@@ -5269,494 +4057,83 @@ currentProfile=null;
 guestMode=false;
 
 $("app")
-.classList.add("hidden");
+.classList
+.add("hidden");
 
 $("lockScreen")
-.classList.remove("hidden");
+.classList
+.remove("hidden");
 
-closePanels();
+closeLogin();
+closeCreate();
 
-toast(
-"You have been signed out."
-);
+toast("Logged out.");
 
 }
 );
-
 
 /* =========================================================
-PHOTO CHANGE
+LOGIN / CREATE BUTTONS
 ========================================================= */
 
-$("changePhotoBtn").addEventListener(
+$("personalBtn").addEventListener(
 "click",
 ()=>{
-
-if(currentProfile){
-
-$("changePhotoInput")
-.click();
-
-}
-
+$("lockActions").classList.add("hidden");
+$("loginPanel").classList.remove("hidden");
+$("citizenId").focus();
 }
 );
 
-
-$("changePhotoInput").addEventListener(
-"change",
-event=>{
-
-const file=
-event.target.files?.[0];
-
-if(
-!file ||
-!currentProfile
-)return;
-
-
-const reader=
-new FileReader();
-
-reader.onload=()=>{
-
-localStorage.setItem(
-`trom_photo_${currentProfile.id}`,
-reader.result
-);
-
-loadProfilePhoto();
-
-toast(
-"Profile photo updated."
-);
-
-};
-
-reader.readAsDataURL(file);
-
-}
-);
-
-
-/* =========================================================
-AI
-========================================================= */
-
-function addMessage(
-text,
-who="bot"
-){
-
-const message=
-document.createElement("div");
-
-message.className=
-`msg ${who}`;
-
-message.textContent=
-text;
-
-$("messages")
-.appendChild(message);
-
-$("messages")
-.scrollTop=
-$("messages").scrollHeight;
-
-}
-
-
-function askAI(question){
-
-const q=
-question
-.trim()
-.toLowerCase();
-
-if(!q)return;
-
-
-addMessage(
-question,
-"user"
-);
-
-
-let answer="";
-
-
-const p=
-bahrain();
-
-
-if(
-/next class|next lesson|what.*next/.test(q)
-){
-
-if(!currentProfile){
-
-answer=
-"Sign in to My TROM and I can check your personal schedule.";
-
-}
-
-else{
-
-const state=
-currentState(
-currentProfile,
-p
-);
-
-if(state.type==="next"){
-
-answer=
-`Your next scheduled item is ${state.item.name} at ${timeLabel(state.item.start)} in ${state.item.room}. It starts in ${duration(state.seconds)}.`;
-
-}
-
-else if(state.type==="current"){
-
-answer=
-`You're currently in ${state.item.name}. You have ${duration(state.seconds)} remaining.`;
-
-}
-
-else{
-
-answer=
-"You have no more scheduled classes today.";
-
-}
-
-}
-
-}
-
-
-else if(
-/time|clock/.test(q)
-){
-
-answer=
-`The current Bahrain time is ${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}.`;
-
-}
-
-
-else if(
-/weather|temperature|hot|cold/.test(q)
-){
-
-if(!weatherData){
-
-answer=
-"I'm loading TROM Weather right now.";
-
-}
-
-else{
-
-const c=
-weatherData.current;
-
-answer=
-`TROM Weather is ${Math.round(c.temperature_2m)}°C with ${weatherText[c.weather_code] || "current conditions"}. It feels like ${Math.round(c.apparent_temperature)}°C.`;
-
-}
-
-}
-
-
-else if(
-/who am i|my name/.test(q)
-){
-
-answer=
-currentProfile
-? `You're signed in as ${currentProfile.name}.`
-: "You're currently browsing TROM as a guest.";
-
-}
-
-
-else if(
-/birthday|date of birth|dob/.test(q)
-){
-
-answer=
-currentProfile
-? `Your TROM birthday is ${currentProfile.dob}.`
-: "Sign in to see your personal birthday.";
-
-}
-
-
-else if(
-/citizen id|my id/.test(q)
-){
-
-answer=
-currentProfile
-? `Your TROM Citizen ID is ${currentProfile.id}.`
-: "Sign in to see your Citizen ID.";
-
-}
-
-
-else if(
-/finish|dismiss|school.*end|end.*school/.test(q)
-){
-
-if(!currentProfile){
-
-answer=
-"Sign in to My TROM and I can check your schedule.";
-
-}
-
-else{
-
-const bell=
-bellFor(p);
-
-const end=
-currentProfile.type==="teacher" &&
-bell.teacherMeeting
-? bell.teacherMeeting[1]
-: bell.end;
-
-answer=
-`Your scheduled ${currentProfile.type==="teacher" ? "workday" : "school day"} ends at ${timeLabel(end)}.`;
-
-}
-
-}
-
-
-else if(
-/weekend/.test(q)
-){
-
-answer=
-"Friday and Saturday are the school weekend.";
-
-}
-
-
-else if(
-/transition/.test(q)
-){
-
-answer=
-"TROM treats five-minute gaps between classes as transition periods and counts them down live.";
-
-}
-
-
-else if(
-/trom|republic of moe/.test(q)
-){
-
-answer=
-"TROM stands for The Republic of Moe — a digital national portal for TROM services, information, media and personalized tools.";
-
-}
-
-
-/*
-GENERAL AI FALLBACK
-
-A static GitHub Pages site cannot safely contain a
-private AI API key. This fallback gives useful answers
-for common questions. A secure backend can later be
-connected here without putting an API key in the website.
-*/
-
-else if(
-/hello|hi|hey/.test(q)
-){
-
-answer=
-"Hi! 👋 I'm TROM AI. I can help with TROM, your schedule, weather, or general questions.";
-
-}
-
-
-else if(
-/photosynthesis/.test(q)
-){
-
-answer=
-"Photosynthesis is the process plants use to turn sunlight, water and carbon dioxide into food called glucose, while releasing oxygen.";
-
-}
-
-
-else if(
-/capital.*japan|japan.*capital/.test(q)
-){
-
-answer=
-"The capital of Japan is Tokyo.";
-
-}
-
-
-else if(
-/ancient egypt/.test(q)
-){
-
-answer=
-"Ancient Egypt was a civilization along the Nile River. Egyptians built pyramids, used hieroglyphics, developed papyrus and created many advances in mathematics, medicine and engineering.";
-
-}
-
-
-else{
-
-answer=
-"I understand that you're asking a general question. TROM AI is ready for a secure general-AI connection, but this GitHub Pages version doesn't contain an AI API key. Your TROM information and schedule features still work locally.";
-
-}
-
-
-setTimeout(
-()=>{
-addMessage(
-answer,
-"bot"
-);
-},
-250
-);
-
-}
-
-
-$("sendBtn").addEventListener(
+$("loginBack").addEventListener(
 "click",
 ()=>{
-const value=
-$("chatInput")
-.value
-.trim();
-
-if(value){
-
-$("chatInput").value="";
-
-askAI(value);
-
-}
+$("loginPanel").classList.add("hidden");
+$("lockActions").classList.remove("hidden");
 }
 );
 
-
-$("chatInput").addEventListener(
-"keydown",
-event=>{
-
-if(event.key==="Enter"){
-
-$("sendBtn").click();
-
-}
-
-}
-);
-
-
-document
-.querySelectorAll("[data-question]")
-.forEach(
-button=>{
-button.addEventListener(
+$("createBtn").addEventListener(
 "click",
-()=>{
-askAI(
-button.dataset.question
-);
-}
-);
-}
+openCreate
 );
 
-
-/* =========================================================
-EVENT LISTENERS
-========================================================= */
-
-$("personalBtn")
-.addEventListener(
+$("createBack").addEventListener(
 "click",
-openLogin
+closeCreate
 );
 
-
-$("createAccountBtn")
-.addEventListener(
-"click",
-openSignup
-);
-
-
-$("guestBtn")
-.addEventListener(
-"click",
-enterGuest
-);
-
-
-$("backBtn")
-.addEventListener(
-"click",
-closePanels
-);
-
-
-$("signupBack")
-.addEventListener(
-"click",
-closePanels
-);
-
-
-$("loginBtn")
-.addEventListener(
+$("loginBtn").addEventListener(
 "click",
 enterProfile
 );
 
-
-$("citizenId")
-.addEventListener(
+$("accessCode").addEventListener(
 "keydown",
-event=>{
-if(event.key==="Enter"){
+e=>{
+if(e.key==="Enter"){
 enterProfile();
 }
 }
 );
 
-
-$("accessCode")
-.addEventListener(
+$("citizenId").addEventListener(
 "keydown",
-event=>{
-if(event.key==="Enter"){
+e=>{
+if(e.key==="Enter"){
 enterProfile();
 }
 }
 );
 
+/* =========================================================
+NAV EVENTS
+========================================================= */
 
-document
-.querySelectorAll("[data-page]")
-.forEach(
-button=>{
+document.querySelectorAll(
+".nav button"
+).forEach(button=>{
+
 button.addEventListener(
 "click",
 ()=>{
@@ -5765,70 +4142,268 @@ button.dataset.page
 );
 }
 );
-}
-);
 
+});
 
-$("topAvatar")
-.addEventListener(
+/* Avatar opens profile */
+$("topAvatar").addEventListener(
 "click",
 ()=>{
-showPage(
-currentProfile
-? "profile"
-: "more"
+if(currentProfile){
+showPage("profile");
+}else{
+toast(
+"Create or sign in to a TROM account first."
 );
+}
 }
 );
 
+/* =========================================================
+TROM AI
+========================================================= */
 
-document
-.querySelectorAll(".day-tab")
-.forEach(
-button=>{
-button.addEventListener(
+function addMessage(text,type){
+
+const box=$("messages");
+
+const div=
+document.createElement("div");
+
+div.className=
+"msg "+type;
+
+div.textContent=text;
+
+box.appendChild(div);
+
+box.scrollTop=
+box.scrollHeight;
+}
+
+function aiAnswer(question){
+
+const q=
+question.toLowerCase();
+
+const p=
+bahrainTime();
+
+if(
+/next class|next lesson|what.*next/.test(q)
+){
+
+if(!currentProfile){
+return "Sign in or create a TROM account and I can check your personal schedule.";
+}
+
+const items=
+getItems(currentProfile,p);
+
+const state=
+currentState(items,p);
+
+if(state.kind==="before"){
+return `Your next scheduled item is ${state.item.name} at ${timeLabel(state.item.start)} in ${state.item.room || "the scheduled location"}.`;
+}
+
+return "There are no more scheduled classes today.";
+
+}
+
+if(
+/what time|current time|time is it/.test(q)
+){
+
+return `The current Bahrain time is ${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}.`;
+
+}
+
+if(
+/weather|temperature|hot|cold/.test(q)
+){
+
+if(!weatherData){
+return "I'm loading TROM Weather right now.";
+}
+
+const c=
+weatherData.current;
+
+return `TROM Weather in Bahrain is ${Math.round(c.temperature_2m)}°C with ${weatherNames[c.weather_code] || "current conditions"}. It feels like ${Math.round(c.apparent_temperature)}°C.`;
+
+}
+
+if(
+/my name|who am i/.test(q)
+){
+
+return currentProfile
+? `You're signed in as ${currentProfile.name}.`
+: "You're currently browsing TROM as a guest.";
+
+}
+
+if(
+/birthday|birth date|date of birth/.test(q)
+){
+
+return currentProfile
+? `Your TROM birthday is ${currentProfile.dob}.`
+: "Sign in to view your personal birthday.";
+
+}
+
+if(
+/citizen id|my id/.test(q)
+){
+
+return currentProfile
+? `Your TROM Citizen ID is ${currentProfile.id}.`
+: "Citizen ID information is available after signing in.";
+
+}
+
+if(
+/schedule|timetable/.test(q)
+){
+
+if(!currentProfile){
+return "Create a TROM account and upload your schedule photo so I can use your personal schedule.";
+}
+
+const cycle=
+getCycle(p);
+
+if(weekend(p)){
+return "It's the weekend. Friday and Saturday are weekends.";
+}
+
+const data=
+currentProfile.schedules["D"+cycle] || {};
+
+const classes=
+Object.entries(data)
+.filter(([,value])=>value)
+.map(([period,value])=>`${period}: ${value[0]} • ${value[1]}`)
+.join("\n");
+
+return classes
+? `Your Day ${cycle} schedule:\n${classes}`
+: `Your Day ${cycle} schedule doesn't have any classes recorded yet.`;
+
+}
+
+if(
+/finish school|school.*end|dismiss/.test(q)
+){
+
+const bell=
+bellFor(p);
+
+if(weekend(p)){
+return "There is no school today because Friday and Saturday are the weekend.";
+}
+
+const end=
+currentProfile?.type==="teacher"
+? bell.teacherEnd
+: bell.studentEnd;
+
+return `Your scheduled ${currentProfile?.type==="teacher" ? "workday" : "school day"} ends at ${timeLabel(end)} today.`;
+
+}
+
+if(
+/trom|republic of moe/.test(q)
+){
+
+return "TROM stands for The Republic of Moe. This portal brings together personal schedules, weather, news, media, TROM AI and TROM COUNTRY.";
+
+}
+
+/*
+General fallback.
+This is intentionally NOT pretending to be a real
+general AI model. A secure backend can be connected
+later for full general AI.
+*/
+
+return `I can help with TROM information, your schedule, weather, time and account information.
+
+For a fully general AI that can answer questions like science, history, writing and current information, TROM AI will need a secure AI backend rather than only static GitHub Pages code.`;
+
+}
+
+function sendAI(){
+
+const input=
+$("aiInput");
+
+const question=
+input.value.trim();
+
+if(!question)return;
+
+input.value="";
+
+addMessage(
+question,
+"user"
+);
+
+setTimeout(()=>{
+
+addMessage(
+aiAnswer(question),
+"bot"
+);
+
+},250);
+
+}
+
+$("aiSend").addEventListener(
 "click",
-()=>{
-renderSchedule(
-Number(
-button.dataset.cycle
-)
-);
-}
-);
-}
+sendAI
 );
 
+$("aiInput").addEventListener(
+"keydown",
+e=>{
+if(e.key==="Enter"){
+sendAI();
+}
+}
+);
 
 /* =========================================================
 RESTORE SESSION
 ========================================================= */
 
-function restoreSession(){
-
-loadCustomAccounts();
+function restore(){
 
 const id=
 localStorage.getItem(
 "trom_session"
 );
 
-if(
-id &&
-profiles[id]
-){
+if(id){
 
-currentProfile=
-profiles[id];
+const profile=
+getProfile(id);
 
+if(profile){
+
+currentProfile=profile;
 guestMode=false;
 
 startApp();
 
 return true;
-
 }
 
+}
 
 if(
 localStorage.getItem(
@@ -5836,19 +4411,13 @@ localStorage.getItem(
 )
 ){
 
-guestMode=true;
-
-startApp();
+enterGuest();
 
 return true;
-
 }
-
 
 return false;
-
 }
-
 
 /* =========================================================
 START
@@ -5858,36 +4427,21 @@ window.addEventListener(
 "load",
 ()=>{
 
-setTimeout(
-()=>{
-$("loading")
-.classList.add("hide");
-},
-600
-);
-
-
-renderNews();
-
-const restored=
-restoreSession();
-
-
-if(!restored){
-
+updateTime();
 renderWeather();
+
+if(!restore()){
+
+$("lockScreen")
+.classList
+.remove("hidden");
 
 }
 
-
-updateClock();
-
-
 setInterval(
-updateAll,
+updateTime,
 1000
 );
-
 
 setInterval(
 fetchWeather,
@@ -5896,9 +4450,7 @@ fetchWeather,
 
 }
 );
-
 </script>
 
 </body>
 </html>
-
